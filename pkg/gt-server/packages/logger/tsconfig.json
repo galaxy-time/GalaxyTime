@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+	  "moduleResolution": "NodeNext",
+	  "module": "NodeNext",
+	  "outDir": "build",
+	  "strict": true,
+	  "target": "ESNext"
+	}
+  }

@@ -1,0 +1,16 @@
+{
+	"name": "@lab75/logger",
+	"devDependencies": {
+		"typescript": "^5.1.6"
+	},
+	"exports": {
+		"types": "./src/index.ts",
+		"development": "./src/index.ts",
+		"default": "./build/index.js"
+	},
+	"private": true,
+	"scripts": {
+		"build": "tsc"
+	},
+	"type": "module"
+}
