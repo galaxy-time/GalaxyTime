@@ -1,5 +1,7 @@
 {
 	"name": "@lab75/logger",
+	"description": "LAB75 Logger",
+	"version": "1.0.0",
 	"devDependencies": {
 		"typescript": "^5.1.6"
 	},
