@@ -4,6 +4,7 @@
 	  "module": "NodeNext",
 	  "outDir": "build",
 	  "strict": true,
-	  "target": "ESNext"
+	  "target": "ESNext",
+    "resolveJsonModule": true
 	}
   }

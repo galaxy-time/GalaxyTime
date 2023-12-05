@@ -1,0 +1,34 @@
+type Query {
+  ping: String
+  time(zone:String): String
+
+}
+
+type Mutation {
+  addZone(input: AddZoneInput!): Zone!
+}
+
+# Locations of astronomical objects in this api are based on the Equatorial coordinate system
+# https://en.wikipedia.org/wiki/Equatorial_coordinate_system
+
+# Geographical Distance calculations
+# https://en.wikipedia.org/wiki/Geographical_distance
+
+# astronomical object location type
+type Location {
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+  distance: Float!
+}
+
+# astronomical object definition
+type Zone {
+  id: ID!
+  name: String!
+  # location: Location
+}
+
+input AddZoneInput {
+  name: String!
+}

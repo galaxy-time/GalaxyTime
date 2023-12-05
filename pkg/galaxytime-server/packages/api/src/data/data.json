@@ -1,0 +1,18 @@
+[
+		{ "id": "0", "name": "sun", "dist": 0, "diameter": 1392684 },
+		{ "id": "1", "name": "mercury", "ref": 0, "distance": 5790900, "diameter": 4879.4 },
+		{ "id": "2", "name": "venus", "ref": 0, "distance": 108160000, "diameter": 12103.6 },
+
+		{ "id": "3", "name": "earth", "ref": 0, "distance": 149600000, "diameter": 12756.3 },
+		{ "id": "4", "name": "iss", "ref": 3, "distance": 10000000, "diameter": 1000 },
+		{ "id": "5", "name": "moon", "ref": 3, "distance": 10000000, "diameter": 1000 },
+
+		{ "id": "6", "name": "mars", "ref": 0, "distance": 227990000, "diameter": 12756.3 },
+
+		{ "id": "7", "name": "jupiter", "ref": 0, "distance": 778360000, "diameter": 142984 },
+		{ "id": "8", "name": "saturn", "ref": 0, "distance": 1433500000, "diameter": 120536 },
+		{ "id": "9", "name": "uranus", "ref": 0, "distance": 2872400000, "diameter": 51118 },
+		{ "id": "10", "name": "neptun", "ref": 0, "distance": 4498400000, "diameter": 49528 },
+
+		{ "id": "11", "name": "pluto", "ref": 0, "distance": 10000000, "diameter": 1000 }
+	]
