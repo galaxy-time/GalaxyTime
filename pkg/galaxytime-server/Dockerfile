@@ -3,9 +3,7 @@ WORKDIR /app/
 COPY . .
 
 RUN \
-  # Install all dependencies
-  yarn install --immutable &&\
-  # Build all packages
+  yarn set version stable &&\
+  yarn install &&\
   yarn build &&\
-  # Remove dev dependencies
   yarn workspaces focus --production --all

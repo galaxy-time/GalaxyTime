@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "yarn install && yarn workspace api dev",
-    "build": "yarn workspaces foreach --topological-dev -pi run build",
-    "docker": "docker build . -t gt-server:latest && docker run -it -p 3000:3000 gt-server:local yarn workspace hello-api start "
+    "build": "yarn install && yarn workspaces foreach --topological-dev -Api run build",
+    "docker": "docker build . -t galaxytime/server:local && docker run -it -p 3000:3000 galaxytime/server:local yarn workspace api start"
   }
 }

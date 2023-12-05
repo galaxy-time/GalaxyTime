@@ -5,8 +5,8 @@ A companion application for space travellers.
 ## Packages
 
 ```
-/pkg/gt-server - timeserver
-/pkg/gt-wearos - wear os application + watchface
+/pkg/galaxytime-server - timeserver
+/pkg/galaxytime-wearos - wear os application + watchface
 ```
 
 ## License
