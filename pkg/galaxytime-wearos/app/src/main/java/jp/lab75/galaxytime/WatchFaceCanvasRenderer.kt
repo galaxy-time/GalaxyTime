@@ -103,6 +103,7 @@ class WatchFaceCanvasRenderer(
 	private var transitionAlpha = 0f
 
 	override fun onTapEvent( tapType: Int, tapEvent: TapEvent, complicationSlot: ComplicationSlot? ) {
+		// TODO: add touch segments to trigger different scenes
 		if ( tapType == TapType.UP ) {
 			nextWatchMode = when ( watchMode ) {
 				WatchMode.WATCH -> WatchMode.BIOMETRICS

@@ -42,15 +42,15 @@
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="moon_style_name">MOON</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="saturn_style_name">MARS</string>
+	<string name="mars_style_name">MARS</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="jupiter_style_name">JUPITER</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="saturn_style_name">SATURN</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="saturn_style_name">URANUS</string>
+	<string name="uranus_style_name">URANUS</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="neptun_style_name">NEPTUNE</string>
+	<string name="neptune_style_name">NEPTUNE</string>
 
     <!-- An option within the analog watch face to draw pips to mark each hour [CHAR LIMIT=20] -->
     <string name="watchface_pips_setting">Hour Pips</string>
