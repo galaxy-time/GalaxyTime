@@ -1,18 +1,3 @@
-/*
- * Copyright 2020 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package jp.lab75.galaxytime
 
 import android.content.Context
@@ -22,7 +7,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
-
+import android.graphics.RectF
+import android.graphics.Color
+import android.graphics.PorterDuffColorFilter
+import android.graphics.PorterDuff
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -59,6 +47,11 @@ import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
 import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 
+import jp.lab75.galaxytime.renderWatchfaceView
+import jp.lab75.galaxytime.renderBiometricsView
+import jp.lab75.galaxytime.renderAstronomicsView
+
+
 import java.time.Duration
 import java.time.ZonedDateTime
 import kotlin.math.cos
@@ -72,15 +65,10 @@ import kotlinx.coroutines.launch
 import android.animation.ValueAnimator
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-// import androidx.compose.animation.AnimatedVisibility
 
 // Default for how long each frame is displayed at expected frame rate.
 private const val FRAME_PERIOD_MS_DEFAULT: Long = 16L
 
-/**
- * Renders watch face via data in Room database. Also, updates watch face state based on setting
- * changes by user via [userStyleRepository.addUserStyleListener()].
- */
 class WatchFaceCanvasRenderer(
     private val context: Context,
     surfaceHolder: SurfaceHolder,
@@ -101,9 +89,10 @@ class WatchFaceCanvasRenderer(
         override fun onDestroy() {}
     }
 
+	//
 	// scene transitions
 	//
-	//
+
 	public var watchMode: WatchMode = WatchMode.WATCH
 	public var nextWatchMode: WatchMode = WatchMode.WATCH
 
@@ -178,16 +167,13 @@ class WatchFaceCanvasRenderer(
         animator.start()
 	}
 
-
+	//
 	// data
 	//
-	//
+
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var watchFaceData: WatchFaceData = WatchFaceData()
-
-	// styling
-	//
-	//
+	private val resources: Resources = context.resources
 	private var watchFaceColors = convertToWatchFaceColorPalette(
         context,
         watchFaceData.activeColorStyle,
@@ -196,33 +182,40 @@ class WatchFaceCanvasRenderer(
 	private val outerElementPaint = Paint().apply {
 		isAntiAlias = true
 	}
-	// Initializes paint object for painting the clock hands with default values.
     private val clockHandPaint = Paint().apply {
         isAntiAlias = true
         strokeWidth = context.resources.getDimensionPixelSize(R.dimen.clock_hand_stroke_width).toFloat()
     }
-    // Used to paint the main hour hand text with the hour pips, i.e., 3, 6, 9, and 12 o'clock.
+	private val typeface = resources.getFont(R.font.pp_stellar)
     private val textPaint = Paint().apply {
         isAntiAlias = true
-        textSize = context.resources.getDimensionPixelSize(R.dimen.hour_mark_size).toFloat()
+		color = Color.WHITE
+		// style = Paint.Style.FILL
+		typeface = typeface
+        textSize = context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
     }
+    private var armLengthChangedRecalculateClockHands: Boolean = false
+    private var currentWatchFaceSize = Rect(0, 0, 0, 0)
 
-	// images
 	//
+	// init image containers
 	//
+
 	private lateinit var ssImage: Bitmap
 	private lateinit var mmImage: Bitmap
 	private lateinit var hhImage: Bitmap
 	private lateinit var ddImage: Bitmap
 	private lateinit var gradientImage: Bitmap
 
-    // Changed when setting changes cause a change in the minute hand arm (triggered by user in
-    // updateUserStyle() via userStyleRepository.addUserStyleListener()).
-    private var armLengthChangedRecalculateClockHands: Boolean = false
+	val ssBitmap = BitmapFactory.decodeResource(resources, R.drawable.ss)
+	val mmBitmap = BitmapFactory.decodeResource(resources, R.drawable.mm)
+	val hhBitmap = BitmapFactory.decodeResource(resources, R.drawable.hh)
+	val ddBitmap = BitmapFactory.decodeResource(resources, R.drawable.dd)
+	val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
 
-    // Default size of watch face drawing area, that is, a no size rectangle. Will be replaced with
-    // valid dimensions from the system.
-    private var currentWatchFaceSize = Rect(0, 0, 0, 0)
+	//
+	//
+	//
 
     init {
         scope.launch {
@@ -236,14 +229,25 @@ class WatchFaceCanvasRenderer(
         return AnalogSharedAssets()
     }
 
-    /*
-     * Triggered when the user makes changes to the watch face through the settings activity. The
-     * function is called by a flow.
-     */
+	//
+	//	update graphics
+	//
+
+	private fun updateGraphics() {
+		ssImage = Bitmap.createScaledBitmap(ssBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		mmImage = Bitmap.createScaledBitmap(mmBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		hhImage = Bitmap.createScaledBitmap(hhBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		ddImage = Bitmap.createScaledBitmap(ddBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		gradientImage = Bitmap.createScaledBitmap(gradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+	}
+
+	//
+	//	update theme
+	//
 
     private fun updateWatchFaceData(userStyle: UserStyle) {
-        Log.d(TAG, "updateWatchFace(): $userStyle")
 
+        Log.d(TAG, "updateWatchFace(): $userStyle")
         var newWatchFaceData: WatchFaceData = watchFaceData
 
         // Loops through user style and applies new values to watchFaceData.
@@ -272,22 +276,6 @@ class WatchFaceCanvasRenderer(
                 }
 
                 WATCH_HAND_LENGTH_STYLE_SETTING -> {
-                    // val doubleValue = options.value as
-                        // UserStyleSetting.DoubleRangeUserStyleSetting.DoubleRangeOption
-
-                    // The arm lengths are usually only calculated the first time the watch face is
-                    // loaded to reduce the ops in the onDraw(). Because we updated the minute hand
-                    // watch length, we need to trigger a recalculation.
-                    // armLengthChangedRecalculateClockHands = true
-
-                    // Updates length of minute hand based on edits from user.
-                    // val newMinuteHandDimensions = newWatchFaceData.minuteHandDimensions.copy(
-                    //     lengthFraction = doubleValue.value.toFloat()
-                    // )
-
-                    // newWatchFaceData = newWatchFaceData.copy(
-                    //     minuteHandDimensions = newMinuteHandDimensions
-                    // )
                 }
 
             }
@@ -319,11 +307,19 @@ class WatchFaceCanvasRenderer(
         }
     }
 
+	//
+	//	destroy
+	//
+
     override fun onDestroy() {
         Log.d(TAG, "onDestroy()")
         scope.cancel("GalaxyWatchCanvasRenderer scope clear() request")
         super.onDestroy()
     }
+
+	//
+	//	complication highlights
+	//
 
     override fun renderHighlightLayer(
         canvas: Canvas,
@@ -339,20 +335,31 @@ class WatchFaceCanvasRenderer(
                 complication.renderHighlightLayer(canvas, zonedDateTime, renderParameters)
             }
         }
+
     }
 
+	//
+	//	main render loop
+	//
 
-
-    override fun render(
+	override fun render(
         canvas: Canvas,
         bounds: Rect,
         zonedDateTime: ZonedDateTime,
         sharedAssets: AnalogSharedAssets
     ) {
 
-		val resources: Resources = context.resources
-		val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
-		gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
+		if ( currentWatchFaceSize != bounds ) {
+            currentWatchFaceSize = bounds
+            updateGraphics()
+        }
+
+		// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
+		// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
+
+		// val filter = PorterDuffColorFilter( context.getColor( null, watchFaceColors.activeBackgroundColor ), PorterDuff.Mode.SRC_IN);
+		// val paintOverlay = Paint()
+		// paintOverlay.setColorFilter(filter)
 
 		// background color
 		val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
@@ -362,95 +369,76 @@ class WatchFaceCanvasRenderer(
         }
         canvas.drawColor( backgroundColor )
 
-		// watch face states
-		if ( watchMode == WatchMode.WATCH ) renderWatchView(canvas, bounds, zonedDateTime)
-		if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(canvas, bounds)
-		if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(canvas, bounds, zonedDateTime)
+		// watchface states
+		if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
+		if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
+		if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds)
 
 		// gradient
 		canvas.drawBitmap( gradientImage, currentWatchFaceSize, currentWatchFaceSize, null )
 
-		// transition
+		// lunette overlay...
+		if ( watchMode == WatchMode.WATCH ) drawLunette( canvas, bounds )
+
+		// overlay transition
 		val paint = Paint().apply { alpha = transitionAlpha.toInt() }
 		canvas.drawPaint(paint)
-
 	}
 
-	private fun renderBiometricsView( canvas: Canvas, bounds: Rect	) {
+	//
+	//	watch view
+	//	TODO: move to views
+	//
 
-		val style = Paint().apply {
-			isAntiAlias = true
-			style = Paint.Style.FILL_AND_STROKE
-		}
-		val centerX = 0.5f * bounds.width().toFloat()
-		val centerY = 0.5f * bounds.height().toFloat()
-		val radius = 0.5f * bounds.width()
+	private fun renderWatchView( context: Context, canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
 
-		canvas.drawCircle(
-			centerX,
-			centerY,
-			radius,
-			style
-		)
+		// complications
 
-		val textBounds = Rect()
-        textPaint.color = watchFaceColors.activeOuterElementColor
-		textPaint.getTextBounds( "hello", 0, 5, textBounds )
-
-		canvas.drawText(
-			"hello",
-			bounds.exactCenterX() - textBounds.width() / 2,
-			bounds.exactCenterY() - textBounds.height() / 2,
-			textPaint
-		)
-
-	}
-
-	private fun renderAstronomicsView(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime) {
-
-	}
-
-	private fun renderWatchView(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime) {
-
-		val resources: Resources = context.resources
-
-		val ssBitmap = BitmapFactory.decodeResource(resources, R.drawable.ss)
-		ssImage = Bitmap.createScaledBitmap(ssBitmap, bounds.width(), bounds.height(), true)
-		val mmBitmap = BitmapFactory.decodeResource(resources, R.drawable.mm)
-		mmImage = Bitmap.createScaledBitmap(mmBitmap, bounds.width(), bounds.height(), true)
-		val hhBitmap = BitmapFactory.decodeResource(resources, R.drawable.hh)
-		hhImage = Bitmap.createScaledBitmap(hhBitmap, bounds.width(), bounds.height(), true)
-		val ddBitmap = BitmapFactory.decodeResource(resources, R.drawable.dd)
-		ddImage = Bitmap.createScaledBitmap(ddBitmap, bounds.width(), bounds.height(), true)
-
-
-
-        // CanvasComplicationDrawable already obeys rendererParameters.
-        // if (renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY)) {
+        // if ( watchFaceData.drawComplications &&
+		// 	renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY) ) {
 		// 	drawComplications(canvas, zonedDateTime)
 		// }
 
+		// hands
+
 		drawClockHands(canvas, bounds, zonedDateTime)
 
-		// if pips are enabled, draw them
-        if (renderParameters.drawMode == DrawMode.INTERACTIVE &&
-            renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE) &&
-            watchFaceData.drawHourPips
-        ) {
-            drawNumberStyleOuterElement(
-                canvas,
-                bounds,
-                watchFaceData.numberRadiusFraction,
-                watchFaceData.numberStyleOuterCircleRadiusFraction,
-                watchFaceColors.activeOuterElementColor,
-                watchFaceData.numberStyleOuterCircleRadiusFraction,
-                watchFaceData.gapBetweenOuterCircleAndBorderFraction
-            )
-        }
     }
 
+	//
+	//	draw lunette
+	//
 
-	// drawing functions
+	private fun drawLunette(
+		canvas: Canvas,
+		bounds: Rect
+	) {
+
+		if ( watchFaceData.drawHourPips ) {
+			drawNumberStyleOuterElement(
+				canvas,
+				bounds,
+				watchFaceData.numberRadiusFraction,
+				watchFaceData.numberStyleOuterCircleRadiusFraction,
+				watchFaceColors.activeOuterElementColor,
+				watchFaceData.numberStyleOuterCircleRadiusFraction,
+				watchFaceData.gapBetweenOuterCircleAndBorderFraction
+				)
+		} else {
+			textPaint.textSize = 10f
+			val text = "The Quick Brown Fox Jumped Over The Lazy Dog"
+			val off = 20f
+			val rect = RectF( off, off, bounds.width().toFloat() - off - off, bounds.height().toFloat() - off - off )
+			val path = Path()
+			path.addArc( rect, -180f, 180f )
+			canvas.drawTextOnPath( text, path, 0f, 0f, textPaint )
+		}
+
+	}
+
+	//
+	//	draw complications
+	//
 
     private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
         for ((_, complication) in complicationSlotsManager.complicationSlots) {
@@ -459,6 +447,10 @@ class WatchFaceCanvasRenderer(
             }
         }
     }
+
+	//
+	//	draw clock hands
+	//
 
     private fun drawClockHands(
         canvas: Canvas,
@@ -469,143 +461,70 @@ class WatchFaceCanvasRenderer(
 		// the arm of one of the clock hands has changed (via user input in the settings).
         // NOTE: Watch face surface usually only updates one time
 		// (when the size of the device is initially broadcasted).
-        if (currentWatchFaceSize != bounds || armLengthChangedRecalculateClockHands) {
-            currentWatchFaceSize = bounds
-        }
+        // if (currentWatchFaceSize != bounds || armLengthChangedRecalculateClockHands) {
+        //     currentWatchFaceSize = bounds
+        // }
 
         val secondOfDay = zonedDateTime.toLocalTime().toSecondOfDay()
         val secondsPerHourHandRotation = Duration.ofHours(12).seconds
         val secondsPerMinuteHandRotation = Duration.ofHours(1).seconds
 
+		// TODO: get day in seconds from api
+		// e.g. one rotation == one day == 100 hours == 100 * 60 * 60 seconds
+		val secondsPerDayHandRotation = Duration.ofHours(100).seconds
+
 		val sRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 1f
 		val mRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 360.0f / secondsPerMinuteHandRotation
         val hRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360.0f / secondsPerHourHandRotation
+		val dRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360.0f / secondsPerDayHandRotation
 
-        canvas.withScale(
-            x = WATCH_HAND_SCALE,
-            y = WATCH_HAND_SCALE,
-            pivotX = bounds.exactCenterX(),
-            pivotY = bounds.exactCenterY()
-        ) {
-            val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
+		if (
+			renderParameters.drawMode == DrawMode.INTERACTIVE &&
+			renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
+		) {
 
-			// use this to color the dials:::
-			clockHandPaint.color = if (drawAmbient) {
-                watchFaceColors.ambientPrimaryColor
-            } else {
-                watchFaceColors.activePrimaryColor
-            }
+        // canvas.withScale(
+        //     x = WATCH_HAND_SCALE,
+        //     y = WATCH_HAND_SCALE,
+        //     pivotX = bounds.exactCenterX(),
+        //     pivotY = bounds.exactCenterY()
+        // ) {
+            // val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
+
+			// color the dials:::
+			// clockHandPaint.color = if (drawAmbient) {
+            //     watchFaceColors.ambientPrimaryColor
+            // } else {
+            //     watchFaceColors.activePrimaryColor
+            // }
 
             // Draw all the stuff when not in ambient mode
-            if (!drawAmbient) {
+            // if ( !drawAmbient ) {
 
-				val m1 = Matrix()
-				m1.postRotate( sRot, ssImage.width / 2f, ssImage.height / 2f )
-				canvas.drawBitmap( ssImage, m1, null )
+			val m1 = Matrix()
+			m1.postRotate( sRot, ssImage.width / 2f, ssImage.height / 2f )
+			canvas.drawBitmap( ssImage, m1, null )
 
-				val m2 = Matrix()
-				m2.postRotate( mRot, mmImage.width / 2f, mmImage.height / 2f )
-				canvas.drawBitmap( mmImage, m2, null )
+			val m2 = Matrix()
+			m2.postRotate( mRot, mmImage.width / 2f, mmImage.height / 2f )
+			canvas.drawBitmap( mmImage, m2, null )
 
-				val m3 = Matrix()
-				m3.postRotate( hRot, hhImage.width / 2f, hhImage.height / 2f )
-				canvas.drawBitmap( hhImage, m3, null )
+			val m3 = Matrix()
+			m3.postRotate( hRot, hhImage.width / 2f, hhImage.height / 2f )
+			canvas.drawBitmap( hhImage, m3, null )
 
-				// matrix.postRotate( 17f, ddImage.width / 2f, ddImage.height / 2f)
-				// canvas.drawBitmap(ddImage, matrix, null)
-			}
-        }
-    }
+			val m4 = Matrix()
+			m4.postRotate( dRot, ddImage.width / 2f, ddImage.height / 2f)
+			canvas.drawBitmap(ddImage, m4, null)
 
+		} else if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
 
-    /*
-     * Rarely called (only when watch face surface changes; usually only once) from the
-     * drawClockHands() method.
-     */
-    // private fun recalculateClockHands(bounds: Rect) {
-    //     Log.d(TAG, "recalculateClockHands()")
-    //     hourHandBorder =
-    //         createClockHand(
-    //             bounds,
-    //             watchFaceData.hourHandDimensions.lengthFraction,
-    //             watchFaceData.hourHandDimensions.widthFraction,
-    //             watchFaceData.gapBetweenHandAndCenterFraction,
-    //             watchFaceData.hourHandDimensions.xRadiusRoundedCorners,
-    //             watchFaceData.hourHandDimensions.yRadiusRoundedCorners
-    //         )
-    //     hourHandFill = hourHandBorder
+			val m4 = Matrix()
+			m4.postRotate( dRot, ddImage.width / 2f, ddImage.height / 2f)
+			canvas.drawBitmap(ddImage, m4, null)
 
-    //     minuteHandBorder =
-    //         createClockHand(
-    //             bounds,
-    //             watchFaceData.minuteHandDimensions.lengthFraction,
-    //             watchFaceData.minuteHandDimensions.widthFraction,
-    //             watchFaceData.gapBetweenHandAndCenterFraction,
-    //             watchFaceData.minuteHandDimensions.xRadiusRoundedCorners,
-    //             watchFaceData.minuteHandDimensions.yRadiusRoundedCorners
-    //         )
-    //     minuteHandFill = minuteHandBorder
-
-    //     secondHand =
-    //         createClockHand(
-    //             bounds,
-    //             watchFaceData.secondHandDimensions.lengthFraction,
-    //             watchFaceData.secondHandDimensions.widthFraction,
-    //             watchFaceData.gapBetweenHandAndCenterFraction,
-    //             watchFaceData.secondHandDimensions.xRadiusRoundedCorners,
-    //             watchFaceData.secondHandDimensions.yRadiusRoundedCorners
-    //         )
-    // }
-
-    /**
-     * Returns a round rect clock hand if {@code rx} and {@code ry} equals to 0, otherwise return a
-     * rect clock hand.
-     *
-     * @param bounds The bounds use to determine the coordinate of the clock hand.
-     * @param length Clock hand's length, in fraction of {@code bounds.width()}.
-     * @param thickness Clock hand's thickness, in fraction of {@code bounds.width()}.
-     * @param gapBetweenHandAndCenter Gap between inner side of arm and center.
-     * @param roundedCornerXRadius The x-radius of the rounded corners on the round-rectangle.
-     * @param roundedCornerYRadius The y-radius of the rounded corners on the round-rectangle.
-     */
-    // private fun createClockHand(
-    //     bounds: Rect,
-    //     length: Float,
-    //     thickness: Float,
-    //     gapBetweenHandAndCenter: Float,
-    //     roundedCornerXRadius: Float,
-    //     roundedCornerYRadius: Float
-    // ): Path {
-    //     val width = bounds.width()
-    //     val centerX = bounds.exactCenterX()
-    //     val centerY = bounds.exactCenterY()
-    //     val left = centerX - thickness / 2 * width
-    //     val top = centerY - (gapBetweenHandAndCenter + length) * width
-    //     val right = centerX + thickness / 2 * width
-    //     val bottom = centerY - gapBetweenHandAndCenter * width
-    //     val path = Path()
-
-    //     if (roundedCornerXRadius != 0.0f || roundedCornerYRadius != 0.0f) {
-    //         path.addRoundRect(
-    //             left,
-    //             top,
-    //             right,
-    //             bottom,
-    //             roundedCornerXRadius,
-    //             roundedCornerYRadius,
-    //             Path.Direction.CW
-    //         )
-    //     } else {
-    //         path.addRect(
-    //             left,
-    //             top,
-    //             right,
-    //             bottom,
-    //             Path.Direction.CW
-    //         )
-    //     }
-    //     return path
-    // }
+		}
+	}
 
     private fun drawNumberStyleOuterElement(
         canvas: Canvas,
@@ -616,23 +535,7 @@ class WatchFaceCanvasRenderer(
         numberStyleOuterCircleRadiusFraction: Float,
         gapBetweenOuterCircleAndBorderFraction: Float
     ) {
-        // Draws text hour indicators (12, 3, 6, and 9).
-        // val textBounds = Rect()
-        // textPaint.color = outerElementColor
-        // for (i in 0 until 4) {
-        //     val rotation = 0.5f * (i + 1).toFloat() * Math.PI
-        //     val dx = sin(rotation).toFloat() * numberRadiusFraction * bounds.width().toFloat()
-        //     val dy = -cos(rotation).toFloat() * numberRadiusFraction * bounds.width().toFloat()
-        //     textPaint.getTextBounds(HOUR_MARKS[i], 0, HOUR_MARKS[i].length, textBounds)
-        //     canvas.drawText(
-        //         HOUR_MARKS[i],
-        //         bounds.exactCenterX() + dx - textBounds.width() / 2.0f,
-        //         bounds.exactCenterY() + dy + textBounds.height() / 2.0f,
-        //         textPaint
-        //     )
-        // }
 
-        // Draws dots for the remain hour indicators between the numbers above.
         outerElementPaint.strokeWidth = outerCircleStokeWidthFraction * bounds.width()
         outerElementPaint.color = outerElementColor
         canvas.save()
@@ -648,8 +551,8 @@ class WatchFaceCanvasRenderer(
             // }
             canvas.rotate(360.0f / 60.0f, bounds.exactCenterX(), bounds.exactCenterY() )
         }
-
         canvas.restore()
+
     }
 
     /** Draws the outer circle on the top middle of the given bounds. */
@@ -659,9 +562,9 @@ class WatchFaceCanvasRenderer(
         radiusFraction: Float,
         gapBetweenOuterCircleAndBorderFraction: Float
     ) {
+
         outerElementPaint.style = Paint.Style.FILL_AND_STROKE
 
-        // X and Y coordinates of the center of the circle.
         val centerX = 0.5f * bounds.width().toFloat()
         val centerY = bounds.width() * (gapBetweenOuterCircleAndBorderFraction + radiusFraction)
 
@@ -671,14 +574,13 @@ class WatchFaceCanvasRenderer(
             radiusFraction * bounds.width(),
             outerElementPaint
         )
+
     }
 
     companion object {
-        private const val TAG = "WatchCanvasRenderer"
-
+        private const val TAG = "CanvasRenderer"
         // Painted between pips on watch face for hour marks.
         private val HOUR_MARKS = arrayOf("3", "6", "9", "12")
-
         // Used to canvas.scale() to scale watch hands in proper bounds. This will always be 1.0.
         private const val WATCH_HAND_SCALE = 1.0f
     }

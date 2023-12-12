@@ -54,46 +54,17 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
- fun renderBiometricsView(
+// private lateinit var ssImage: Bitmap
+// private lateinit var mmImage: Bitmap
+// private lateinit var hhImage: Bitmap
+// private lateinit var ddImage: Bitmap
+
+
+fun renderWatchfaceView(
 	context: Context,
 	canvas: Canvas,
 	bounds: Rect,
-	textPaint: Paint
+	zonedDateTime: ZonedDateTime,
+	ambient: Boolean
 ) {
-
-	var watchFaceData: WatchFaceData = WatchFaceData()
-	var watchFaceColors = convertToWatchFaceColorPalette(
-		context,
-		watchFaceData.activeColorStyle,
-		watchFaceData.ambientColorStyle
-	)
-
-	val style = Paint().apply {
-		isAntiAlias = true
-		style = Paint.Style.FILL_AND_STROKE
-	}
-	val centerX = 0.5f * bounds.width().toFloat()
-	val centerY = 0.5f * bounds.height().toFloat()
-	val radius = 0.5f * bounds.width()
-
-	canvas.drawCircle(
-		centerX,
-		centerY,
-		radius,
-		style
-	)
-
-	val textBounds = Rect()
-	textPaint.color = watchFaceColors.activeOuterElementColor
-	textPaint.getTextBounds( "hello", 0, 5, textBounds )
-
-	canvas.drawText(
-		"hello",
-		bounds.exactCenterX() - textBounds.width() / 2,
-		bounds.exactCenterY() - textBounds.height() / 2,
-		textPaint
-	)
-
 }
-
-

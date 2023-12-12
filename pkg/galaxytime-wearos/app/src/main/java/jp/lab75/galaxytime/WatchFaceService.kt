@@ -30,7 +30,14 @@ import androidx.wear.watchface.style.UserStyleSchema
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
 
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+
 class WatchFaceService : WatchFaceService() {
+
+	val client = HttpClient(CIO)
+	// val response: HttpResponse = client.get("https://ktor.io/")
+	// println(response.status)
 
     override fun createUserStyleSchema(): UserStyleSchema =
         createUserStyleSchema(context = applicationContext)

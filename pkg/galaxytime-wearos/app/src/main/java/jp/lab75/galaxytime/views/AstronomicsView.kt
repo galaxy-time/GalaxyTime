@@ -7,7 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
-
+import android.graphics.Color
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -54,11 +54,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
- fun renderBiometricsView(
+private lateinit var gradientImage: Bitmap
+
+ fun renderAstronomicsView(
 	context: Context,
 	canvas: Canvas,
-	bounds: Rect,
-	textPaint: Paint
+	bounds: Rect
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()
@@ -68,31 +69,36 @@ import kotlinx.coroutines.launch
 		watchFaceData.ambientColorStyle
 	)
 
+	val resources: Resources = context.resources
+
+	// gradient
+	// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
+	// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
+	// canvas.drawBitmap( gradientImage, bounds, bounds, null )
+
 	val style = Paint().apply {
-		isAntiAlias = true
-		style = Paint.Style.FILL_AND_STROKE
-	}
+        isAntiAlias = true
+		style = Paint.Style.STROKE
+		color = Color.WHITE
+    }
 	val centerX = 0.5f * bounds.width().toFloat()
 	val centerY = 0.5f * bounds.height().toFloat()
 	val radius = 0.5f * bounds.width()
 
-	canvas.drawCircle(
-		centerX,
-		centerY,
-		radius,
+	canvas.drawLine(
+		0f, bounds.height().toFloat() / 2,
+		bounds.width().toFloat(),
+		bounds.height().toFloat() /2,
 		style
 	)
 
-	val textBounds = Rect()
-	textPaint.color = watchFaceColors.activeOuterElementColor
-	textPaint.getTextBounds( "hello", 0, 5, textBounds )
+	// canvas.drawCircle(
+	// 	centerX,
+	// 	centerY,
+	// 	radius,
+	// 	style
+	// )
 
-	canvas.drawText(
-		"hello",
-		bounds.exactCenterX() - textBounds.width() / 2,
-		bounds.exactCenterY() - textBounds.height() / 2,
-		textPaint
-	)
 
 }
 
