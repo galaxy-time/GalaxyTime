@@ -23,25 +23,34 @@
 
 
     <!-- Name of watchface style category for selecting the color theme [CHAR LIMIT=20] -->
-    <string name="colors_style_setting">Colors</string>
+    <string name="colors_style_setting">Locations</string>
 
     <!-- Subtitle for the menu option to select the watch face color theme -->
-    <string name="colors_style_setting_description">Watchface colorization</string>
+    <string name="colors_style_setting_description">Select a location in space.</string>
 
     <!-- Name of watchface style [CHAR LIMIT=20] -->
     <string name="ambient_style_name">Ambient Style</string>
 
     <!-- Name of watchface style [CHAR LIMIT=20] -->
-    <string name="red_style_name">Red Style</string>
-
+    <string name="sun_style_name">SUN</string>
     <!-- Name of watchface style [CHAR LIMIT=20] -->
-    <string name="green_style_name">Green Style</string>
-
+    <string name="mercury_style_name">MERCURY</string>
     <!-- Name of watchface style [CHAR LIMIT=20] -->
-    <string name="blue_style_name">Blue Style</string>
-
+    <string name="venus_style_name">VENUS</string>
     <!-- Name of watchface style [CHAR LIMIT=20] -->
-    <string name="white_style_name">White Style</string>
+    <string name="earth_style_name">EARTH</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="moon_style_name">MOON</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="saturn_style_name">MARS</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="jupiter_style_name">JUPITER</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="saturn_style_name">SATURN</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="saturn_style_name">URANUS</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="neptun_style_name">NEPTUNE</string>
 
     <!-- An option within the analog watch face to draw pips to mark each hour [CHAR LIMIT=20] -->
     <string name="watchface_pips_setting">Hour Pips</string>
@@ -85,11 +94,13 @@
     <!-- Values for WatchFaceConfigActivity -->
     <!-- Title for config activity for watch face (settings). -->
     <string name="title_activity_watch_face_config">Configuration</string>
-    <!-- Use of "\n" is to conserve horizontal space in config menu. -->
-    <string name="activity_config_color_style_picker_label">Color\nStyle</string>
+
+	<!-- Use of "\n" is to conserve horizontal space in config menu. -->
+    <string name="activity_config_color_style_picker_label">Location</string>
     <string name="activity_config_ticks_enabled_label">Ticks\nEnabled</string>
     <string name="activity_config_slider_text_label">Minute Hand Size</string>
-    <!-- Content Descriptions -->
+
+	<!-- Content Descriptions -->
     <string name="activity_config_preview_of_watch_face_content_description">Preview of Watch Face.</string>
     <string name="activity_config_more_options_icon_content_description">Icon to indicate there are more options if you scroll down.</string>
     <string name="activity_config_change_color_style_button_content_description">Button to change the color style of the watch face.</string>
@@ -100,21 +111,5 @@
     <string name="activity_config_complication_button_right_content_description">Button to edit the right complication data</string>
     <string name="activity_config_complication_button_left_content_description">Button to edit the left complication data</string>
     <string name="title_activity_settings">SettingsActivity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-
 
 </resources>

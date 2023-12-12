@@ -29,6 +29,57 @@
     <color name="ambient_background_color">#33d26040</color>
     <color name="ambient_outer_element_color">@color/white_30</color>
 
+    <!-- Sun Style -->
+    <color name="sun_primary_color">@color/maroon_light</color>
+    <color name="sun_secondary_color">@color/maroon_50</color>
+    <color name="sun_background_color">@color/dark_gray</color>
+    <color name="sun_outer_element_color">@color/maroon_30</color>
+    <!-- Mercury Style -->
+    <color name="mercury_primary_color">@color/maroon_light</color>
+    <color name="mercury_secondary_color">@color/maroon_50</color>
+    <color name="mercury_background_color">@color/dark_gray</color>
+    <color name="mercury_outer_element_color">@color/maroon_30</color>
+    <!-- Venus Style -->
+    <color name="venus_primary_color">@color/maroon_light</color>
+    <color name="venus_secondary_color">@color/maroon_50</color>
+    <color name="venus_background_color">@color/dark_gray</color>
+    <color name="venus_outer_element_color">@color/maroon_30</color>
+    <!-- Earth Style -->
+    <color name="earth_primary_color">@color/maroon_light</color>
+    <color name="earth_secondary_color">@color/maroon_50</color>
+    <color name="earth_background_color">@color/dark_gray</color>
+    <color name="earth_outer_element_color">@color/maroon_30</color>
+    <!-- Moon Style -->
+    <color name="moon_primary_color">@color/maroon_light</color>
+    <color name="moon_secondary_color">@color/maroon_50</color>
+    <color name="moon_background_color">@color/dark_gray</color>
+    <color name="moon_outer_element_color">@color/maroon_30</color>
+    <!-- Mars Style -->
+    <color name="mars_primary_color">@color/maroon_light</color>
+    <color name="mars_secondary_color">@color/maroon_50</color>
+    <color name="mars_background_color">@color/dark_gray</color>
+    <color name="mars_outer_element_color">@color/maroon_30</color>
+    <!-- Jupiter Style -->
+    <color name="jupiter_primary_color">@color/maroon_light</color>
+    <color name="jupiter_secondary_color">@color/maroon_50</color>
+    <color name="jupiter_background_color">@color/dark_gray</color>
+    <color name="jupiter_outer_element_color">@color/maroon_30</color>
+    <!-- Saturn Style -->
+    <color name="saturn_primary_color">@color/maroon_light</color>
+    <color name="saturn_secondary_color">@color/maroon_50</color>
+    <color name="saturn_background_color">@color/dark_gray</color>
+    <color name="saturn_outer_element_color">@color/maroon_30</color>
+	<!-- Uranus Style -->
+	<color name="uranus_primary_color">@color/maroon_light</color>
+    <color name="uranus_secondary_color">@color/maroon_50</color>
+    <color name="uranus_background_color">@color/dark_gray</color>
+    <color name="uranus_outer_element_color">@color/maroon_30</color>
+    <!-- Neptune Style -->
+    <color name="neptune_primary_color">@color/maroon_light</color>
+    <color name="neptune_secondary_color">@color/maroon_50</color>
+    <color name="neptune_background_color">@color/dark_gray</color>
+    <color name="neptune_outer_element_color">@color/maroon_30</color>
+
     <!-- Red Style -->
     <color name="red_primary_color">@color/maroon_light</color>
     <color name="red_secondary_color">@color/maroon_50</color>

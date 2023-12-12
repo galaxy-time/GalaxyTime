@@ -19,16 +19,19 @@
     <style name="Theme.WatchFace" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorSecondary">@color/color_secondary</item>
+		<item name="android:fontFamily">@font/pp_stellar</item>
     </style>
 
     <style name="Widget.WatchFace.Button" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/color_primary_button</item>
+		<item name="android:fontFamily">@font/pp_stellar</item>
     </style>
 
     <style name="SplashTheme" parent="@android:style/Theme.DeviceDefault">
 		<item name="windowSplashScreenBackground">@android:color/black</item>
-		<!-- <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item> -->
+		<item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
 		<item name="postSplashScreenTheme">@style/Theme.WatchFace</item>
+		<item name="android:fontFamily">@font/pp_stellar</item>
 	</style>
 
 </resources>

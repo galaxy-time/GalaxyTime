@@ -35,6 +35,50 @@ private val AMBIENT_COLOR_STYLE_NAME_RESOURCE_ID = R.string.ambient_style_name
 private val AMBIENT_COLOR_STYLE_ICON_ID = R.drawable.white_style
 // private val AMBIENT_COLOR_STYLE_BG = R.drawable.white_backdrop
 
+const val SUN_COLOR_STYLE_ID = "sun_style_id"
+private val SUN_COLOR_STYLE_NAME_RESOURCE_ID = R.string.sun_style_name
+private val SUN_COLOR_STYLE_ICON_ID = R.drawable.sun_style
+
+const val MERCURY_COLOR_STYLE_ID = "mercury_style_id"
+private val MERCURY_COLOR_STYLE_NAME_RESOURCE_ID = R.string.mercury_style_name
+private val MERCURY_COLOR_STYLE_ICON_ID = R.drawable.mercury_style
+
+const val VENUS_COLOR_STYLE_ID = "venus_style_id"
+private val VENUS_COLOR_STYLE_NAME_RESOURCE_ID = R.string.venus_style_name
+private val VENUS_COLOR_STYLE_ICON_ID = R.drawable.venus_style
+
+const val EARTH_COLOR_STYLE_ID = "earth_style_id"
+private val EARTH_COLOR_STYLE_NAME_RESOURCE_ID = R.string.earth_style_name
+private val EARTH_COLOR_STYLE_ICON_ID = R.drawable.earth_style
+
+const val MOON_COLOR_STYLE_ID = "moon_style_id"
+private val MOON_COLOR_STYLE_NAME_RESOURCE_ID = R.string.moon_style
+private val MOON_COLOR_STYLE_ICON_ID = R.drawable.moon_style
+
+const val MARS_COLOR_STYLE_ID = "mars_style_id"
+private val MARS_COLOR_STYLE_NAME_RESOURCE_ID = R.string.mars_style_name
+private val MARS_COLOR_STYLE_ICON_ID = R.drawable.mars_style
+
+const val JUPITER_COLOR_STYLE_ID = "jupiter_style_id"
+private val JUPITER_COLOR_STYLE_NAME_RESOURCE_ID = R.string.jupiter_style_name
+private val JUPITER_COLOR_STYLE_ICON_ID = R.drawable.jupiter_style
+
+const val SATURN_COLOR_STYLE_ID = "saturn_style_id"
+private val SATURN_COLOR_STYLE_NAME_RESOURCE_ID = R.string.saturn_style_name
+private val SATURN_COLOR_STYLE_ICON_ID = R.drawable.saturn_style
+
+const val URANUS_COLOR_STYLE_ID = "uranus_style_id"
+private val URANUS_COLOR_STYLE_NAME_RESOURCE_ID = R.string.uranus_style_name
+private val URANUS_COLOR_STYLE_ICON_ID = R.drawable.uranus_style
+
+const val NEPTUNE_COLOR_STYLE_ID = "neptune_style_id"
+private val NEPTUNE_COLOR_STYLE_NAME_RESOURCE_ID = R.string.neptune_style_name
+private val NEPTUNE_COLOR_STYLE_ICON_ID = R.drawable.neptune_style
+
+//
+//	old colors. todo: remove
+//
+
 const val RED_COLOR_STYLE_ID = "red_style_id"
 private val RED_COLOR_STYLE_NAME_RESOURCE_ID = R.string.red_style_name
 private val RED_COLOR_STYLE_ICON_ID = R.drawable.red_style
@@ -70,6 +114,8 @@ enum class ColorStyleIdAndResourceIds(
     @ColorRes val backgroundColorId: Int,
     @ColorRes val outerElementColorId: Int
 ) {
+
+	// TODO: we may need ambient colors for all styles
     AMBIENT(
         id = AMBIENT_COLOR_STYLE_ID,
         nameResourceId = AMBIENT_COLOR_STYLE_NAME_RESOURCE_ID,
@@ -80,6 +126,111 @@ enum class ColorStyleIdAndResourceIds(
         backgroundColorId = R.color.ambient_background_color,
         outerElementColorId = R.color.ambient_outer_element_color
     ),
+
+	SUN(
+		id = SUN_COLOR_STYLE_ID,
+        nameResourceId = SUN_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = SUN_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_sun_style,
+        primaryColorId = R.color.sun_primary_color,
+        secondaryColorId = R.color.sun_secondary_color,
+        backgroundColorId = R.color.sun_background_color,
+        outerElementColorId = R.color.sun_outer_element_color
+	),
+	MERCURY(
+		id = MERCURY_COLOR_STYLE_ID,
+        nameResourceId = MERCURY_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = MERCURY_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_mercury_style,
+        primaryColorId = R.color.mercury_primary_color,
+        secondaryColorId = R.color.mercury_secondary_color,
+        backgroundColorId = R.color.mercury_background_color,
+        outerElementColorId = R.color.mercury_outer_element_color
+	),
+	VENUS(
+		id = VENUS_COLOR_STYLE_ID,
+        nameResourceId = VENUS_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = VENUS_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_venus_style,
+        primaryColorId = R.color.venus_primary_color,
+        secondaryColorId = R.color.venus_secondary_color,
+        backgroundColorId = R.color.venus_background_color,
+        outerElementColorId = R.color.venus_outer_element_color
+	),
+	EARTH(
+		id = EARTH_COLOR_STYLE_ID,
+		nameResourceId = EARTH_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = EARTH_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_earth_style,
+        primaryColorId = R.color.earth_primary_color,
+        secondaryColorId = R.color.earth_secondary_color,
+		backgroundColorId = R.color.earth_background_color,
+        outerElementColorId = R.color.earth_outer_element_color
+	),
+	MOON(
+		id = MOON_COLOR_STYLE_ID,
+        nameResourceId = MOON_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = MOON_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_moon_style,
+        primaryColorId = R.color.moon_primary_color,
+        secondaryColorId = R.color.moon_secondary_color,
+        backgroundColorId = R.color.moon_background_color,
+        outerElementColorId = R.color.moon_outer_element_color
+	),
+	MARS(
+		id = MARS_COLOR_STYLE_ID,
+		nameResourceId = MARS_COLOR_STYLE_NAME_RESOURCE_ID,
+		iconResourceId = MARS_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_mars_style,
+        primaryColorId = R.color.mars_primary_color,
+        secondaryColorId = R.color.mars_secondary_color,
+        backgroundColorId = R.color.mars_background_color,
+		outerElementColorId = R.color.mars_outer_element_color
+	),
+	JUPITER(
+        id = JUPITER_COLOR_STYLE_ID,
+        nameResourceId = JUPITER_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = JUPITER_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_jupiter_style,
+		primaryColorId = R.color.jupiter_primary_color,
+        secondaryColorId = R.color.jupiter_secondary_color,
+        backgroundColorId = R.color.jupiter_background_color,
+        outerElementColorId = R.color.jupiter_outer_element_color
+	),
+	SATURN(
+		id = SATURN_COLOR_STYLE_ID,
+        nameResourceId = SATURN_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = SATURN_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_saturn_style,
+        primaryColorId = R.color.saturn_primary_color,
+        secondaryColorId = R.color.saturn_secondary_color,
+        backgroundColorId = R.color.saturn_background_color,
+        outerElementColorId = R.color.saturn_outer_element_color
+	),
+	URANUS(
+		id = URANUS_COLOR_STYLE_ID,
+        nameResourceId = URANUS_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = URANUS_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_uranus_style,
+        primaryColorId = R.color.uranus_primary_color,
+        secondaryColorId = R.color.uranus_secondary_color,
+        backgroundColorId = R.color.uranus_background_color,
+        outerElementColorId = R.color.uranus_outer_element_color
+	),
+	NEPTUNE(
+		id = NEPTUNE_COLOR_STYLE_ID,
+        nameResourceId = NEPTUNE_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = NEPTUNE_COLOR_STYLE_ICON_ID,
+        complicationStyleDrawableId = R.drawable.complication_neptune_style,
+        primaryColorId = R.color.neptune_primary_color,
+        secondaryColorId = R.color.neptune_secondary_color,
+        backgroundColorId = R.color.neptune_background_color,
+        outerElementColorId = R.color.neptune_outer_element_color
+	),
+
+	//
+	// to be removed styles
+	//
 
     RED(
         id = RED_COLOR_STYLE_ID,

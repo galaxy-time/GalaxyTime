@@ -18,6 +18,7 @@ package jp.lab75.galaxytime.data.watchface
 // Defaults for the watch face. All private values aren't editable by the user, so they don't need
 // to be exposed as settings defaults.
 const val DRAW_HOUR_PIPS_DEFAULT = true
+const val DRAW_COMPLICATIONS_DEFAULT = false
 
 private const val HOUR_HAND_LENGTH_FRACTION = 0.21028f
 private const val HOUR_HAND_WIDTH_FRACTION = 0.02336f
@@ -51,9 +52,12 @@ private const val NUMBER_RADIUS_FRACTION = 0.45f
  * Represents all data needed to render an analog watch face.
  */
 data class WatchFaceData(
+
+	// val backgroundImage: ImageResource,
     val activeColorStyle: ColorStyleIdAndResourceIds = ColorStyleIdAndResourceIds.RED,
     val ambientColorStyle: ColorStyleIdAndResourceIds = ColorStyleIdAndResourceIds.AMBIENT,
     val drawHourPips: Boolean = DRAW_HOUR_PIPS_DEFAULT,
+	val drawComplications: Boolean = DRAW_COMPLICATIONS_DEFAULT,
     val hourHandDimensions: ArmDimensions = ArmDimensions(
         lengthFraction = HOUR_HAND_LENGTH_FRACTION,
         widthFraction = HOUR_HAND_WIDTH_FRACTION,
