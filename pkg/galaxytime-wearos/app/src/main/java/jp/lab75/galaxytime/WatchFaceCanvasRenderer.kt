@@ -56,6 +56,8 @@ import jp.lab75.galaxytime.primitives.drawGradientArc
 
 import java.time.Duration
 import java.time.ZonedDateTime
+import java.time.Year
+
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.coroutines.CoroutineScope
@@ -240,11 +242,11 @@ class WatchFaceCanvasRenderer(
 	// init image containers
 	//
 
-	private lateinit var ssImage: Bitmap
-	private lateinit var mmImage: Bitmap
-	private lateinit var hhImage: Bitmap
-	private lateinit var ddImage: Bitmap
-	private lateinit var gradientImage: Bitmap
+	// private lateinit var ssImage: Bitmap
+	// private lateinit var mmImage: Bitmap
+	// private lateinit var hhImage: Bitmap
+	// private lateinit var ddImage: Bitmap
+	// private lateinit var gradientImage: Bitmap
 
 	// val ssBitmap = BitmapFactory.decodeResource(resources, R.drawable.ss)
 	// val mmBitmap = BitmapFactory.decodeResource(resources, R.drawable.mm)
@@ -433,18 +435,21 @@ class WatchFaceCanvasRenderer(
 
 		val colors = intArrayOf (
 			0x00000000.toInt(),
-			0x99000000.toInt(),
+			0x00000000.toInt(),
+			0x00000000.toInt(),
 			0xFF000000.toInt(),
 		)
-		val stops = listOf( 0.5f, 0.75f, 1f ).toFloatArray()
+		val stops = listOf( 0f, 0.5f, 0.75f, 1f ).toFloatArray()
 		val circularGradientPaint = Paint().apply {
 		    isAntiAlias = true
 			shader = RadialGradient(
+				//start
 				bounds.exactCenterX(),
 				bounds.exactCenterY(),
 				bounds.width() / 2f,
-				colors, //Color.TRANSPARENT,
-                stops, //watchFaceColors.activeBackgroundColor,
+				// color table
+				colors,
+                stops,
                 Shader.TileMode.CLAMP
 			)
 		}
@@ -520,7 +525,7 @@ class WatchFaceCanvasRenderer(
 		// } else {
 			textPaint.textSize = 10f
 			val text = "The Quick Brown Fox Jumped Over The Lazy Dog"
-			val offset = 22f
+			val offset = 20f
 			val rect = RectF( offset, offset, bounds.width().toFloat() - offset - offset, bounds.height().toFloat() - offset - offset )
 			val path = Path()
 			path.addArc( rect, -180f, 180f )
@@ -560,16 +565,24 @@ class WatchFaceCanvasRenderer(
 
         val secondOfDay = zonedDateTime.toLocalTime().toSecondOfDay()
         val secondsPerHourHandRotation = Duration.ofHours(12).seconds
-        val secondsPerMinuteHandRotation = Duration.ofHours(1).seconds
+        // val secondsPerMinuteHandRotation = Duration.ofHours(1).seconds
 
 		// TODO: get day in seconds from api
 		// e.g. one rotation == one day == 100 hours == 100 * 60 * 60 seconds
 		val secondsPerDayHandRotation = Duration.ofHours(100).seconds
 
-		val sRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 1f
-		val mRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 360.0f / secondsPerMinuteHandRotation
-        val hRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360.0f / secondsPerHourHandRotation
-		val dRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360.0f / secondsPerDayHandRotation
+		// val sRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 1f
+		// val mRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 60f / secondsPerMinuteHandRotation
+        // val hRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360f / secondsPerHourHandRotation
+		val dRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360f / secondsPerDayHandRotation
+
+		val sr = -90 + 6f * zonedDateTime.second
+		val mr = -90 + 6f * zonedDateTime.minute
+		val hr = -90 + 15f * zonedDateTime.hour // 24h dial = 15f, 12h dial= 30f
+		// TODO: adopt to local solar year length of location
+		val dr = -90 + zonedDateTime.dayOfYear * 360f / 365f
+
+		// Log.d(TAG, "drawClockHands() $sr $mr $hr $dr ")
 
 		if (
 			renderParameters.drawMode == DrawMode.INTERACTIVE
@@ -595,10 +608,10 @@ class WatchFaceCanvasRenderer(
             // if ( !drawAmbient ) {
 
 
-			drawGradientArc( canvas, bounds, 185f, 200f, sRot, 0xffff0000.toInt() )
-			drawGradientArc( canvas, bounds, 170f, 184f, mRot, 0xffffffff.toInt() )
-			drawGradientArc( canvas, bounds, 155f, 169f, hRot, 0xff00ff00.toInt() )
-			drawGradientArc( canvas, bounds,   0f, 154f, dRot, 0xff0000ff.toInt() )
+			drawGradientArc( canvas, bounds, 185f, 200f, sr, 0xffff0000.toInt() )
+			drawGradientArc( canvas, bounds, 170f, 184f, mr, 0xffffffff.toInt() )
+			drawGradientArc( canvas, bounds, 155f, 169f, hr, 0xff00ff00.toInt() )
+			drawGradientArc( canvas, bounds,   0f, 154f, dr, 0xff0000ff.toInt() )
 
 			// val m1 = Matrix()
 			// m1.postRotate( sRot, ssImage.width / 2f, ssImage.height / 2f )
@@ -616,14 +629,11 @@ class WatchFaceCanvasRenderer(
 			// m4.postRotate( dRot, ddImage.width / 2f, ddImage.height / 2f)
 			// canvas.drawBitmap(ddImage, m4, null)
 
+			// TODO: interactive tap zones...
 			drawTapZones(canvas, bounds)
 
 		} else if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
-
-			val m4 = Matrix()
-			m4.postRotate( dRot, ddImage.width / 2f, ddImage.height / 2f)
-			canvas.drawBitmap(ddImage, m4, null)
-
+			drawGradientArc( canvas, bounds,   0f, 200f, dRot, 0xff0000ff.toInt() )
 		}
 	}
 
