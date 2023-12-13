@@ -59,6 +59,7 @@
     <color name="mars_secondary_color">@color/maroon_50</color>
     <color name="mars_background_color">@color/dark_gray</color>
     <color name="mars_outer_element_color">@color/maroon_30</color>
+
     <!-- Jupiter Style -->
     <color name="jupiter_primary_color">@color/maroon_light</color>
     <color name="jupiter_secondary_color">@color/maroon_50</color>
@@ -80,23 +81,24 @@
     <color name="neptune_background_color">@color/dark_gray</color>
     <color name="neptune_outer_element_color">@color/maroon_30</color>
 
+
     <!-- Red Style -->
-    <color name="red_primary_color">@color/maroon_light</color>
+    <!-- <color name="red_primary_color">@color/maroon_light</color>
     <color name="red_secondary_color">@color/maroon_50</color>
     <color name="red_background_color">@color/dark_gray</color>
-    <color name="red_outer_element_color">@color/maroon_30</color>
+    <color name="red_outer_element_color">@color/maroon_30</color> -->
 
     <!-- Green Style -->
-    <color name="green_primary_color">@color/light_green</color>
+    <!-- <color name="green_primary_color">@color/light_green</color>
     <color name="green_secondary_color">@color/dark_green</color>
     <color name="green_background_color">@color/dark_gray</color>
-    <color name="green_outer_element_color">@color/light_green</color>
+    <color name="green_outer_element_color">@color/light_green</color> -->
 
     <!-- Blue Style -->
-    <color name="blue_primary_color">@color/light_blue</color>
+    <!-- <color name="blue_primary_color">@color/light_blue</color>
     <color name="blue_secondary_color">@color/dark_blue</color>
     <color name="blue_background_color">@color/dark_gray</color>
-    <color name="blue_outer_element_color">@color/light_blue</color>
+    <color name="blue_outer_element_color">@color/light_blue</color> -->
 
     <!-- White Style -->
     <color name="white_primary_color">@color/white_70</color>
