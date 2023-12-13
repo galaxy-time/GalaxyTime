@@ -11,15 +11,17 @@ import android.graphics.RectF
 import android.graphics.Color
 import android.graphics.PorterDuffColorFilter
 import android.graphics.PorterDuff
-
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.RadialGradient
+import android.graphics.Shader
+
+import androidx.core.graphics.withRotation
+import androidx.core.graphics.withScale
 
 import android.util.Log
 import android.view.SurfaceHolder
-import androidx.core.graphics.withRotation
-import androidx.core.graphics.withScale
 
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.DrawMode
@@ -50,7 +52,7 @@ import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 import jp.lab75.galaxytime.renderWatchfaceView
 import jp.lab75.galaxytime.renderBiometricsView
 import jp.lab75.galaxytime.renderAstronomicsView
-
+import jp.lab75.galaxytime.primitives.drawGradientArc
 
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -175,27 +177,63 @@ class WatchFaceCanvasRenderer(
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var watchFaceData: WatchFaceData = WatchFaceData()
 	private val resources: Resources = context.resources
+
+	//
+	//	color, text, type and size defaults
+	//
+
 	private var watchFaceColors = convertToWatchFaceColorPalette(
         context,
         watchFaceData.activeColorStyle,
         watchFaceData.ambientColorStyle
     )
+
 	private val outerElementPaint = Paint().apply {
 		isAntiAlias = true
 	}
-    private val clockHandPaint = Paint().apply {
+
+	private val clockHandPaint = Paint().apply {
         isAntiAlias = true
         strokeWidth = context.resources.getDimensionPixelSize(R.dimen.clock_hand_stroke_width).toFloat()
     }
+
 	private val typeface = resources.getFont(R.font.pp_stellar)
+	// general text
     private val textPaint = Paint().apply {
         isAntiAlias = true
 		color = Color.WHITE
 		// style = Paint.Style.FILL
 		typeface = typeface
         textSize = context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
+		isSubpixelText = true
+		letterSpacing = 0.1f
     }
-    private var armLengthChangedRecalculateClockHands: Boolean = false
+
+	// location zon top
+	private val p1 = Paint().apply {
+        isAntiAlias = true
+		color = Color.WHITE
+		typeface = typeface
+        textSize = 14f //context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
+		textAlign = Paint.Align.CENTER
+		isLinearText = true
+		isSubpixelText = true
+		letterSpacing = 0.1f
+    }
+
+	// time zones left
+	private val p2 = Paint().apply {
+        isAntiAlias = true
+		color = Color.WHITE
+		typeface = typeface
+        textSize = 12f
+		textAlign = Paint.Align.RIGHT
+		isLinearText = true
+		isSubpixelText = true
+		letterSpacing = 0.1f
+	}
+
+	private var armLengthChangedRecalculateClockHands: Boolean = false
     private var currentWatchFaceSize = Rect(0, 0, 0, 0)
 
 	//
@@ -208,11 +246,11 @@ class WatchFaceCanvasRenderer(
 	private lateinit var ddImage: Bitmap
 	private lateinit var gradientImage: Bitmap
 
-	val ssBitmap = BitmapFactory.decodeResource(resources, R.drawable.ss)
-	val mmBitmap = BitmapFactory.decodeResource(resources, R.drawable.mm)
-	val hhBitmap = BitmapFactory.decodeResource(resources, R.drawable.hh)
-	val ddBitmap = BitmapFactory.decodeResource(resources, R.drawable.dd)
-	val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
+	// val ssBitmap = BitmapFactory.decodeResource(resources, R.drawable.ss)
+	// val mmBitmap = BitmapFactory.decodeResource(resources, R.drawable.mm)
+	// val hhBitmap = BitmapFactory.decodeResource(resources, R.drawable.hh)
+	// val ddBitmap = BitmapFactory.decodeResource(resources, R.drawable.dd)
+	// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
 
 	//
 	//
@@ -235,11 +273,11 @@ class WatchFaceCanvasRenderer(
 	//
 
 	private fun updateGraphics() {
-		ssImage = Bitmap.createScaledBitmap(ssBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
-		mmImage = Bitmap.createScaledBitmap(mmBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
-		hhImage = Bitmap.createScaledBitmap(hhBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
-		ddImage = Bitmap.createScaledBitmap(ddBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
-		gradientImage = Bitmap.createScaledBitmap(gradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		// ssImage = Bitmap.createScaledBitmap(ssBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		// mmImage = Bitmap.createScaledBitmap(mmBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		// hhImage = Bitmap.createScaledBitmap(hhBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		// ddImage = Bitmap.createScaledBitmap(ddBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+		// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
 	}
 
 	//
@@ -355,12 +393,7 @@ class WatchFaceCanvasRenderer(
             updateGraphics()
         }
 
-		// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
-		// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
-
-		// val filter = PorterDuffColorFilter( context.getColor( null, watchFaceColors.activeBackgroundColor ), PorterDuff.Mode.SRC_IN);
-		// val paintOverlay = Paint()
-		// paintOverlay.setColorFilter(filter)
+		val themeName = watchFaceData.activeColorStyle.toString()
 
 		// background color
 		val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
@@ -376,14 +409,19 @@ class WatchFaceCanvasRenderer(
 		if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds)
 
 		// gradient
-		canvas.drawBitmap( gradientImage, currentWatchFaceSize, currentWatchFaceSize, null )
+		drawGradient( canvas, currentWatchFaceSize )
 
-		// lunette overlay...
-		if ( watchMode == WatchMode.WATCH ) drawLunette( canvas, bounds )
+		if ( watchMode == WatchMode.WATCH ) {
+			// lunette overlay...
+			drawLunette( canvas, bounds )
+			// text zones
+			drawTextZones(canvas, bounds, themeName, zonedDateTime )
+		}
 
 		// overlay transition
 		val paint = Paint().apply { alpha = transitionAlpha.toInt() }
 		canvas.drawPaint(paint)
+
 	}
 
 	//
@@ -391,20 +429,74 @@ class WatchFaceCanvasRenderer(
 	//	TODO: move to views
 	//
 
+	private fun drawGradient(canvas: Canvas, bounds: Rect) {
+
+		val colors = intArrayOf (
+			0x00000000.toInt(),
+			0x99000000.toInt(),
+			0xFF000000.toInt(),
+		)
+		val stops = listOf( 0.5f, 0.75f, 1f ).toFloatArray()
+		val circularGradientPaint = Paint().apply {
+		    isAntiAlias = true
+			shader = RadialGradient(
+				bounds.exactCenterX(),
+				bounds.exactCenterY(),
+				bounds.width() / 2f,
+				colors, //Color.TRANSPARENT,
+                stops, //watchFaceColors.activeBackgroundColor,
+                Shader.TileMode.CLAMP
+			)
+		}
+		canvas.drawRect(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat(), circularGradientPaint)
+	}
+
 	private fun renderWatchView( context: Context, canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
 
 		// complications
-
         // if ( watchFaceData.drawComplications &&
 		// 	renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY) ) {
 		// 	drawComplications(canvas, zonedDateTime)
 		// }
 
 		// hands
-
 		drawClockHands(canvas, bounds, zonedDateTime)
-
     }
+
+	private fun drawTapZones( canvas: Canvas, bounds: Rect ) {
+		// draw four donut segments and a circle in the center
+		outerElementPaint.style = Paint.Style.FILL_AND_STROKE
+		outerElementPaint.color = Color.WHITE
+		outerElementPaint.alpha = 64
+
+		val oval = RectF(0f,0f,bounds.width().toFloat(), bounds.height().toFloat())
+		canvas.drawArc(oval, 0f,90f,true, outerElementPaint)
+		canvas.drawArc(oval, 90f,90f,true, outerElementPaint)
+		canvas.drawArc(oval, 180f,90f,true, outerElementPaint)
+		canvas.drawArc(oval, 270f,90f,true, outerElementPaint)
+
+		// draw a segment in the center
+
+
+	}
+
+	//
+	//	draw text
+	//
+
+	private fun drawTextZones( canvas: Canvas, bounds: Rect, themeName: String, zonedDateTime: ZonedDateTime ) {
+
+		val xc = bounds.width().toFloat() / 2f
+
+		val t1 = themeName
+		canvas.drawText( t1, xc, 140f, p1 )
+
+		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString()
+		val t3 = "1'23'45'6789"
+		canvas.drawText( t2, xc - 40, 220f, p2 )
+		canvas.drawText( t3, xc - 40, 244f, p2 )
+
+	}
 
 	//
 	//	draw lunette
@@ -415,25 +507,25 @@ class WatchFaceCanvasRenderer(
 		bounds: Rect
 	) {
 
-		if ( watchFaceData.drawHourPips ) {
-			drawNumberStyleOuterElement(
-				canvas,
-				bounds,
-				watchFaceData.numberRadiusFraction,
-				watchFaceData.numberStyleOuterCircleRadiusFraction,
-				watchFaceColors.activeOuterElementColor,
-				watchFaceData.numberStyleOuterCircleRadiusFraction,
-				watchFaceData.gapBetweenOuterCircleAndBorderFraction
-				)
-		} else {
+		// if ( watchFaceData.drawHourPips ) {
+			// drawNumberStyleOuterElement(
+			// 	canvas,
+			// 	bounds,
+			// 	watchFaceData.numberRadiusFraction,
+			// 	watchFaceData.numberStyleOuterCircleRadiusFraction,
+			// 	watchFaceColors.activeOuterElementColor,
+			// 	watchFaceData.numberStyleOuterCircleRadiusFraction,
+			// 	watchFaceData.gapBetweenOuterCircleAndBorderFraction
+			// 	)
+		// } else {
 			textPaint.textSize = 10f
 			val text = "The Quick Brown Fox Jumped Over The Lazy Dog"
-			val off = 20f
-			val rect = RectF( off, off, bounds.width().toFloat() - off - off, bounds.height().toFloat() - off - off )
+			val offset = 22f
+			val rect = RectF( offset, offset, bounds.width().toFloat() - offset - offset, bounds.height().toFloat() - offset - offset )
 			val path = Path()
 			path.addArc( rect, -180f, 180f )
 			canvas.drawTextOnPath( text, path, 0f, 0f, textPaint )
-		}
+		// }
 
 	}
 
@@ -441,13 +533,13 @@ class WatchFaceCanvasRenderer(
 	//	draw complications
 	//
 
-    private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
-        for ((_, complication) in complicationSlotsManager.complicationSlots) {
-            if (complication.enabled) {
-                complication.render(canvas, zonedDateTime, renderParameters)
-            }
-        }
-    }
+    // private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
+    //     for ((_, complication) in complicationSlotsManager.complicationSlots) {
+    //         if (complication.enabled) {
+    //             complication.render(canvas, zonedDateTime, renderParameters)
+    //         }
+    //     }
+    // }
 
 	//
 	//	draw clock hands
@@ -480,8 +572,8 @@ class WatchFaceCanvasRenderer(
 		val dRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360.0f / secondsPerDayHandRotation
 
 		if (
-			renderParameters.drawMode == DrawMode.INTERACTIVE &&
-			renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
+			renderParameters.drawMode == DrawMode.INTERACTIVE
+			// && renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
 		) {
 
         // canvas.withScale(
@@ -502,21 +594,29 @@ class WatchFaceCanvasRenderer(
             // Draw all the stuff when not in ambient mode
             // if ( !drawAmbient ) {
 
-			val m1 = Matrix()
-			m1.postRotate( sRot, ssImage.width / 2f, ssImage.height / 2f )
-			canvas.drawBitmap( ssImage, m1, null )
 
-			val m2 = Matrix()
-			m2.postRotate( mRot, mmImage.width / 2f, mmImage.height / 2f )
-			canvas.drawBitmap( mmImage, m2, null )
+			drawGradientArc( canvas, bounds, 185f, 200f, sRot, 0xffff0000.toInt() )
+			drawGradientArc( canvas, bounds, 170f, 184f, mRot, 0xffffffff.toInt() )
+			drawGradientArc( canvas, bounds, 155f, 169f, hRot, 0xff00ff00.toInt() )
+			drawGradientArc( canvas, bounds,   0f, 154f, dRot, 0xff0000ff.toInt() )
 
-			val m3 = Matrix()
-			m3.postRotate( hRot, hhImage.width / 2f, hhImage.height / 2f )
-			canvas.drawBitmap( hhImage, m3, null )
+			// val m1 = Matrix()
+			// m1.postRotate( sRot, ssImage.width / 2f, ssImage.height / 2f )
+			// canvas.drawBitmap( ssImage, m1, null )
 
-			val m4 = Matrix()
-			m4.postRotate( dRot, ddImage.width / 2f, ddImage.height / 2f)
-			canvas.drawBitmap(ddImage, m4, null)
+			// val m2 = Matrix()
+			// m2.postRotate( mRot, mmImage.width / 2f, mmImage.height / 2f )
+			// canvas.drawBitmap( mmImage, m2, null )
+
+			// val m3 = Matrix()
+			// m3.postRotate( hRot, hhImage.width / 2f, hhImage.height / 2f )
+			// canvas.drawBitmap( hhImage, m3, null )
+
+			// val m4 = Matrix()
+			// m4.postRotate( dRot, ddImage.width / 2f, ddImage.height / 2f)
+			// canvas.drawBitmap(ddImage, m4, null)
+
+			drawTapZones(canvas, bounds)
 
 		} else if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
 
