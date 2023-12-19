@@ -18,5 +18,7 @@ package jp.lab75.galaxytime.data.watchface
 enum class WatchMode {
 	WATCH,
 	BIOMETRICS,
-	ASTRONOMICS
+	ASTRONOMICS,
+	CALENDAR,
+	MOVEMENT,
 }
