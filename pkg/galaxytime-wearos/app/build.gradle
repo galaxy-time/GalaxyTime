@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         applicationId "jp.lab75.galaxytime"
-        minSdk 28
+        minSdk 33
         targetSdk 33
         versionCode 1
         versionName "1.0"
