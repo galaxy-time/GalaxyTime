@@ -19,23 +19,37 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.SweepGradient
 
-public fun drawGradientArc ( canvas: Canvas, bounds: Rect, innerRadius: Float, outerRadius: Float, start: Float, color: Int ) {
+
+var next = 0f
+
+fun drawGradientArc ( canvas: Canvas, bounds: Rect, innerRadius: Float, outerRadius: Float, start: Float, segments: Float, color: Int, alpha: Int ) {
 
 	// gradient
 
 	val colors = intArrayOf( Color.BLACK, color.toInt() )
-	val positions = floatArrayOf(0.0f, 1.0f)
-	val gradient = SweepGradient (
-		bounds.width().toFloat() / 2f,
-		bounds.height().toFloat() / 2f,
-		colors,
-		positions
-	)
+
+	// next = Math.max(start,next) - Math.min(start,next) / 2f
+
+	// instead of rotating the path, we shift the gradient itself for smoother rendering.
+	// val gradientOffset = 1f / segments * start
+	// val positions = floatArrayOf( gradientOffset, 1f + gradientOffset )
+
+	val xc = bounds.centerX().toFloat()
+	val yc = bounds.centerY().toFloat()
+
+	val positions = floatArrayOf( 0f, 1f )
+	val gradient = SweepGradient ( xc, yc, colors, positions )
 	val gradientFillPaint = Paint()
 		gradientFillPaint.apply {
 			shader = gradient
 			isAntiAlias = true
 		}
+    gradientFillPaint.alpha = alpha
+	// apply matrix to the gradient instead of the whole canvas:
+	val matrix = Matrix()
+		matrix.setRotate( start, xc, yc )
+	gradient.setLocalMatrix(matrix)
+
 
 	val clippingPaint = Paint()
 		clippingPaint.color = Color.BLACK
@@ -66,11 +80,11 @@ public fun drawGradientArc ( canvas: Canvas, bounds: Rect, innerRadius: Float, o
 	val rot = Matrix()
 		rot.postRotate( start, outerRectF.centerX(), outerRectF.centerY() )
 
-	canvas.save()
-	canvas.rotate( start, bounds.exactCenterX(), bounds.exactCenterY() )
-	canvas.save()
+	// canvas.save()
+	// canvas.rotate( start, bounds.exactCenterX(), bounds.exactCenterY() )
+	// canvas.save()
 	canvas.drawPath( path, gradientFillPaint )
-	canvas.restore()
-	canvas.restore()
+	// canvas.restore()
+	// canvas.restore()
 
 }

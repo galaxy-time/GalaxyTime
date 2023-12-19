@@ -1,3 +1,9 @@
+//
+// 	biometrics view shows hydration rate and heart rate
+//
+//
+//
+
 package jp.lab75.galaxytime
 
 import android.content.Context

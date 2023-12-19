@@ -1,3 +1,9 @@
+//
+// 	astronomics view shows distances from earth
+//
+//
+//
+
 package jp.lab75.galaxytime
 
 import android.content.Context

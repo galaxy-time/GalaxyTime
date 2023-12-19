@@ -14,13 +14,8 @@
      limitations under the License.
 -->
 <resources>
-    <string name="app_name" translatable="false">GalaxyTime Alpha</string>
-    <string name="analog_watch_face_name" translatable="false">GalaxyTime</string>
-
-    <!--  -->
-    <string name="tile_one_label" translatable="false">Tile One</string>
-    <string name="tile_one_description" translatable="false">Tile One</string>
-
+    <string name="app_name" translatable="false">GalaxyTime</string>
+    <string name="watchface_name" translatable="false">GalaxyTime</string>
 
     <!-- Name of watchface style category for selecting the color theme [CHAR LIMIT=20] -->
     <string name="colors_style_setting">Locations</string>
@@ -29,7 +24,7 @@
     <string name="colors_style_setting_description">Select a location in space.</string>
 
     <!-- Name of watchface style [CHAR LIMIT=20] -->
-    <string name="ambient_style_name">Ambient Style</string>
+    <string name="ambient_style_name">AMBIENT</string>
 
     <!-- Name of watchface style [CHAR LIMIT=20] -->
     <string name="sun_style_name">SUN</string>
@@ -51,13 +46,6 @@
 	<string name="uranus_style_name">URANUS</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="neptune_style_name">NEPTUNE</string>
-
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<!-- <string name="red_style_name">RED</string> -->
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<!-- <string name="green_style_name">GREEN</string> -->
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<!-- <string name="blue_style_name">BLUE</string> -->
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="white_style_name">WHITE</string>
 
@@ -106,20 +94,20 @@
     <string name="title_activity_watch_face_config">Configuration</string>
 
 	<!-- Use of "\n" is to conserve horizontal space in config menu. -->
-    <string name="activity_config_color_style_picker_label">Location</string>
-    <string name="activity_config_ticks_enabled_label">Ticks\nEnabled</string>
-    <string name="activity_config_slider_text_label">Minute Hand Size</string>
+    <string name="settings_color_style_picker_label">Location</string>
+    <string name="settings_ticks_enabled_label">Ticks\nEnabled</string>
+    <string name="settings_slider_text_label">Minute Hand Size</string>
 
 	<!-- Content Descriptions -->
-    <string name="activity_config_preview_of_watch_face_content_description">Preview of Watch Face.</string>
-    <string name="activity_config_more_options_icon_content_description">Icon to indicate there are more options if you scroll down.</string>
-    <string name="activity_config_change_color_style_button_content_description">Button to change the color style of the watch face.</string>
-    <string name="activity_config_ticks_enabled_switch_content_description">Displays or hides the outer marks for the watch face.</string>
-    <string name="activity_config_minute_hand_slider_text_label_content_description">Label for hand length slider below.</string>
-    <string name="activity_config_minute_hand_length_slider_content_description">Slider for adjusting the minute hand length.</string>
-    <string name="activity_config_screenshot_content_description">Screenshot of Watch Face</string>
-    <string name="activity_config_complication_button_right_content_description">Button to edit the right complication data</string>
-    <string name="activity_config_complication_button_left_content_description">Button to edit the left complication data</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="settings_preview_of_watch_face_content_description">Preview of Watch Face.</string>
+    <string name="settings_more_options_icon_content_description">Icon to indicate there are more options if you scroll down.</string>
+    <string name="settings_change_color_style_button_content_description">Button to change the color style of the watch face.</string>
+    <string name="settings_ticks_enabled_switch_content_description">Displays or hides the outer marks for the watch face.</string>
+    <string name="settings_minute_hand_slider_text_label_content_description">Label for hand length slider below.</string>
+    <string name="settings_minute_hand_length_slider_content_description">Slider for adjusting the minute hand length.</string>
+    <string name="settings_screenshot_content_description">Screenshot of Watch Face</string>
+    <string name="settings_complication_button_right_content_description">Button to edit the right complication data</string>
+    <string name="settings_complication_button_left_content_description">Button to edit the left complication data</string>
+    <string name="settings_title">SettingsActivity</string>
 
 </resources>

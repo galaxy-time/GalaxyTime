@@ -1,9 +1,8 @@
 //
-// 	watchface view
-//	TODO: migrate from watchface
+// movement view
 //
 //
-
+//
 package jp.lab75.galaxytime
 
 import android.content.Context
@@ -13,7 +12,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
-
+import android.graphics.Color
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -60,17 +59,52 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-// private lateinit var ssImage: Bitmap
-// private lateinit var mmImage: Bitmap
-// private lateinit var hhImage: Bitmap
-// private lateinit var ddImage: Bitmap
+private lateinit var gradientImage: Bitmap
 
-
-fun renderWatchfaceView(
+ fun renderMovementView(
 	context: Context,
 	canvas: Canvas,
-	bounds: Rect,
-	zonedDateTime: ZonedDateTime,
-	ambient: Boolean
+	bounds: Rect
 ) {
+
+	var watchFaceData: WatchFaceData = WatchFaceData()
+	var watchFaceColors = convertToWatchFaceColorPalette(
+		context,
+		watchFaceData.activeColorStyle,
+		watchFaceData.ambientColorStyle
+	)
+
+	val resources: Resources = context.resources
+
+	// gradient
+	// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
+	// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
+	// canvas.drawBitmap( gradientImage, bounds, bounds, null )
+
+	val style = Paint().apply {
+        isAntiAlias = true
+		style = Paint.Style.STROKE
+		color = Color.WHITE
+    }
+	val centerX = 0.5f * bounds.width().toFloat()
+	val centerY = 0.5f * bounds.height().toFloat()
+	val radius = 0.5f * bounds.width()
+
+	canvas.drawLine(
+		0f, bounds.height().toFloat() / 2,
+		bounds.width().toFloat(),
+		bounds.height().toFloat() /2,
+		style
+	)
+
+	// canvas.drawCircle(
+	// 	centerX,
+	// 	centerY,
+	// 	radius,
+	// 	style
+	// )
+
+
 }
+
+

@@ -75,22 +75,6 @@ const val NEPTUNE_COLOR_STYLE_ID = "neptune_style_id"
 private val NEPTUNE_COLOR_STYLE_NAME_RESOURCE_ID = R.string.neptune_style_name
 private val NEPTUNE_COLOR_STYLE_ICON_ID = R.drawable.neptune_style
 
-//
-//	old colors. todo: remove
-//
-
-// const val RED_COLOR_STYLE_ID = "red_style_id"
-// private val RED_COLOR_STYLE_NAME_RESOURCE_ID = R.string.red_style_name
-// private val RED_COLOR_STYLE_ICON_ID = R.drawable.red_style
-
-// const val GREEN_COLOR_STYLE_ID = "green_style_id"
-// private val GREEN_COLOR_STYLE_NAME_RESOURCE_ID = R.string.green_style_name
-// private val GREEN_COLOR_STYLE_ICON_ID = R.drawable.green_style
-
-// const val BLUE_COLOR_STYLE_ID = "blue_style_id"
-// private val BLUE_COLOR_STYLE_NAME_RESOURCE_ID = R.string.blue_style_name
-// private val BLUE_COLOR_STYLE_ICON_ID = R.drawable.blue_style
-
 const val WHITE_COLOR_STYLE_ID = "white_style_id"
 private val WHITE_COLOR_STYLE_NAME_RESOURCE_ID = R.string.white_style_name
 private val WHITE_COLOR_STYLE_ICON_ID = R.drawable.white_style
@@ -227,44 +211,6 @@ enum class ColorStyleIdAndResourceIds(
         backgroundColorId = R.color.neptune_background_color,
         outerElementColorId = R.color.neptune_outer_element_color
 	),
-
-	//
-	// to be removed styles
-	//
-
-    // RED(
-    //     id = RED_COLOR_STYLE_ID,
-    //     nameResourceId = RED_COLOR_STYLE_NAME_RESOURCE_ID,
-    //     iconResourceId = RED_COLOR_STYLE_ICON_ID,
-    //     complicationStyleDrawableId = R.drawable.complication_red_style,
-    //     primaryColorId = R.color.red_primary_color,
-    //     secondaryColorId = R.color.red_secondary_color,
-    //     backgroundColorId = R.color.red_background_color,
-    //     outerElementColorId = R.color.red_outer_element_color
-    // ),
-
-    // GREEN(
-    //     id = GREEN_COLOR_STYLE_ID,
-    //     nameResourceId = GREEN_COLOR_STYLE_NAME_RESOURCE_ID,
-    //     iconResourceId = GREEN_COLOR_STYLE_ICON_ID,
-    //     complicationStyleDrawableId = R.drawable.complication_green_style,
-    //     primaryColorId = R.color.green_primary_color,
-    //     secondaryColorId = R.color.green_secondary_color,
-    //     backgroundColorId = R.color.green_background_color,
-    //     outerElementColorId = R.color.green_outer_element_color
-    // ),
-
-    // BLUE(
-    //     id = BLUE_COLOR_STYLE_ID,
-    //     nameResourceId = BLUE_COLOR_STYLE_NAME_RESOURCE_ID,
-    //     iconResourceId = BLUE_COLOR_STYLE_ICON_ID,
-    //     complicationStyleDrawableId = R.drawable.complication_blue_style,
-    //     primaryColorId = R.color.blue_primary_color,
-    //     secondaryColorId = R.color.blue_secondary_color,
-    //     backgroundColorId = R.color.blue_background_color,
-    //     outerElementColorId = R.color.blue_outer_element_color
-    // ),
-
     WHITE(
         id = WHITE_COLOR_STYLE_ID,
         nameResourceId = WHITE_COLOR_STYLE_NAME_RESOURCE_ID,
@@ -293,9 +239,6 @@ enum class ColorStyleIdAndResourceIds(
 				SATURN.id -> SATURN
 				URANUS.id -> URANUS
 				NEPTUNE.id -> NEPTUNE
-				// RED.id -> RED
-                // GREEN.id -> GREEN
-                // BLUE.id -> BLUE
                 WHITE.id -> WHITE
                 else -> WHITE
             }

@@ -35,27 +35,28 @@ import io.ktor.client.engine.cio.*
 
 class WatchFaceService : WatchFaceService() {
 
-	val client = HttpClient(CIO)
-	// val response: HttpResponse = client.get("https://ktor.io/")
-	// println(response.status)
+  // val client = HttpClient(CIO)
+  // val response: HttpResponse = client.get("https://ktor.io/")
+  // println(response.status)
 
-    override fun createUserStyleSchema(): UserStyleSchema =
-        createUserStyleSchema(context = applicationContext)
+  override fun createUserStyleSchema(): UserStyleSchema =
+  createUserStyleSchema(context = applicationContext)
 
-    // override fun createComplicationSlotsManager(
-    //     currentUserStyleRepository: CurrentUserStyleRepository
-    // ): ComplicationSlotsManager = createComplicationSlotManager(
-    //     context = applicationContext,
-    //     currentUserStyleRepository = currentUserStyleRepository
-    // )
+  // override fun createComplicationSlotsManager(
+	  //     currentUserStyleRepository: CurrentUserStyleRepository
+	  // ): ComplicationSlotsManager = createComplicationSlotManager(
+		  //     context = applicationContext,
+		  //     currentUserStyleRepository = currentUserStyleRepository
+		  // )
 
-    override suspend fun createWatchFace(
-        surfaceHolder: SurfaceHolder,
-        watchState: WatchState,
-        complicationSlotsManager: ComplicationSlotsManager,
-        currentUserStyleRepository: CurrentUserStyleRepository
-    ): WatchFace {
-        Log.d(TAG, "createWatchFace()")
+	override suspend fun createWatchFace(
+		surfaceHolder: SurfaceHolder,
+		watchState: WatchState,
+		complicationSlotsManager: ComplicationSlotsManager,
+		currentUserStyleRepository: CurrentUserStyleRepository
+		): WatchFace {
+
+		Log.d(TAG, "createWatchFace()")
 
         val renderer = WatchFaceCanvasRenderer(
             context = applicationContext,
