@@ -18,6 +18,7 @@ package jp.lab75.galaxytime.settings
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
+
 import androidx.activity.ComponentActivity
 import androidx.wear.watchface.DrawMode
 import androidx.wear.watchface.RenderParameters
@@ -27,14 +28,19 @@ import androidx.wear.watchface.style.UserStyle
 import androidx.wear.watchface.style.UserStyleSchema
 import androidx.wear.watchface.style.UserStyleSetting
 import androidx.wear.watchface.style.WatchFaceLayer
+
 import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_DEFAULT
 import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_MAXIMUM
 import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_MINIMUM
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-import jp.lab75.galaxytime.utils.LEFT_COMPLICATION_ID
-import jp.lab75.galaxytime.utils.RIGHT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
+
+import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
+import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
+import jp.lab75.galaxytime.utils.BOTTOM_LEFT_COMPLICATION_ID
+import jp.lab75.galaxytime.utils.BOTTOM_RIGHT_COMPLICATION_ID
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -165,11 +171,17 @@ class WatchFaceSettingsState(
 
     fun setComplication(complicationLocation: Int) {
         val complicationSlotId = when (complicationLocation) {
-            LEFT_COMPLICATION_ID -> {
-                LEFT_COMPLICATION_ID
+            TOP_LEFT_COMPLICATION_ID -> {
+                TOP_LEFT_COMPLICATION_ID
             }
-            RIGHT_COMPLICATION_ID -> {
-                RIGHT_COMPLICATION_ID
+            TOP_RIGHT_COMPLICATION_ID -> {
+                TOP_RIGHT_COMPLICATION_ID
+            }
+            BOTTOM_LEFT_COMPLICATION_ID -> {
+                BOTTOM_LEFT_COMPLICATION_ID
+            }
+            BOTTOM_RIGHT_COMPLICATION_ID -> {
+                BOTTOM_RIGHT_COMPLICATION_ID
             }
             else -> {
                 return
