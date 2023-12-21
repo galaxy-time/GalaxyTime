@@ -64,7 +64,8 @@ private lateinit var gradientImage: Bitmap
  fun renderCalendarView(
 	context: Context,
 	canvas: Canvas,
-	bounds: Rect
+	bounds: Rect,
+	defaultStyle: Paint,
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()

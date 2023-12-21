@@ -64,7 +64,8 @@ private lateinit var gradientImage: Bitmap
  fun renderMovementView(
 	context: Context,
 	canvas: Canvas,
-	bounds: Rect
+	bounds: Rect,
+	defaultStyle: Paint,
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()
@@ -79,26 +80,26 @@ private lateinit var gradientImage: Bitmap
 		style = Paint.Style.FILL_AND_STROKE
         textSize = 20f
 	}
-	val centerX = 0.5f * bounds.width().toFloat()
-	val centerY = 0.5f * bounds.height().toFloat()
-	val radius = 0.5f * bounds.width()
 
-	canvas.drawCircle(
-		centerX,
-		centerY,
-		radius,
-		style
-	)
+	val centerX = bounds.exactCenterX().toFloat()
+	val centerY = bounds.exactCenterY().toFloat()
+
+	// val radius = 0.5f * bounds.width()
+	// canvas.drawCircle(
+	// 	centerX,
+	// 	centerY,
+	// 	radius,
+	// 	style
+	// )
 
 	val str = "MOVEMENT"
 	val textBounds = Rect()
-	style.color = watchFaceColors.activeOuterElementColor
-	style.getTextBounds( str, 0, 5, textBounds )
+	style.getTextBounds( str, 0, str.length, textBounds )
 
 	canvas.drawText(
 		str,
-		bounds.exactCenterX() - textBounds.width() / 2,
-		bounds.exactCenterY() - textBounds.height() / 2,
+		centerX,
+		centerY,
 		style
 	)
 }

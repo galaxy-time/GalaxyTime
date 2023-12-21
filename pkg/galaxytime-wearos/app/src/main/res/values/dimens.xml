@@ -32,7 +32,7 @@
     <dimen name="settings_style_picker_icon_padding">2dp</dimen>
     <dimen name="settings_ticks_enabled_switch_icon_padding">2dp</dimen>
 
-    <dimen name="settings_default_text_size">12sp</dimen>
+    <dimen name="settings_default_text_size">20sp</dimen>
 
     <dimen name="analog_complication_settings_preview_size">160dp</dimen>
     <dimen name="analog_complication_color_picker_size">70dp</dimen>
