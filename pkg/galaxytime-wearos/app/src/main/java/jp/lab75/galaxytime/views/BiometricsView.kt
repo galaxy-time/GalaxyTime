@@ -77,6 +77,7 @@ import kotlinx.coroutines.launch
 	val style = Paint().apply {
 		isAntiAlias = true
 		style = Paint.Style.FILL_AND_STROKE
+        textSize = 20f
 	}
 	val centerX = 0.5f * bounds.width().toFloat()
 	val centerY = 0.5f * bounds.height().toFloat()
@@ -89,15 +90,16 @@ import kotlinx.coroutines.launch
 		style
 	)
 
+	val str = "BIOMETRICS"
 	val textBounds = Rect()
-	textPaint.color = watchFaceColors.activeOuterElementColor
-	textPaint.getTextBounds( "hello", 0, 5, textBounds )
+	style.color = watchFaceColors.activeOuterElementColor
+	style.getTextBounds( str, 0, 5, textBounds )
 
 	canvas.drawText(
-		"hello",
+		str,
 		bounds.exactCenterX() - textBounds.width() / 2,
 		bounds.exactCenterY() - textBounds.height() / 2,
-		textPaint
+		style
 	)
 
 }

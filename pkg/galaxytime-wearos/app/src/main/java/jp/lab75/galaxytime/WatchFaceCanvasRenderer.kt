@@ -134,7 +134,7 @@ class WatchFaceCanvasRenderer(
 
 	fun fadeOut() {
 
-		Log.d(TAG, "FADEOUT $watchMode")
+		// Log.d(TAG, "FADEOUT $watchMode")
 		transitionMode = TransitionMode.OUT
 
 		val animator = ValueAnimator.ofFloat(0.0f, 255f)
@@ -151,7 +151,7 @@ class WatchFaceCanvasRenderer(
                 transitionAlpha = 255f
 				transitionMode = TransitionMode.IDLE
 				watchMode = nextWatchMode
-				Log.d(TAG, "FADEOUT complete")
+				// Log.d(TAG, "FADEOUT complete")
 				fadeIn()
                 invalidate()
             }
@@ -161,7 +161,7 @@ class WatchFaceCanvasRenderer(
 
 	fun fadeIn() {
 
-		Log.d(TAG, "FADEIN $watchMode")
+		// Log.d(TAG, "FADEIN $watchMode")
 		transitionMode = TransitionMode.IN
 
 		val animator = ValueAnimator.ofFloat(255f, 0.0f)
@@ -177,7 +177,7 @@ class WatchFaceCanvasRenderer(
 				super.onAnimationEnd(animation)
                 transitionAlpha = 0f
 				transitionMode = TransitionMode.IDLE
-				Log.d(TAG, "FADEIN complete")
+				// Log.d(TAG, "FADEIN complete")
                 invalidate()
             }
         })
@@ -394,6 +394,8 @@ class WatchFaceCanvasRenderer(
 		if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
 		if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
 		if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds)
+		if ( watchMode == WatchMode.CALENDAR ) renderCalendarView(context, canvas, bounds)
+		if ( watchMode == WatchMode.MOVEMENT ) renderMovementView(context, canvas, bounds)
 
 		// gradient
 		drawGradient( canvas, currentWatchFaceSize )
@@ -505,21 +507,26 @@ class WatchFaceCanvasRenderer(
 
 	}
 
+
+
+
+
 	//
 	//	draw text
 	//
 
 	private fun drawTextZones( canvas: Canvas, bounds: Rect, themeName: String, zonedDateTime: ZonedDateTime ) {
 
-		val xc = bounds.width().toFloat() / 2f
+		val xc = bounds.exactCenterX()
+		val yc = bounds.exactCenterY()
 
 		val t1 = themeName
-		canvas.drawText( t1, xc, 140f, p1 )
+		canvas.drawText( t1, xc, yc / 2f, p1 )
 
-		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString()
-		val t3 = "1'23'45'6789"
-		canvas.drawText( t2, xc - 40, 220f, p2 )
-		canvas.drawText( t3, xc - 40, 244f, p2 )
+		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString() + " LT"
+		val t3 = "1'23'45'6789 UT"
+		canvas.drawText( t2, xc - 40, yc - 10f, p2 )
+		canvas.drawText( t3, xc - 40, yc + 10f, p2 )
 
 	}
 
@@ -624,8 +631,8 @@ class WatchFaceCanvasRenderer(
         //     pivotX = bounds.exactCenterX(),
         //     pivotY = bounds.exactCenterY()
         // ) {
-            // val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
 
+            // val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
 			// color the dials:::
 			// clockHandPaint.color = if (drawAmbient) {
             //     watchFaceColors.ambientPrimaryColor
