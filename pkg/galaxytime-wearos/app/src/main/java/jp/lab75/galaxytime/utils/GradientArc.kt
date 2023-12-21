@@ -2,7 +2,7 @@
 //	a donut filled with a sweep gradient
 //
 
-package jp.lab75.galaxytime.primitives
+package jp.lab75.galaxytime.utils
 
 import android.R
 

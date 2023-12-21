@@ -54,7 +54,7 @@ import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 import jp.lab75.galaxytime.renderWatchfaceView
 import jp.lab75.galaxytime.renderBiometricsView
 import jp.lab75.galaxytime.renderAstronomicsView
-import jp.lab75.galaxytime.primitives.drawGradientArc
+import jp.lab75.galaxytime.utils.drawGradientArc
 
 import java.time.Duration
 import java.time.ZonedDateTime
