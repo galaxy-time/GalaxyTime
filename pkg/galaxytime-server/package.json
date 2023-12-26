@@ -12,6 +12,12 @@
     "build": "yarn install && yarn workspaces foreach --topological-dev -Api run build",
     "docker": "yarn docker:build && yarn docker:run",
     "docker:build": "docker build . -t galaxytime/server:local",
-    "docker:run": "docker run -it -p 3000:3000 -p 4000:4000 galaxytime/server:local yarn workspace api start"
+    "docker:run": "docker run -it -p 3000:3000 -p 4000:4000 galaxytime/server:local yarn workspace api start",
+    "format": "yarn workspaces foreach --topological-dev -Api run format",
+    "lint": "yarn workspaces foreach --topological-dev -Api run lint",
+    "test": "yarn workspaces foreach --topological-dev -Api run test"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.1"
   }
 }

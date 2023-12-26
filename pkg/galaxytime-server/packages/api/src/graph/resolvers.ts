@@ -1,12 +1,23 @@
 import { AddZoneInput, Zone } from './graph.js'
+import pkg from '../../package.json' assert { type: "json" }
 import zones from '../data/data.json' assert { type: "json" }
 
-console.log( zones.map(zone => zone.name) )
+// console.log( pkg.name )
+// console.log( pkg.version )
+// console.log( zones.map(zone => zone.name) )
 
 const resolvers = {
   Query: {
+
     ping: () => 'pong',
-	  time: ( _parent: any, args: any ): String => {
+    version: () => pkg.name + ' ' + pkg.version,
+
+    zones: () => zones,
+    // zone: ( _parent: any, args: any ): Zone => {
+    //   return zones.find( zone => zone.id === args.id )
+    // },
+
+    time: ( _parent: any, args: any ): String => {
       return `The time on ${args.zone} is ${Date.now()}`
     },
 },

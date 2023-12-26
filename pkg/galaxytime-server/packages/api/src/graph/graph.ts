@@ -42,6 +42,8 @@ export type Query = {
   __typename?: 'Query';
   ping?: Maybe<Scalars['String']['output']>;
   time?: Maybe<Scalars['String']['output']>;
+  version?: Maybe<Scalars['String']['output']>;
+  zones?: Maybe<Array<Maybe<Zone>>>;
 };
 
 
@@ -165,6 +167,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   ping?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   time?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<QueryTimeArgs>>;
+  version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  zones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Zone']>>>, ParentType, ContextType>;
 };
 
 export type ZoneResolvers<ContextType = any, ParentType extends ResolversParentTypes['Zone'] = ResolversParentTypes['Zone']> = {

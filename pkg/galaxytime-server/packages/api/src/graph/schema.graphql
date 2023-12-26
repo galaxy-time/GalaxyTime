@@ -1,6 +1,10 @@
 type Query {
+
   ping: String
-  time(zone:String): String
+  version: String
+
+  time(zone: String): String
+  zones: [Zone]
 
 }
 
@@ -22,7 +26,7 @@ type Location {
   distance: Float!
 }
 
-# astronomical object definition
+# astronomical object definitionyarn
 type Zone {
   id: ID!
   name: String!
