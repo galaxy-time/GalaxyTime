@@ -4,7 +4,7 @@
 	"version": "1.0.0",
 	"dependencies": {
 		"@apollo/server": "^4.9.5",
-		"@lab75/logger": "workspace:^",
+		"@lab75/logger": "*",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
 		"graphql": "^16.8.1"
