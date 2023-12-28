@@ -64,7 +64,8 @@ private lateinit var gradientImage: Bitmap
  fun renderCalendarView(
 	context: Context,
 	canvas: Canvas,
-	bounds: Rect
+	bounds: Rect,
+	defaultStyle: Paint,
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()
@@ -74,37 +75,33 @@ private lateinit var gradientImage: Bitmap
 		watchFaceData.ambientColorStyle
 	)
 
-	val resources: Resources = context.resources
-
-	// gradient
-	// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
-	// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
-	// canvas.drawBitmap( gradientImage, bounds, bounds, null )
-
 	val style = Paint().apply {
-        isAntiAlias = true
-		style = Paint.Style.STROKE
-		color = Color.WHITE
-    }
+		isAntiAlias = true
+		style = Paint.Style.FILL_AND_STROKE
+        textSize = 20f
+	}
 	val centerX = 0.5f * bounds.width().toFloat()
 	val centerY = 0.5f * bounds.height().toFloat()
 	val radius = 0.5f * bounds.width()
 
-	canvas.drawLine(
-		0f, bounds.height().toFloat() / 2,
-		bounds.width().toFloat(),
-		bounds.height().toFloat() /2,
+	canvas.drawCircle(
+		centerX,
+		centerY,
+		radius,
 		style
 	)
 
-	// canvas.drawCircle(
-	// 	centerX,
-	// 	centerY,
-	// 	radius,
-	// 	style
-	// )
+	val str = "CALENDAR"
+	val textBounds = Rect()
+	style.color = watchFaceColors.activeOuterElementColor
+	style.getTextBounds( str, 0, 5, textBounds )
 
-
+	canvas.drawText(
+		str,
+		bounds.exactCenterX() - textBounds.width() / 2,
+		bounds.exactCenterY() - textBounds.height() / 2,
+		style
+	)
 }
 
 

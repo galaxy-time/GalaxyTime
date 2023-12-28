@@ -65,7 +65,8 @@ private lateinit var gradientImage: Bitmap
  fun renderAstronomicsView(
 	context: Context,
 	canvas: Canvas,
-	bounds: Rect
+	bounds: Rect,
+	defaultStyle: Paint,
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()

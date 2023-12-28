@@ -13,7 +13,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
-
+import android.graphics.Color
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -64,7 +64,7 @@ import kotlinx.coroutines.launch
 	context: Context,
 	canvas: Canvas,
 	bounds: Rect,
-	textPaint: Paint
+	defaultStyle: Paint,
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()
@@ -74,30 +74,35 @@ import kotlinx.coroutines.launch
 		watchFaceData.ambientColorStyle
 	)
 
-	val style = Paint().apply {
-		isAntiAlias = true
-		style = Paint.Style.FILL_AND_STROKE
-	}
-	val centerX = 0.5f * bounds.width().toFloat()
-	val centerY = 0.5f * bounds.height().toFloat()
-	val radius = 0.5f * bounds.width()
+	val centerX = bounds.exactCenterX().toFloat()
+	val centerY = bounds.exactCenterY().toFloat()
+	val radius = bounds.exactCenterX().toFloat()
 
-	canvas.drawCircle(
-		centerX,
-		centerY,
-		radius,
-		style
-	)
+	// val style = Paint().apply {
+    //     isAntiAlias = true
+	// 	color = Color.WHITE
+	// 	// style = Paint.Style.STROKE
+	// }
 
+	// canvas.drawCircle(
+	// 	centerX,
+	// 	centerY,
+	// 	radius,
+	// 	style
+	// )
+
+	val str = "BIOMETRICS"
 	val textBounds = Rect()
-	textPaint.color = watchFaceColors.activeOuterElementColor
-	textPaint.getTextBounds( "hello", 0, 5, textBounds )
+	defaultStyle.color = watchFaceColors.activeOuterElementColor
+	defaultStyle.textSize = 20f
+	defaultStyle.getTextBounds( str, 0, 5, textBounds )
+	defaultStyle.textAlign = Paint.Align.CENTER
 
 	canvas.drawText(
-		"hello",
-		bounds.exactCenterX() - textBounds.width() / 2,
-		bounds.exactCenterY() - textBounds.height() / 2,
-		textPaint
+		str,
+		centerX,
+		centerY,
+		defaultStyle
 	)
 
 }

@@ -54,7 +54,7 @@ import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 import jp.lab75.galaxytime.renderWatchfaceView
 import jp.lab75.galaxytime.renderBiometricsView
 import jp.lab75.galaxytime.renderAstronomicsView
-import jp.lab75.galaxytime.primitives.drawGradientArc
+import jp.lab75.galaxytime.utils.drawGradientArc
 
 import java.time.Duration
 import java.time.ZonedDateTime
@@ -106,6 +106,7 @@ class WatchFaceCanvasRenderer(
 	var nextWatchMode: WatchMode = WatchMode.WATCH
 
 	private enum class TransitionMode { IN, OUT, IDLE }
+	private enum class TapZone { TL, TR, BL, BR }
 	private var transitionMode: TransitionMode = TransitionMode.IDLE
 	private var prevMode: TransitionMode = TransitionMode.IDLE
 
@@ -115,6 +116,8 @@ class WatchFaceCanvasRenderer(
 		// TODO: add touch segments to trigger different scenes
 
 		Log.d(TAG, "$tapEvent.x, $tapEvent.y")
+
+
 
 		// this only toggles through all available views.
 		// remove when todo above is resolved.
@@ -134,7 +137,7 @@ class WatchFaceCanvasRenderer(
 
 	fun fadeOut() {
 
-		Log.d(TAG, "FADEOUT $watchMode")
+		// Log.d(TAG, "FADEOUT $watchMode")
 		transitionMode = TransitionMode.OUT
 
 		val animator = ValueAnimator.ofFloat(0.0f, 255f)
@@ -151,7 +154,7 @@ class WatchFaceCanvasRenderer(
                 transitionAlpha = 255f
 				transitionMode = TransitionMode.IDLE
 				watchMode = nextWatchMode
-				Log.d(TAG, "FADEOUT complete")
+				// Log.d(TAG, "FADEOUT complete")
 				fadeIn()
                 invalidate()
             }
@@ -161,7 +164,7 @@ class WatchFaceCanvasRenderer(
 
 	fun fadeIn() {
 
-		Log.d(TAG, "FADEIN $watchMode")
+		// Log.d(TAG, "FADEIN $watchMode")
 		transitionMode = TransitionMode.IN
 
 		val animator = ValueAnimator.ofFloat(255f, 0.0f)
@@ -177,7 +180,7 @@ class WatchFaceCanvasRenderer(
 				super.onAnimationEnd(animation)
                 transitionAlpha = 0f
 				transitionMode = TransitionMode.IDLE
-				Log.d(TAG, "FADEIN complete")
+				// Log.d(TAG, "FADEIN complete")
                 invalidate()
             }
         })
@@ -202,6 +205,8 @@ class WatchFaceCanvasRenderer(
         watchFaceData.ambientColorStyle
     )
 
+	private var themeName = watchFaceData.activeColorStyle.toString()
+
 	private val outerElementPaint = Paint().apply {
 		isAntiAlias = true
 	}
@@ -212,12 +217,14 @@ class WatchFaceCanvasRenderer(
     }
 
 	private val typeface = resources.getFont(R.font.pp_stellar)
+
 	// general text
     private val textPaint = Paint().apply {
         isAntiAlias = true
-		color = Color.WHITE
+		color = Color.GREEN
 		typeface = typeface
-        textSize = context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
+        // textSize = context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
+		// isSubpixelText = true
 		letterSpacing = 0.1f
     }
 
@@ -231,7 +238,6 @@ class WatchFaceCanvasRenderer(
 		isLinearText = true
 		isSubpixelText = true
 		letterSpacing = 0.1f
-
     }
 
 	// time zones left
@@ -272,6 +278,8 @@ class WatchFaceCanvasRenderer(
     private fun updateWatchFaceData(userStyle: UserStyle) {
 
         Log.d(TAG, "updateWatchFace(): $userStyle")
+
+		themeName = watchFaceData.activeColorStyle.toString()
 
 		p1.setShadowLayer(10f, 0f, 0f, Color.BLACK)
 		p2.setShadowLayer(10f, 0f, 0f, Color.BLACK)
@@ -380,29 +388,39 @@ class WatchFaceCanvasRenderer(
 
 		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
 
-		val themeName = watchFaceData.activeColorStyle.toString()
-
-		// background color
-		val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
-			watchFaceColors.ambientBackgroundColor
-        } else {
-			watchFaceColors.activeBackgroundColor
-        }
-        canvas.drawColor( backgroundColor )
+		// val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
+		// 	watchFaceColors.ambientBackgroundColor
+        // } else {
+		// 	watchFaceColors.activeBackgroundColor
+        // }
+        // canvas.drawColor( backgroundColor )
 
 		// watchface states
-		if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
-		if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
-		if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds)
+		if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
+
+			// if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
+			// if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
+			// if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds, textPaint)
+			// if ( watchMode == WatchMode.CALENDAR ) renderCalendarView(context, canvas, bounds, textPaint)
+			// if ( watchMode == WatchMode.MOVEMENT ) renderMovementView(context, canvas, bounds, textPaint)
+
+			renderMovementView(context, canvas, bounds, textPaint)
+
+		} else if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
+
+			val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
+			drawGradientArc( canvas, bounds,   0f, 200f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
+
+		}
 
 		// gradient
 		drawGradient( canvas, currentWatchFaceSize )
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT && watchMode == WatchMode.WATCH ) {
 			// lunette overlay
-			drawLunette( canvas, bounds )
+			// drawLunette( canvas, bounds )
 			// text zones
-			drawTextZones(canvas, bounds, themeName, zonedDateTime )
+			// drawTextZones(canvas, bounds, themeName, zonedDateTime )
 		}
 
 		// overlay transition
@@ -484,9 +502,9 @@ class WatchFaceCanvasRenderer(
     }
 
 	private fun drawTapZones( canvas: Canvas, bounds: Rect ) {
+
 		// draw four donut segments and a circle in the center
 		outerElementPaint.style = Paint.Style.FILL_AND_STROKE
-
 		outerElementPaint.alpha = 128
 
 		val oval = RectF(0f,0f,bounds.width().toFloat(), bounds.height().toFloat())
@@ -498,10 +516,9 @@ class WatchFaceCanvasRenderer(
 		canvas.drawArc(oval, 180f,90f,true, outerElementPaint)
 		outerElementPaint.color = Color.YELLOW
 		canvas.drawArc(oval, 270f,90f,true, outerElementPaint)
+		// TODO: draw a segment in the center
 		// outerElementPaint.color = Color.WHITE
 		// canvas.drawCircle(bounds.exactCenterX(), bounds.exactCenterY(), bounds.exactCenterX(), outerElementPaint )
-
-		// draw a segment in the center
 
 	}
 
@@ -511,15 +528,16 @@ class WatchFaceCanvasRenderer(
 
 	private fun drawTextZones( canvas: Canvas, bounds: Rect, themeName: String, zonedDateTime: ZonedDateTime ) {
 
-		val xc = bounds.width().toFloat() / 2f
+		val xc = bounds.exactCenterX()
+		val yc = bounds.exactCenterY()
 
 		val t1 = themeName
-		canvas.drawText( t1, xc, 140f, p1 )
+		canvas.drawText( t1, xc, yc / 2f, p1 )
 
-		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString()
-		val t3 = "1'23'45'6789"
-		canvas.drawText( t2, xc - 40, 220f, p2 )
-		canvas.drawText( t3, xc - 40, 244f, p2 )
+		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString() + " LT"
+		val t3 = "1'23'45'6789 UT"
+		canvas.drawText( t2, xc - 40, yc - 10f, p2 )
+		canvas.drawText( t3, xc - 40, yc + 10f, p2 )
 
 	}
 
@@ -548,15 +566,26 @@ class WatchFaceCanvasRenderer(
 			val rect = RectF( offset, offset, bounds.width().toFloat() - offset, bounds.height().toFloat() - offset )
 			textPaint.textSize = 10f
 
-			val t1 = "The Quick Brown Fox Jumped Over The Lazy Dog"
+			val t0 = "ZONE 1"
+			val p0 = Path()
+			p0.addArc( rect, -90f, 90f )
+			canvas.drawTextOnPath( t0, p0, 0f, 0f, textPaint )
+
+			val t1 = "ZONE 2"
 			val p1 = Path()
-			p1.addArc( rect, -180f, 180f )
+			p1.addArc( rect, 0f, 90f )
 			canvas.drawTextOnPath( t1, p1, 0f, 0f, textPaint )
 
-			val t2 = "1234.5678.90AB.CDEF"
+			val t2 = "ZONE 3"
 			val p2 = Path()
-			p2.addArc( rect, 0f, 180f )
+			p2.addArc( rect, 90f, 90f )
 			canvas.drawTextOnPath( t2, p2, 0f, 0f, textPaint )
+
+			val t3 = "ZONE 4"
+			val p3 = Path()
+			p3.addArc( rect, 180f, 90f )
+			canvas.drawTextOnPath( t3, p3, 0f, 0f, textPaint )
+
 
 
 		// }
@@ -614,7 +643,7 @@ class WatchFaceCanvasRenderer(
 		// Log.d(TAG, "drawClockHands() $sr $mr $hr $dr ")
 
 		if (
-			renderParameters.drawMode == DrawMode.INTERACTIVE
+			renderParameters.drawMode != DrawMode.AMBIENT // INTERACTIVE
 			// && renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
 		) {
 
@@ -624,8 +653,8 @@ class WatchFaceCanvasRenderer(
         //     pivotX = bounds.exactCenterX(),
         //     pivotY = bounds.exactCenterY()
         // ) {
-            // val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
 
+            // val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
 			// color the dials:::
 			// clockHandPaint.color = if (drawAmbient) {
             //     watchFaceColors.ambientPrimaryColor
@@ -658,8 +687,6 @@ class WatchFaceCanvasRenderer(
 			// TODO: interactive tap zones...
 			// drawTapZones(canvas, bounds)
 
-		} else if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
-			drawGradientArc( canvas, bounds,   0f, 200f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
 		}
 	}
 
