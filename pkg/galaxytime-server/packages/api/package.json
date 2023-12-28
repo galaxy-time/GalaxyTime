@@ -26,7 +26,7 @@
 	"private": true,
 	"scripts": {
 		"build": "yarn rimraf ./build && yarn codegen && tsc",
-		"dev": "concurrently -c 'bgBlue.bold,bgMagenta.bold' \"yarn codegen --watch\" \"tsx --watch --conditions=development src/index.ts\"",
+		"dev": "concurrently -n 'gen,dev' -c 'bgBlue.bold,bgMagenta.bold' \"yarn codegen --watch\" \"tsx --watch --conditions=development src/index.ts\"",
 		"start": "node build/src/index.js",
 		"codegen": "graphql-codegen -w --config codegen.ts",
 		"test": "echo \"Error: no test specified\" && exit 1",
