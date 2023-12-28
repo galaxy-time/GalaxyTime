@@ -1,3 +1,5 @@
+import log from "@lab75/logger"
+
 import pkg from '../../package.json' assert { type: "json" }
 import zones from '../data/data.json' assert { type: "json" }
 import Astronomy from 'astronomy-engine'
@@ -11,7 +13,7 @@ import { AddZoneInput, Zone } from './graph.js'
 const planets = () => {
 
   for (var i in Astronomy.Body) {
-    console.log(
+    log(
       Astronomy.Body[i]
     )
   }
