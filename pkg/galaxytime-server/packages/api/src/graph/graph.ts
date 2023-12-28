@@ -43,6 +43,7 @@ export type Query = {
   ping?: Maybe<Scalars['String']['output']>;
   time?: Maybe<Scalars['String']['output']>;
   version?: Maybe<Scalars['String']['output']>;
+  zone?: Maybe<Zone>;
   zones?: Maybe<Array<Maybe<Zone>>>;
 };
 
@@ -51,10 +52,36 @@ export type QueryTimeArgs = {
   zone?: InputMaybe<Scalars['String']['input']>;
 };
 
+
+export type QueryZoneArgs = {
+  id?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SunPath = {
+  __typename?: 'SunPath';
+  culmination?: Maybe<Scalars['String']['output']>;
+  rise?: Maybe<Scalars['String']['output']>;
+  set?: Maybe<Scalars['String']['output']>;
+};
+
 export type Zone = {
   __typename?: 'Zone';
+  altitude?: Maybe<Scalars['String']['output']>;
+  azimuth?: Maybe<Scalars['String']['output']>;
+  con?: Maybe<Scalars['String']['output']>;
+  dec?: Maybe<Scalars['String']['output']>;
+  dist?: Maybe<Scalars['String']['output']>;
+  ecl_lat?: Maybe<Scalars['String']['output']>;
+  ecl_long?: Maybe<Scalars['String']['output']>;
+  elong?: Maybe<Scalars['String']['output']>;
+  hx?: Maybe<Scalars['String']['output']>;
+  hy?: Maybe<Scalars['String']['output']>;
+  hz?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  mag?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  ra?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -132,10 +159,12 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Location: ResolverTypeWrapper<Location>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  SunPath: ResolverTypeWrapper<SunPath>;
   Zone: ResolverTypeWrapper<Zone>;
 };
 
@@ -145,10 +174,12 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   Float: Scalars['Float']['output'];
   ID: Scalars['ID']['output'];
+  Int: Scalars['Int']['output'];
   Location: Location;
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
+  SunPath: SunPath;
   Zone: Zone;
 };
 
@@ -168,12 +199,33 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   ping?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   time?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<QueryTimeArgs>>;
   version?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  zone?: Resolver<Maybe<ResolversTypes['Zone']>, ParentType, ContextType, Partial<QueryZoneArgs>>;
   zones?: Resolver<Maybe<Array<Maybe<ResolversTypes['Zone']>>>, ParentType, ContextType>;
 };
 
+export type SunPathResolvers<ContextType = any, ParentType extends ResolversParentTypes['SunPath'] = ResolversParentTypes['SunPath']> = {
+  culmination?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  rise?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  set?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ZoneResolvers<ContextType = any, ParentType extends ResolversParentTypes['Zone'] = ResolversParentTypes['Zone']> = {
+  altitude?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  azimuth?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  con?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dec?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  dist?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ecl_lat?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ecl_long?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  elong?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hx?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hz?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  mag?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  ra?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -181,6 +233,7 @@ export type Resolvers<ContextType = any> = {
   Location?: LocationResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  SunPath?: SunPathResolvers<ContextType>;
   Zone?: ZoneResolvers<ContextType>;
 };
 

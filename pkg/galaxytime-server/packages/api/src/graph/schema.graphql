@@ -5,7 +5,7 @@ type Query {
 
   time(zone: String): String
   zones: [Zone]
-
+  zone( name:String, id: Int) : Zone
 }
 
 type Mutation {
@@ -28,11 +28,37 @@ type Location {
 
 # astronomical object definitionyarn
 type Zone {
+  #
   id: ID!
   name: String!
-  # location: Location
+  #
+  hx: String
+  hy: String
+  hz: String
+  # dist to sund in AU
+  dist: String 
+  #
+  mag: String
+  elong: String
+  con: String
+  # ecliptic
+  ecl_long: String
+  ecl_lat: String
+  # equatorial
+  ra: String
+  dec: String
+  # horizontal
+  azimuth: String
+  altitude: String
 }
 
 input AddZoneInput {
   name: String!
+}
+
+# sun path on a planet
+type SunPath {
+  rise: String
+  culmination: String
+  set: String
 }
