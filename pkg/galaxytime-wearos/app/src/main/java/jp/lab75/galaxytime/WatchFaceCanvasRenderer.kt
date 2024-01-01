@@ -49,7 +49,7 @@ import jp.lab75.galaxytime.data.watchface.WatchMode
 
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
+// import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 
 import jp.lab75.galaxytime.renderWatchfaceView
 import jp.lab75.galaxytime.renderBiometricsView
@@ -113,14 +113,11 @@ class WatchFaceCanvasRenderer(
 	private var transitionAlpha = 0f
 
 	override fun onTapEvent( tapType: Int, tapEvent: TapEvent, complicationSlot: ComplicationSlot? ) {
-		// TODO: add touch segments to trigger different scenes
 
-		Log.d(TAG, "$tapEvent.x, $tapEvent.y")
+		// TODO: identify tapzones
+		Log.d(TAG, "$tapEvent.x, $tapEvent.y, $complicationSlot")
 
-
-
-		// this only toggles through all available views.
-		// remove when todo above is resolved.
+		// this toggles through all available views.
 		if ( tapType == TapType.UP ) {
 			nextWatchMode = when ( watchMode ) {
 				WatchMode.WATCH -> WatchMode.BIOMETRICS
@@ -130,14 +127,12 @@ class WatchFaceCanvasRenderer(
 				WatchMode.MOVEMENT -> WatchMode.WATCH
 			}
 			if ( prevMode == TransitionMode.IDLE && nextWatchMode != watchMode ) fadeOut()
-			Log.d(TAG, "next mode $nextWatchMode")
 		}
 		invalidate()
 	}
 
 	fun fadeOut() {
 
-		// Log.d(TAG, "FADEOUT $watchMode")
 		transitionMode = TransitionMode.OUT
 
 		val animator = ValueAnimator.ofFloat(0.0f, 255f)
@@ -154,7 +149,6 @@ class WatchFaceCanvasRenderer(
                 transitionAlpha = 255f
 				transitionMode = TransitionMode.IDLE
 				watchMode = nextWatchMode
-				// Log.d(TAG, "FADEOUT complete")
 				fadeIn()
                 invalidate()
             }
@@ -164,7 +158,6 @@ class WatchFaceCanvasRenderer(
 
 	fun fadeIn() {
 
-		// Log.d(TAG, "FADEIN $watchMode")
 		transitionMode = TransitionMode.IN
 
 		val animator = ValueAnimator.ofFloat(255f, 0.0f)
@@ -180,7 +173,6 @@ class WatchFaceCanvasRenderer(
 				super.onAnimationEnd(animation)
                 transitionAlpha = 0f
 				transitionMode = TransitionMode.IDLE
-				// Log.d(TAG, "FADEIN complete")
                 invalidate()
             }
         })
@@ -233,7 +225,7 @@ class WatchFaceCanvasRenderer(
         isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-        textSize = 14f //context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
+        textSize = 18f //context.resources.getDimensionPixelSize(R.dimen.settings_default_text_size).toFloat()
 		textAlign = Paint.Align.CENTER
 		isLinearText = true
 		isSubpixelText = true
@@ -245,7 +237,7 @@ class WatchFaceCanvasRenderer(
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-        textSize = 12f
+        textSize = 16f
 		textAlign = Paint.Align.RIGHT
 		isLinearText = true
 		isSubpixelText = true
@@ -312,8 +304,8 @@ class WatchFaceCanvasRenderer(
                     )
                 }
 
-                WATCH_HAND_LENGTH_STYLE_SETTING -> {
-                }
+                // WATCH_HAND_LENGTH_STYLE_SETTING -> {
+                // }
 
             }
         }
@@ -388,25 +380,22 @@ class WatchFaceCanvasRenderer(
 
 		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
 
-		// val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
-		// 	watchFaceColors.ambientBackgroundColor
-        // } else {
-		// 	watchFaceColors.activeBackgroundColor
-        // }
+		// val backgroundColor =
+		// if ( renderParameters.drawMode == DrawMode.AMBIENT ) { watchFaceColors.ambientBackgroundColor }
+		// else {	watchFaceColors.activeBackgroundColor }
         // canvas.drawColor( backgroundColor )
 
-		// watchface states
 		if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
 
-			// if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
-			// if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
-			// if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds, textPaint)
-			// if ( watchMode == WatchMode.CALENDAR ) renderCalendarView(context, canvas, bounds, textPaint)
-			// if ( watchMode == WatchMode.MOVEMENT ) renderMovementView(context, canvas, bounds, textPaint)
+			when ( watchMode ) {
+				WatchMode.WATCH -> renderWatchView(context, canvas, bounds, zonedDateTime)
+				WatchMode.BIOMETRICS -> renderBiometricsView(context, canvas, bounds, textPaint)
+				WatchMode.ASTRONOMICS -> renderAstronomicsView(context, canvas, bounds, textPaint)
+				WatchMode.CALENDAR -> renderCalendarView(context, canvas, bounds, textPaint)
+				WatchMode.MOVEMENT -> renderMovementView(context, canvas, bounds, textPaint)
+			}
 
-			renderMovementView(context, canvas, bounds, textPaint)
-
-		} else if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
+		} else if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
 
 			val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
 			drawGradientArc( canvas, bounds,   0f, 200f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
@@ -418,9 +407,9 @@ class WatchFaceCanvasRenderer(
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT && watchMode == WatchMode.WATCH ) {
 			// lunette overlay
-			// drawLunette( canvas, bounds )
+			drawLunette( canvas, bounds )
 			// text zones
-			// drawTextZones(canvas, bounds, themeName, zonedDateTime )
+			drawTextZones(canvas, bounds, themeName, zonedDateTime )
 		}
 
 		// overlay transition
@@ -445,7 +434,7 @@ class WatchFaceCanvasRenderer(
 	// 	}
 	// """.trimIndent()
 
-	private fun drawShaderLayer(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
+	// private fun drawShaderLayer(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
 
 		// Log.d(TAG, "drawShaderLayer()")
 		// val shaderSource = RuntimeShader( SIMPLE )
@@ -457,7 +446,7 @@ class WatchFaceCanvasRenderer(
 		// 	blendMode = BlendMode.MULTIPLY
 		// }
 		// canvas.drawPaint(shaderPaint)
-	}
+	// }
 
 	//
 	//	watch view
@@ -492,10 +481,10 @@ class WatchFaceCanvasRenderer(
 	private fun renderWatchView( context: Context, canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
 
 		// complications
-        // if ( watchFaceData.drawComplications &&
-		// 	renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY) ) {
-		// 	drawComplications(canvas, zonedDateTime)
-		// }
+        if ( watchFaceData.drawComplications &&
+			renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY) ) {
+			drawComplications(canvas, zonedDateTime)
+		}
 
 		// hands
 		drawClockHands(canvas, bounds, zonedDateTime)
@@ -532,12 +521,12 @@ class WatchFaceCanvasRenderer(
 		val yc = bounds.exactCenterY()
 
 		val t1 = themeName
-		canvas.drawText( t1, xc, yc / 2f, p1 )
+		canvas.drawText( t1, xc, yc / 2f + 8f, p1 )
 
 		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString() + " LT"
 		val t3 = "1'23'45'6789 UT"
-		canvas.drawText( t2, xc - 40, yc - 10f, p2 )
-		canvas.drawText( t3, xc - 40, yc + 10f, p2 )
+		canvas.drawText( t2, xc - 16, yc - 8f, p2 )
+		canvas.drawText( t3, xc - 16, yc + 20f, p2 )
 
 	}
 
@@ -562,31 +551,52 @@ class WatchFaceCanvasRenderer(
 			// 	)
 		// } else {
 
-			val offset = 20f
+			val offset = 16f
+			val space = 10f
+
+			val arcOffset = 1f
+			val arcSweep = 90f - arcOffset - arcOffset
+
 			val rect = RectF( offset, offset, bounds.width().toFloat() - offset, bounds.height().toFloat() - offset )
-			textPaint.textSize = 10f
+			val r01 = RectF( space, space, bounds.width().toFloat() - space, bounds.height().toFloat() - space )
+
+			val p = Paint().apply {
+				color = Color.YELLOW
+				strokeWidth = 18f
+				style = Paint.Style.STROKE
+				// strokeJoin = Paint.Join.ROUND
+				// strokeCap = Paint.Cap.ROUND
+			}
+
+			canvas.drawArc(r01, -90f + arcOffset ,arcSweep, false, p)
+			canvas.drawArc(r01,   0f + arcOffset, arcSweep, false, p)
+			canvas.drawArc(r01, 180f + arcOffset, arcSweep, false, p)
+			canvas.drawArc(r01,  90f + arcOffset, arcSweep, false, p)
+
+			//
+
+			textPaint.textSize = 16f
+			textPaint.color = Color.WHITE
 
 			val t0 = "ZONE 1"
 			val p0 = Path()
-			p0.addArc( rect, -90f, 90f )
+			p0.addArc( rect, -90f + arcOffset, 90f )
 			canvas.drawTextOnPath( t0, p0, 0f, 0f, textPaint )
 
 			val t1 = "ZONE 2"
 			val p1 = Path()
-			p1.addArc( rect, 0f, 90f )
+			p1.addArc( rect, 0f + arcOffset, 90f )
 			canvas.drawTextOnPath( t1, p1, 0f, 0f, textPaint )
 
 			val t2 = "ZONE 3"
 			val p2 = Path()
-			p2.addArc( rect, 90f, 90f )
+			p2.addArc( rect, 90f + arcOffset, 90f )
 			canvas.drawTextOnPath( t2, p2, 0f, 0f, textPaint )
 
 			val t3 = "ZONE 4"
 			val p3 = Path()
-			p3.addArc( rect, 180f, 90f )
+			p3.addArc( rect, 180f + arcOffset, 90f )
 			canvas.drawTextOnPath( t3, p3, 0f, 0f, textPaint )
-
-
 
 		// }
 
@@ -596,13 +606,19 @@ class WatchFaceCanvasRenderer(
 	//	draw complications
 	//
 
-    // private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
-    //     for ((_, complication) in complicationSlotsManager.complicationSlots) {
-    //         if (complication.enabled) {
-    //             complication.render(canvas, zonedDateTime, renderParameters)
-    //         }
-    //     }
-    // }
+    private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
+
+
+
+
+
+        for ((_, complication) in complicationSlotsManager.complicationSlots) {
+            if (complication.enabled) {
+                complication.render(canvas, zonedDateTime, renderParameters)
+            }
+        }
+
+    }
 
 	//
 	//	draw clock hands

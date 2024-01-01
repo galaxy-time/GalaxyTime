@@ -29,12 +29,13 @@ import androidx.wear.watchface.style.UserStyleSchema
 import androidx.wear.watchface.style.UserStyleSetting
 import androidx.wear.watchface.style.WatchFaceLayer
 
-import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_DEFAULT
-import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_MAXIMUM
-import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_MINIMUM
+// import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_DEFAULT
+// import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_MAXIMUM
+// import jp.lab75.galaxytime.data.watchface.MINUTE_HAND_LENGTH_FRACTION_MINIMUM
+// import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
+
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 
 import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
@@ -119,10 +120,11 @@ class WatchFaceSettingsState(
                     drawPipsKey = setting as UserStyleSetting.BooleanUserStyleSetting
                 }
 
-                WATCH_HAND_LENGTH_STYLE_SETTING -> {
-                    minuteHandLengthKey = setting as UserStyleSetting.DoubleRangeUserStyleSetting
-                }
-                // TODO (codingjeremy): Add complication change support if settings activity
+                // WATCH_HAND_LENGTH_STYLE_SETTING -> {
+                //     minuteHandLengthKey = setting as UserStyleSetting.DoubleRangeUserStyleSetting
+                // }
+
+				// TODO: Add complication change support if settings activity
                 // PR doesn't cover it. Otherwise, remove comment.
             }
         }
@@ -151,20 +153,16 @@ class WatchFaceSettingsState(
             complicationsPreviewData
         )
 
-        val colorStyle =
-            userStyle[colorStyleKey] as UserStyleSetting.ListUserStyleSetting.ListOption
-        val ticksEnabledStyle =
-            userStyle[drawPipsKey] as UserStyleSetting.BooleanUserStyleSetting.BooleanOption
-        val minuteHandStyle =
-            userStyle[minuteHandLengthKey]
-                as UserStyleSetting.DoubleRangeUserStyleSetting.DoubleRangeOption
+        val colorStyle = userStyle[colorStyleKey] as UserStyleSetting.ListUserStyleSetting.ListOption
+        val ticksEnabledStyle = userStyle[drawPipsKey] as UserStyleSetting.BooleanUserStyleSetting.BooleanOption
+        // val minuteHandStyle = userStyle[minuteHandLengthKey] as UserStyleSetting.DoubleRangeUserStyleSetting.DoubleRangeOption
 
-        Log.d(TAG, "/new values: $colorStyle, $ticksEnabledStyle, $minuteHandStyle")
+		Log.d(TAG, "/new values: $colorStyle, $ticksEnabledStyle")
 
         return UserStylesAndPreview(
             colorStyleId = colorStyle.id.toString(),
             ticksEnabled = ticksEnabledStyle.value,
-            minuteHandLength = multiplyByMultipleForSlider(minuteHandStyle.value).toFloat(),
+            minuteHandLength = 0f, // multiplyByMultipleForSlider(minuteHandStyle.value).toFloat(),
             previewImage = bitmap
         )
     }
@@ -269,16 +267,16 @@ class WatchFaceSettingsState(
         // slider can support, we need to multiply the original value times 1,000.
         private const val MULTIPLE_FOR_SLIDER: Float = 1000f
 
-        const val MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER =
-            MINUTE_HAND_LENGTH_FRACTION_MINIMUM * MULTIPLE_FOR_SLIDER
+        // const val MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER =
+        //     MINUTE_HAND_LENGTH_FRACTION_MINIMUM * MULTIPLE_FOR_SLIDER
 
-        const val MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER =
-            MINUTE_HAND_LENGTH_FRACTION_MAXIMUM * MULTIPLE_FOR_SLIDER
+        // const val MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER =
+        //     MINUTE_HAND_LENGTH_FRACTION_MAXIMUM * MULTIPLE_FOR_SLIDER
 
-        const val MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER =
-            MINUTE_HAND_LENGTH_FRACTION_DEFAULT * MULTIPLE_FOR_SLIDER
+        // const val MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER =
+        //     MINUTE_HAND_LENGTH_FRACTION_DEFAULT * MULTIPLE_FOR_SLIDER
 
-        private fun multiplyByMultipleForSlider(lengthFraction: Double) =
-            lengthFraction * MULTIPLE_FOR_SLIDER
+        // private fun multiplyByMultipleForSlider(lengthFraction: Double) =
+        //     lengthFraction * MULTIPLE_FOR_SLIDER
     }
 }

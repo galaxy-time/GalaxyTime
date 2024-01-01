@@ -42,12 +42,12 @@ class WatchFaceService : WatchFaceService() {
   override fun createUserStyleSchema(): UserStyleSchema =
   createUserStyleSchema(context = applicationContext)
 
-  // override fun createComplicationSlotsManager(
-	  //     currentUserStyleRepository: CurrentUserStyleRepository
-	  // ): ComplicationSlotsManager = createComplicationSlotManager(
-		  //     context = applicationContext,
-		  //     currentUserStyleRepository = currentUserStyleRepository
-		  // )
+	override fun createComplicationSlotsManager(
+		currentUserStyleRepository: CurrentUserStyleRepository
+	): ComplicationSlotsManager = createComplicationSlotManager(
+		context = applicationContext,
+		currentUserStyleRepository = currentUserStyleRepository
+	)
 
 	override suspend fun createWatchFace(
 		surfaceHolder: SurfaceHolder,

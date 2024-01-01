@@ -23,9 +23,9 @@ import androidx.lifecycle.lifecycleScope
 
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.databinding.WatchfaceSettingsBinding
-import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
-import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
-import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
+// import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
+// import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
+// import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
 
 import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
@@ -60,6 +60,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
         // Disable widgets until data loads and values are set.
         binding.colorStylePickerButton.isEnabled = false
         // binding.ticksEnabledSwitch.isEnabled = false
+		// binding.backgroundImage.isEnabled = false
         // binding.minuteHandLengthSlider.isEnabled = false
 
         // Set max and min.
@@ -110,7 +111,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 
     private fun enabledWidgets() {
         binding.colorStylePickerButton.isEnabled = true
-		// binding.backgroundImageEnables.isEnabled = false
+		// binding.backgroundImage.isEnabled = false
         // binding.ticksEnabledSwitch.isEnabled = true
         // binding.minuteHandLengthSlider.isEnabled = true
     }
@@ -125,14 +126,24 @@ class WatchFaceSettingsActivity : ComponentActivity() {
         stateHolder.setColorStyle(newColorStyle.id)
     }
 
-    // fun onClickLeftComplicationButton(view: View) {
-    //     Log.d(TAG, "onClickLeftComplicationButton() $view")
-    //     stateHolder.setComplication(LEFT_COMPLICATION_ID)
+    // fun onClickTopLeftComplicationButton(view: View) {
+    //     Log.d(TAG, "onClickTopLeftComplicationButton() $view")
+    //     stateHolder.setComplication(TOP_LEFT_COMPLICATION_ID)
     // }
 
-    // fun onClickRightComplicationButton(view: View) {
-    //     Log.d(TAG, "onClickRightComplicationButton() $view")
-    //     stateHolder.setComplication(RIGHT_COMPLICATION_ID)
+    // fun onClickTopRightComplicationButton(view: View) {
+    //     Log.d(TAG, "onClickTopRightComplicationButton() $view")
+    //     stateHolder.setComplication(TOP_RIGHT_COMPLICATION_ID)
+    // }
+
+	// fun onClickBottomLeftComplicationButton(view: View) {
+    //     Log.d(TAG, "onClickBottomLeftComplicationButton() $view")
+    //     stateHolder.setComplication(BOTTOM_LEFT_COMPLICATION_ID)
+    // }
+
+    // fun onClickBottomRightComplicationButton(view: View) {
+    //     Log.d(TAG, "onClickBottomRightComplicationButton() $view")
+    //     stateHolder.setComplication(BOTTOM_RIGHT_COMPLICATION_ID)
     // }
 
     // fun onClickTicksEnabledSwitch(view: View) {

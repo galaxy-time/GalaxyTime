@@ -1,5 +1,5 @@
 //
-// 	biometrics view shows hydration rate and heart rate
+// 	astronomics view shows distances from earth
 //
 //
 //
@@ -46,10 +46,6 @@ import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.conver
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
 import jp.lab75.galaxytime.data.watchface.WatchMode
 
-import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
-import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
-
 import java.time.Duration
 import java.time.ZonedDateTime
 import kotlin.math.cos
@@ -60,29 +56,45 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
- fun renderBiometricsView(
+private lateinit var gradientImage: Bitmap
+
+ fun renderAstronomicsView(
 	context: Context,
 	canvas: Canvas,
 	bounds: Rect,
 	defaultStyle: Paint,
 ) {
 
-	var watchFaceData: WatchFaceData = WatchFaceData()
-	var watchFaceColors = convertToWatchFaceColorPalette(
-		context,
-		watchFaceData.activeColorStyle,
-		watchFaceData.ambientColorStyle
+	// var watchFaceData: WatchFaceData = WatchFaceData()
+	// var watchFaceColors = convertToWatchFaceColorPalette(
+	// 	context,
+	// 	watchFaceData.activeColorStyle,
+	// 	watchFaceData.ambientColorStyle
+	// )
+
+	// val resources: Resources = context.resources
+
+	// gradient
+	// val gradientBitmap = BitmapFactory.decodeResource(resources, R.drawable.outergradient)
+	// gradientImage = Bitmap.createScaledBitmap(gradientBitmap, bounds.width(), bounds.height(), false)
+	// canvas.drawBitmap( gradientImage, bounds, bounds, null )
+
+	val style = Paint().apply {
+        isAntiAlias = true
+		style = Paint.Style.STROKE
+		color = Color.WHITE
+    }
+	// val centerX = 0.5f * bounds.width().toFloat()
+	val centerY = 0.5f * bounds.height().toFloat()
+	// val radius = 0.5f * bounds.width()
+
+	canvas.drawLine(
+		0f,
+		centerY,
+		bounds.width().toFloat(),
+		centerY,
+		style
 	)
-
-	val centerX = bounds.exactCenterX().toFloat()
-	val centerY = bounds.exactCenterY().toFloat()
-	val radius = bounds.exactCenterX().toFloat()
-
-	// val style = Paint().apply {
-    //     isAntiAlias = true
-	// 	color = Color.WHITE
-	// 	// style = Paint.Style.STROKE
-	// }
 
 	// canvas.drawCircle(
 	// 	centerX,
@@ -91,19 +103,6 @@ import kotlinx.coroutines.launch
 	// 	style
 	// )
 
-	val str = "BIOMETRICS"
-	val textBounds = Rect()
-	defaultStyle.color = watchFaceColors.activeOuterElementColor
-	defaultStyle.textSize = 20f
-	defaultStyle.getTextBounds( str, 0, 5, textBounds )
-	defaultStyle.textAlign = Paint.Align.CENTER
-
-	canvas.drawText(
-		str,
-		centerX,
-		centerY,
-		defaultStyle
-	)
 
 }
 

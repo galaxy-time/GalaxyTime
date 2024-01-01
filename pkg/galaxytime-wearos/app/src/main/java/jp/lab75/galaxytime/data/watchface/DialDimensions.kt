@@ -15,9 +15,9 @@
  */
 package jp.lab75.galaxytime.data.watchface
 
-data class ArmDimensions(
-    val lengthFraction: Float,
-    val widthFraction: Float,
-    val xRadiusRoundedCorners: Float,
-    val yRadiusRoundedCorners: Float
+data class DialDimensions(
+    val secondWidth: Float,
+    val minuteBarWidth: Float,
+    val hourBarWidth: Float,
+    val dayBarWidth: Float
 )

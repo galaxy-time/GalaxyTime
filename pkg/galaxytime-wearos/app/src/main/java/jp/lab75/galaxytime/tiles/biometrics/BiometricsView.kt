@@ -1,8 +1,9 @@
 //
-// 	calendar view shows meetings and events
+// 	biometrics view shows hydration rate and heart rate
 //
 //
 //
+
 package jp.lab75.galaxytime
 
 import android.content.Context
@@ -45,10 +46,6 @@ import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.conver
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
 import jp.lab75.galaxytime.data.watchface.WatchMode
 
-import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
-import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
-
 import java.time.Duration
 import java.time.ZonedDateTime
 import kotlin.math.cos
@@ -59,13 +56,11 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-private lateinit var gradientImage: Bitmap
-
- fun renderCalendarView(
+fun renderBiometricsView(
 	context: Context,
 	canvas: Canvas,
 	bounds: Rect,
-	defaultStyle: Paint,
+	style: Paint,
 ) {
 
 	var watchFaceData: WatchFaceData = WatchFaceData()
@@ -75,33 +70,37 @@ private lateinit var gradientImage: Bitmap
 		watchFaceData.ambientColorStyle
 	)
 
-	val style = Paint().apply {
-		isAntiAlias = true
-		style = Paint.Style.FILL_AND_STROKE
-        textSize = 20f
-	}
-	val centerX = 0.5f * bounds.width().toFloat()
-	val centerY = 0.5f * bounds.height().toFloat()
-	val radius = 0.5f * bounds.width()
+	val centerX = bounds.exactCenterX().toFloat()
+	val centerY = bounds.exactCenterY().toFloat()
+	// val radius = bounds.exactCenterX().toFloat()
 
-	canvas.drawCircle(
-		centerX,
-		centerY,
-		radius,
-		style
-	)
+	// val style = Paint().apply {
+    //     isAntiAlias = true
+	// 	color = Color.WHITE
+	// 	// style = Paint.Style.STROKE
+	// }
 
-	val str = "CALENDAR"
+	// canvas.drawCircle(
+	// 	centerX,
+	// 	centerY,
+	// 	radius,
+	// 	style
+	// )
+
+	val str = "BIOMETRICS"
 	val textBounds = Rect()
 	style.color = watchFaceColors.activeOuterElementColor
+	style.textSize = 20f
 	style.getTextBounds( str, 0, 5, textBounds )
+	style.textAlign = Paint.Align.CENTER
 
 	canvas.drawText(
 		str,
-		bounds.exactCenterX() - textBounds.width() / 2,
-		bounds.exactCenterY() - textBounds.height() / 2,
+		centerX,
+		centerY,
 		style
 	)
+
 }
 
 

@@ -75,7 +75,7 @@
 
     <!-- Menu option within the complications configuration widget that lets us select both
     the left and the right complication for rendering. [CHAR LIMIT=20] -->
-    <string name="watchface_complications_setting_both">Both</string>
+    <string name="watchface_complications_setting_both">All</string>
 
     <!-- Menu option within the complications configuration widget that lets us select no
     complications for rendering. [CHAR LIMIT=20] -->

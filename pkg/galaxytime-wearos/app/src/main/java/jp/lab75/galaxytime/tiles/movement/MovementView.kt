@@ -45,10 +45,6 @@ import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.conver
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
 import jp.lab75.galaxytime.data.watchface.WatchMode
 
-import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
-import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
-
 import java.time.Duration
 import java.time.ZonedDateTime
 import kotlin.math.cos
@@ -94,13 +90,16 @@ private lateinit var gradientImage: Bitmap
 
 	val str = "MOVEMENT"
 	val textBounds = Rect()
-	style.getTextBounds( str, 0, str.length, textBounds )
+	defaultStyle.color = watchFaceColors.activeOuterElementColor
+	defaultStyle.textSize = 20f
+	defaultStyle.getTextBounds( str, 0, 5, textBounds )
+	defaultStyle.textAlign = Paint.Align.CENTER
 
 	canvas.drawText(
 		str,
 		centerX,
 		centerY,
-		style
+		defaultStyle
 	)
 }
 

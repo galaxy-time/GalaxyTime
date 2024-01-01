@@ -80,13 +80,17 @@ dependencies {
 	// Compose preview annotations for Wear OS.
 	implementation "androidx.wear.compose:compose-ui-tooling:$wear_compose_version"
 
+    // implementation libs.horologist.compose.tools
+    // implementation libs.horologist.tiles
 
 	implementation libs.androidx.compose.foundation
 	implementation libs.androidx.compose.ui.tooling
 
     // Kotlin components
+    // implementation libs.coil
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
+    // implementation libs.kotlinx.coroutines.guava
 
 	// Material components
 	implementation libs.android.material
@@ -108,4 +112,8 @@ dependencies {
     implementation libs.wear.watchface.style
 	implementation libs.appcompat
 	implementation libs.preference
+
+    // implementation libs.androidx.wear.tooling.preview
+    // implementation libs.compose.ui.tooling.preview
+    // debugImplementation libs.androidx.ui.tooling
 }
