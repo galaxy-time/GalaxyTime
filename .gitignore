@@ -2,3 +2,6 @@
 pkg/wfs/GalaxyTime/**
 pkg/galaxytime-wearos/app/debug/app-debug.aab
 pkg/galaxytime-wearos/app/release/app-release.aab
+pkg/astronomy
+pkg/galaxytime
+keys

@@ -1,4 +1,4 @@
-# Galaxy Time Wear OS App +  WatchFace
+# Galaxy Time Wear OS App + WatchFace
 
 ## License
 

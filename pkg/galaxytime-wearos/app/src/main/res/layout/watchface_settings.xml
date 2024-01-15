@@ -81,9 +81,8 @@
             android:contentDescription="@string/settings_change_color_style_button_content_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/more_options_image_view" />
+            app:layout_constraintTop_toBottomOf="@+id/post_content_spacer" />
 <!--
-
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/ticks_enabled_switch"
             android:layout_width="0dp"
@@ -138,6 +137,6 @@
             android:layout_height="@dimen/settings_spacer_height_post_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/minute_hand_length_slider" />
+            app:layout_constraintTop_toBottomOf="@+id/color_style_picker_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

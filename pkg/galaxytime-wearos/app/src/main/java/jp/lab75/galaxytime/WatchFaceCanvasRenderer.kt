@@ -72,9 +72,8 @@ import android.animation.ValueAnimator
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 
-//	shaders
-import android.graphics.RuntimeShader
-
+//	SHADERS — NEEDS MORE RESEARCH, SHADERS DO NOT SEEM TO BE STABLE OR WELL DOCUMENTED ATM
+// import android.graphics.RuntimeShader
 // Default for how long each frame is displayed at expected frame rate.
 private const val FRAME_PERIOD_MS_DEFAULT: Long = 16L
 
@@ -104,33 +103,37 @@ class WatchFaceCanvasRenderer(
 
 	var watchMode: WatchMode = WatchMode.WATCH
 	var nextWatchMode: WatchMode = WatchMode.WATCH
-
 	private enum class TransitionMode { IN, OUT, IDLE }
 	private enum class TapZone { TL, TR, BL, BR }
 	private var transitionMode: TransitionMode = TransitionMode.IDLE
 	private var prevMode: TransitionMode = TransitionMode.IDLE
-
 	private var transitionAlpha = 0f
 
+
 	override fun onTapEvent( tapType: Int, tapEvent: TapEvent, complicationSlot: ComplicationSlot? ) {
-		// TODO: add touch segments to trigger different scenes
 
-		Log.d(TAG, "$tapEvent.x, $tapEvent.y")
-
-
-
-		// this only toggles through all available views.
-		// remove when todo above is resolved.
+		// ON TAP UP WE TRANSITION THE VIEW TO EITHER ONE OF THE APP VIEWS OR BACK TO WATCH MODE.
+		// WE SIMPLY DIVIDE THE WATCH VIEW INTO FOUR QUADRANTS TO MAKE IT EEASY TO HIT.
+		// NEXT VERSION CAN USE A SEPARATE CIRCULAR OBJECT IN THE MIDDLE SO WE CAN TRIGGER A 
+		// FIFTH VIEW.
 		if ( tapType == TapType.UP ) {
-			nextWatchMode = when ( watchMode ) {
-				WatchMode.WATCH -> WatchMode.BIOMETRICS
-				WatchMode.BIOMETRICS -> WatchMode.ASTRONOMICS
-				WatchMode.ASTRONOMICS -> WatchMode.CALENDAR
-				WatchMode.CALENDAR -> WatchMode.MOVEMENT
-				WatchMode.MOVEMENT -> WatchMode.WATCH
+			// RETURN TO WATCH
+			if ( watchMode != WatchMode.WATCH ) { nextWatchMode = WatchMode.WATCH }
+			// TRANSITION TO VIEW
+			else {
+				if ( tapEvent.xPos < currentWatchFaceSize.width() / 2 ) {
+					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.BIOMETRICS
+					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.ASTRONOMICS
+				}
+				if ( tapEvent.xPos > currentWatchFaceSize.width() / 2 ) {
+					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.CALENDAR
+					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.MOVEMENT
+				}
 			}
+
 			if ( prevMode == TransitionMode.IDLE && nextWatchMode != watchMode ) fadeOut()
 			Log.d(TAG, "next mode $nextWatchMode")
+
 		}
 		invalidate()
 	}
@@ -188,7 +191,7 @@ class WatchFaceCanvasRenderer(
 	}
 
 	//
-	// data
+	// DATA
 	//
 
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -196,7 +199,7 @@ class WatchFaceCanvasRenderer(
 	private val resources: Resources = context.resources
 
 	//
-	//	color, text, type and size defaults
+	//	COLOR, TEXT, TYPE AND SIZE DEFAULTS
 	//
 
 	private var watchFaceColors = convertToWatchFaceColorPalette(
@@ -218,7 +221,7 @@ class WatchFaceCanvasRenderer(
 
 	private val typeface = resources.getFont(R.font.pp_stellar)
 
-	// general text
+	// GENERAL TEXT
     private val textPaint = Paint().apply {
         isAntiAlias = true
 		color = Color.GREEN
@@ -272,7 +275,7 @@ class WatchFaceCanvasRenderer(
     }
 
 	//
-	//	update theme
+	//	UPDATE THEME
 	//
 
     private fun updateWatchFaceData(userStyle: UserStyle) {
@@ -287,7 +290,7 @@ class WatchFaceCanvasRenderer(
 
         var newWatchFaceData: WatchFaceData = watchFaceData
 
-        // Loops through user style and applies new values to watchFaceData.
+        // LOOPS THROUGH USER STYLE AND APPLIES NEW VALUES TO WATCHFACEDATA.
         for (options in userStyle) {
 
             when (options.key.id.toString()) {
@@ -318,20 +321,20 @@ class WatchFaceCanvasRenderer(
             }
         }
 
-        // Only updates if something changed.
+        // ONLY UPDATES IF SOMETHING CHANGED.
         if (watchFaceData != newWatchFaceData) {
             watchFaceData = newWatchFaceData
 
-            // Recreates Color and ComplicationDrawable from resource ids.
+            // RECREATES COLOR AND COMPLICATIONDRAWABLE FROM RESOURCE IDS.
             watchFaceColors = convertToWatchFaceColorPalette(
                 context,
                 watchFaceData.activeColorStyle,
                 watchFaceData.ambientColorStyle
             )
 
-            // Applies the user chosen complication color scheme changes. ComplicationDrawables for
-            // each of the styles are defined in XML so we need to replace the complication's
-            // drawables.
+            // APPLIES THE USER CHOSEN COMPLICATION COLOR SCHEME CHANGES. COMPLICATIONDRAWABLES FOR
+            // EACH OF THE STYLES ARE DEFINED IN XML SO WE NEED TO REPLACE THE COMPLICATION'S
+            // DRAWABLES.
             for ((_, complication) in complicationSlotsManager.complicationSlots) {
                 ComplicationDrawable.getDrawable(
                     context,
@@ -345,7 +348,7 @@ class WatchFaceCanvasRenderer(
     }
 
 	//
-	//	destroy
+	//	DESTROY
 	//
 
     override fun onDestroy() {
@@ -355,7 +358,7 @@ class WatchFaceCanvasRenderer(
     }
 
 	//
-	//	complication highlights
+	//	COMPLICATION HIGHLIGHTS
 	//
 
     override fun renderHighlightLayer(
@@ -376,7 +379,7 @@ class WatchFaceCanvasRenderer(
     }
 
 	//
-	//	main render loop
+	//	MAIN RENDER LOOP
 	//
 
 	override fun render(
@@ -388,29 +391,20 @@ class WatchFaceCanvasRenderer(
 
 		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
 
-		// val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
-		// 	watchFaceColors.ambientBackgroundColor
-        // } else {
-		// 	watchFaceColors.activeBackgroundColor
-        // }
-        // canvas.drawColor( backgroundColor )
+		val backgroundColor = if ( renderParameters.drawMode == DrawMode.AMBIENT ) { watchFaceColors.ambientBackgroundColor }
+        else { watchFaceColors.activeBackgroundColor }
+        canvas.drawColor( backgroundColor )
 
-		// watchface states
+		// RENDER WATCHFACE STATES
 		if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
-
-			// if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
-			// if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
-			// if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds, textPaint)
-			// if ( watchMode == WatchMode.CALENDAR ) renderCalendarView(context, canvas, bounds, textPaint)
-			// if ( watchMode == WatchMode.MOVEMENT ) renderMovementView(context, canvas, bounds, textPaint)
-
-			renderMovementView(context, canvas, bounds, textPaint)
-
+			if ( watchMode == WatchMode.WATCH ) renderWatchView(context, canvas, bounds, zonedDateTime)
+			if ( watchMode == WatchMode.BIOMETRICS ) renderBiometricsView(context, canvas, bounds, textPaint)
+			if ( watchMode == WatchMode.ASTRONOMICS ) renderAstronomicsView(context, canvas, bounds, textPaint)
+			if ( watchMode == WatchMode.CALENDAR ) renderCalendarView(context, canvas, bounds, textPaint)
+			if ( watchMode == WatchMode.MOVEMENT ) renderMovementView(context, canvas, bounds, textPaint)
 		} else if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
-
 			val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
 			drawGradientArc( canvas, bounds,   0f, 200f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
-
 		}
 
 		// gradient
@@ -418,21 +412,22 @@ class WatchFaceCanvasRenderer(
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT && watchMode == WatchMode.WATCH ) {
 			// lunette overlay
-			// drawLunette( canvas, bounds )
-			// text zones
-			// drawTextZones(canvas, bounds, themeName, zonedDateTime )
+			drawLunette( canvas, bounds )
+			// text zone
+			drawTextZones(canvas, bounds, themeName, zonedDateTime )
 		}
 
-		// overlay transition
+		// TRANSITION OVERLAY
 		val paint = Paint().apply { alpha = transitionAlpha.toInt() }
 		canvas.drawPaint(paint)
 
+		// SHADER CURRENTLY DISABLED
 		// drawShaderLayer( canvas, bounds, zonedDateTime )
 
 	}
 
 	//
-	//	shader
+	//	SHADER
 	//
 
 	// @Language("AGSL")
@@ -446,7 +441,6 @@ class WatchFaceCanvasRenderer(
 	// """.trimIndent()
 
 	private fun drawShaderLayer(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
-
 		// Log.d(TAG, "drawShaderLayer()")
 		// val shaderSource = RuntimeShader( SIMPLE )
 		// 	shaderSource.setFloatUniform( "resolution", bounds.width().toFloat(), bounds.height().toFloat() )
