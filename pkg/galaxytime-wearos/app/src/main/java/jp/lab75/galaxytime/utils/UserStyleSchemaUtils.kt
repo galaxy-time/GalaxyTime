@@ -57,8 +57,7 @@ fun createUserStyleSchema(context: Context): UserStyleSchema {
             )
         )
 
-    // 2. Allows user to toggle on/off the hour pips (dashes around the outer edge of the watch
-    // face).
+    // 2. Allows user to toggle on/off the hour pips
     val drawHourPipsStyleSetting = UserStyleSetting.BooleanUserStyleSetting(
         UserStyleSetting.Id(DRAW_HOUR_PIPS_STYLE_SETTING),
         context.resources,

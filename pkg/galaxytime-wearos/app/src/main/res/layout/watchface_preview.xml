@@ -23,7 +23,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/analog_complication_settings_preview_size"
     android:layout_height="@dimen/analog_complication_settings_preview_size"
-    tools:context=".editor.WatchFaceSettingsActivity">
+    tools:context=".editor.WatchFaceSettingsActivity"
+    android:fontFamily="@font/stellar"
+    >
 
     <!-- <Button
         android:id="@+id/left_complication"
@@ -60,7 +62,8 @@
         android:textSize="10sp"
         android:visibility="visible"
         tools:layout_editor_absoluteX="88dp"
-        tools:layout_editor_absoluteY="141dp" />
+        tools:layout_editor_absoluteY="141dp"
+        android:fontFamily="@font/stellar" />
 
     <ImageView
         android:id="@+id/watch_face_seconds"
@@ -79,7 +82,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mm" />
+        app:srcCompat="@drawable/mm"
+        android:fontFamily="@font/stellar" />
 
     <ImageView
         android:id="@+id/watch_face_background"
@@ -92,6 +96,7 @@
         android:padding="@dimen/watchface_preview_background_padding"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:fontFamily="@font/stellar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

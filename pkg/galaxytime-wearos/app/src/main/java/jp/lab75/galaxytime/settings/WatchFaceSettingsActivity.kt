@@ -23,9 +23,9 @@ import androidx.lifecycle.lifecycleScope
 
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.databinding.WatchfaceSettingsBinding
-// import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
-// import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
-// import jp.lab75.galaxytime.settings.WatchFaceSettingsState.Companion.MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
+// import jp.lab75.galaxytime.settings.SettingsState.Companion.MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
+// import jp.lab75.galaxytime.settings.SettingsState.Companion.MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
+// import jp.lab75.galaxytime.settings.SettingsState.Companion.MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
 
 import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
@@ -116,6 +116,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
         // binding.minuteHandLengthSlider.isEnabled = true
     }
 
+    // TODO: this needs a propoer dropdown or scroll selector
     fun onClickColorStylePickerButton(view: View) {
         Log.d(TAG, "onClickColorStylePickerButton() $view")
 

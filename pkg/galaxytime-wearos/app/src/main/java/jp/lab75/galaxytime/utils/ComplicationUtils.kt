@@ -21,7 +21,9 @@ import android.graphics.RectF
 import androidx.wear.watchface.CanvasComplicationFactory
 import androidx.wear.watchface.ComplicationSlot
 import androidx.wear.watchface.ComplicationSlotsManager
+// import androidx.wear.watchface.complications.BoundingArc
 import androidx.wear.watchface.complications.ComplicationSlotBounds
+// import androidx.wear.watchface.complications.ComplicationTapFilter
 import androidx.wear.watchface.complications.DefaultComplicationDataSourcePolicy
 import androidx.wear.watchface.complications.SystemDataSources
 import androidx.wear.watchface.complications.data.ComplicationType
@@ -65,80 +67,102 @@ fun createComplicationSlotManager(
 ): ComplicationSlotsManager {
 
 	val defaultCanvasComplicationFactory =
-	CanvasComplicationFactory { watchState, listener ->
+	CanvasComplicationFactory {watchState, listener ->
 		CanvasComplicationDrawable(
 			ComplicationDrawable.getDrawable(context, drawableId)!!,
 			watchState,
 			listener
-            )
-        }
-
-		val topLeftComplication = ComplicationSlot.createRoundRectComplicationSlotBuilder(
-			id = ComplicationConfig.TopLeft.id,
-			canvasComplicationFactory = defaultCanvasComplicationFactory,
-			supportedTypes = ComplicationConfig.TopLeft.supportedTypes,
-			defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
-				// TODO: DATA_SOURCE based on the respective segment.
-				SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
-				ComplicationType.LONG_TEXT
-				),
-		// TODO: check custom complication geometry,
-		// as we need the full canvas and inside a segment
-        bounds = ComplicationSlotBounds(
-            RectF()
         )
-    ).build()
+    }
 
-	val topRightComplication = ComplicationSlot.createRoundRectComplicationSlotBuilder(
-        id = ComplicationConfig.TopRight.id,
-        canvasComplicationFactory = defaultCanvasComplicationFactory,
-        supportedTypes = ComplicationConfig.TopRight.supportedTypes,
-        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
-			// TODO: DATA_SOURCE based on the respective segment.
-            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
-            ComplicationType.LONG_TEXT
-        ),
-		// TODO: check custom complication geometry,
-		// as we need the full canvas and inside a segment
-        bounds = ComplicationSlotBounds(
-            RectF()
-        )
-    ).build()
+    // .addComplicationSlot(EdgeComplicationSlot.createEdgeComplicationSlotBuilder(
+    //     COMPLICATION_ID_1,
+    //     this::onComplicationDataUpdate,
+    //     new int[]{ComplicationType.SHORT_TEXT, ComplicationType.RANGED_VALUE, ComplicationType.SMALL_IMAGE},
+    //     DefaultComplicationDataSourcePolicy(SystemDataSources.DATA_SOURCE_DAY_OF_WEEK),
+    //     ComplicationSlotBounds(RectF(0.1f, 0.1f, 0.2f, 0.2f))
+    // ).build()
 
-	val bottomLeftComplication = ComplicationSlot.createRoundRectComplicationSlotBuilder(
-        id = ComplicationConfig.BottomLeft.id,
-        canvasComplicationFactory = defaultCanvasComplicationFactory,
-        supportedTypes = ComplicationConfig.BottomLeft.supportedTypes,
-        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
-			// TODO: DATA_SOURCE based on the respective segment.
-            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
-            ComplicationType.LONG_TEXT
-        ),
-		// TODO: check custom complication geometry,
-		// as we need the full canvas and inside a segment
-        bounds = ComplicationSlotBounds(
-            RectF()
-        )
-    ).build()
+//    val topLeftComplication = ComplicationSlot.createEdgeComplicationSlotBuilder(
+//        id = ComplicationConfig.TopLeft.id,
+//        canvasComplicationFactory = defaultCanvasComplicationFactory,
+//        supportedTypes = ComplicationConfig.TopLeft.supportedTypes,
+//        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
+//            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
+//            ComplicationType.LONG_TEXT
+//        ),
+//        bounds = ComplicationSlotBounds(
+//            RectF(0f,0f,context.canvas.bounds.width()/2f,context.canvas.bounds.height()/2f)
+//        )
+        // TODO
+        // boundingArc = BoundingArc(
+        //     0f,
+        //     90f,
+        //     10f
+        // ),
+        // TODO
+        // complicationTapFilter = ComplicationTapFilter(
+        // )
+//    ).build()
 
-	val bottomRightComplication = ComplicationSlot.createRoundRectComplicationSlotBuilder(
-        id = ComplicationConfig.BottomRight.id,
-        canvasComplicationFactory = defaultCanvasComplicationFactory,
-        supportedTypes = ComplicationConfig.BottomRight.supportedTypes,
-        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
-			// TODO: DATA_SOURCE based on the respective segment.
-            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
-            ComplicationType.LONG_TEXT
-        ),
-		// TODO: check custom complication geometry,
-		// as we need the full canvas and inside a segment
-        bounds = ComplicationSlotBounds(
-            RectF()
-        )
-    ).build()
+//	val topRightComplication = ComplicationSlot.createEdgeComplicationSlotBuilder(
+//        id = ComplicationConfig.TopRight.id,
+//        canvasComplicationFactory = defaultCanvasComplicationFactory,
+//        supportedTypes = ComplicationConfig.TopRight.supportedTypes,
+//        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
+//            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
+//            ComplicationType.LONG_TEXT
+//        ),
+//        bounds = ComplicationSlotBounds(
+//            RectF(canvas.bounds.width()/2f,0f,context.canvas.bounds.width()/2f,context.canvas.bounds.height()/2f)
+//        )
+        // TODO
+        // boundingArc = BoundingArc(),
+        // TODO
+        // complicationTapFilter = ComplicationTapFilter()
+//    ).build()
+
+//	val bottomLeftComplication = ComplicationSlot.createEdgeComplicationSlotBuilder(
+//        id = ComplicationConfig.BottomLeft.id,
+//        canvasComplicationFactory = defaultCanvasComplicationFactory,
+//        supportedTypes = ComplicationConfig.BottomLeft.supportedTypes,
+//        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
+//            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
+//            ComplicationType.LONG_TEXT
+//        ),
+//        bounds = ComplicationSlotBounds(
+//            RectF(0f,context.canvas.bounds.height()/2f,context.canvas.bounds.width()/2f,context.canvas.bounds.height()/2f)
+//        )
+        // TODO
+        // boundingArc = BoundingArc(),
+        // TODO
+        // complicationTapFilter = ComplicationTapFilter()
+//    ).build()
+
+//	val bottomRightComplication = ComplicationSlot.createEdgeComplicationSlotBuilder(
+//        id = ComplicationConfig.BottomRight.id,
+//        canvasComplicationFactory = defaultCanvasComplicationFactory,
+//        supportedTypes = ComplicationConfig.BottomRight.supportedTypes,
+//        defaultDataSourcePolicy = DefaultComplicationDataSourcePolicy(
+//            SystemDataSources.DATA_SOURCE_DAY_OF_WEEK,
+//            ComplicationType.LONG_TEXT
+//        ),
+//        bounds = ComplicationSlotBounds(
+//            RectF(context.canvas.bounds.width()/2f,context.canvas.bounds.height()/2f,context.canvas.bounds.width()/2f,context.canvas.bounds.height()/2f)
+//        )
+        // TODO
+        // boundingArc = BoundingArc(),
+        // TODO
+        // complicationTapFilter = ComplicationTapFilter()
+//    ).build()
 
     return ComplicationSlotsManager(
-        listOf(topLeftComplication, topRightComplication, bottomLeftComplication, bottomRightComplication),
+        listOf(
+//			topLeftComplication,
+//			topRightComplication,
+//			bottomLeftComplication,
+//			bottomRightComplication
+		),
         currentUserStyleRepository
     )
 }

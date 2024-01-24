@@ -42,7 +42,7 @@ import androidx.wear.watchface.style.UserStyleSetting
 import androidx.wear.watchface.style.WatchFaceLayer
 
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
-import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToWatchFaceColorPalette
+import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
 import jp.lab75.galaxytime.data.watchface.WatchMode
 
