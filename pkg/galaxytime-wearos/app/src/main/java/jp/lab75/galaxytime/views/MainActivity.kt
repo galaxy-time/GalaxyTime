@@ -41,23 +41,12 @@ class MainActivity : ComponentActivity() {
 			WearApp("GalaxyTime App")
 		}
 
-		try {
-			var uri = getIntent().getData()
-			Log.d( TAG, "main: $uri")
-		} catch( e: Error ) {
-			Log.e( TAG, "$e")
-			// startActivity( FindTable.start(FindTablePublic.this));
-			finish()
-			return
-       }
-
 	}
 
 	companion object {
         const val TAG = "MainActivity"
 	}
 }
-
 
 @Composable
 fun WearApp(greetingName: String) {
@@ -68,7 +57,7 @@ fun WearApp(greetingName: String) {
 				.background(MaterialTheme.colors.background),
 			contentAlignment = Alignment.Center
 		) {
-			TimeText()
+			// TimeText()
 			Greeting(greetingName = greetingName)
 		}
 	}

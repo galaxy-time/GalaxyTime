@@ -1,5 +1,5 @@
 //
-// 	biometrics view shows hydration rate and heart rate
+// 	astronomics view shows distances from earth
 //
 //
 //
@@ -14,10 +14,10 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.Color
-
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.BlendMode
 
 import android.util.Log
 import android.view.SurfaceHolder
@@ -63,35 +63,41 @@ private val typePadding = 20f
 private val size = 20f
 private val fontSize = 20f
 
-// draw a line of text vertically aligned at the given position
+//
+//
+//
 
-fun addText( x: Float, y: Float, string: String, style: Paint, canvas: Canvas ) {
-	val str = string
-	val bounds = Rect()
-	style.getTextBounds( str, 0, str.length, bounds )
-	canvas.drawText( str, x, y - bounds.exactCenterY(), style )
-}
+fun drawCompass( context: Context, canvas: Canvas, bounds: Rect, textStyle: Paint ) {
 
-// draw a vertical range of steps from start to end
+	val HOUR_MARKS = arrayOf("E", "S", "W", "N")
+	var radius = 100f
+	val textBounds = Rect()
 
-fun addRange( x:Float, y: Float, height: Float, steps: Int, start: Int, end: Int, style: Paint, canvas: Canvas ) {
-	for ( i in 0..steps ) {
-		val c = -i
-		addText(
-			x,
-			y + i * height / steps.toFloat(),
-			"$c",
-			style,
-			canvas
+
+	for (i in 0 until 4) {
+
+		val rotation = 0.5f * (i + 1).toFloat() * Math.PI
+		val dx = sin(rotation).toFloat() * radius * bounds.width().toFloat()
+		val dy = -cos(rotation).toFloat() * radius * bounds.width().toFloat()
+
+		textStyle.getTextBounds(HOUR_MARKS[i], 0, HOUR_MARKS[i].length, textBounds)
+
+		canvas.drawText(
+			HOUR_MARKS[i],
+			bounds.exactCenterX() + dx - textBounds.width() / 2.0f,
+			bounds.exactCenterY() + dy + textBounds.height() / 2.0f,
+			textStyle
 		)
+
 	}
+
 }
 
-//
+	//
 //
 //
 
-fun renderBiometricsView(
+fun renderDirectionsView(
 	context: Context,
 	canvas: Canvas,
 	bounds: Rect,
@@ -107,14 +113,40 @@ fun renderBiometricsView(
 		watchFaceData.ambientColorStyle
 	)
 
+	val t_n = "N"
+	val t_e = "E"
+	val t_s = "S"
+	val t_w = "W"
+
+	val target_name = watchFaceData.activeColorStyle.toString()
+	val target_info = "1234˚ NW"
+	val target_direction = 234f
+
 	// background
 
-	val backgroundBitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_hydration )
-	backgroundImage = Bitmap.createScaledBitmap( backgroundBitmap, bounds.width(), bounds.height(), false )
-	
-	canvas.drawBitmap( backgroundImage, bounds, bounds, null )
+	// val backgroundBitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_planet_neutral )
+	// backgroundImage = Bitmap.createScaledBitmap( backgroundBitmap, bounds.width(), bounds.height(), false )
+	// canvas.drawBitmap( backgroundImage, bounds, bounds, null )
+
+	// val overlayColor = watchFaceColors.activePrimaryColor
+	// canvas.drawColor( overlayColor, BlendMode.OVERLAY )
 
 	// view
+
+	drawCompass( context, canvas, bounds, textStyle )
+	// drawArrow( canvas, 123f )
+	// drawInfo( canvas )
+
+	fun drawArrow( canvas: Canvas, direction:Float ) {
+
+		val lineStyle = Paint().apply {
+			isAntiAlias = true
+			strokeWidth = 1f
+			style = Paint.Style.STROKE
+			color = Color.WHITE
+		}
+
+	}
 
 	val lineStyle = Paint().apply {
         isAntiAlias = true
@@ -127,77 +159,31 @@ fun renderBiometricsView(
 	val centerY = 0.5f * bounds.height().toFloat()
 
 	canvas.drawLine(
-		padding + 5,
-		centerY,
-		bounds.width().toFloat() - padding -  5,
-		centerY,
+		centerX,
+		0f,
+		bounds.width().toFloat() - 105f ,
+		centerY - 20f,
 		lineStyle
 	)
-
-	canvas.drawLine(
-		centerX,
-		padding + size + 5,
-		centerX,
-		bounds.height().toFloat() - padding - size - 5,
-		lineStyle
-	)
-
-	// canvas.drawCircle(
-	// 	centerX,
-	// 	centerY,
-	// 	radius,
-	// 	style
-	// )
 
 	textStyle.color = watchFaceColors.activeOuterElementColor
 	textStyle.textSize = fontSize
 	textStyle.textAlign = Paint.Align.CENTER
-	addText( centerX, padding, "HIGH", textStyle, canvas )
-	addText( centerX, bounds.height() - padding, "LOW", textStyle, canvas )
 
-	textStyle.textAlign = Paint.Align.RIGHT
-	addText( centerX - 20f, centerY + 30f, "HYDRATION HRS", textStyle, canvas )
-	addText( centerX - 20f, centerY + 70f, "TAP TO CONFIRM", textStyle, canvas )
-	addText( centerX - 20f, centerY + 90f, "REHYDRATION", textStyle, canvas )
+	val destination = "EARTH"
+	val location  = watchFaceData.activeColorStyle.toString()
+	addText( centerX, centerY - 140f, "$location — $destination", textStyle, canvas )
 
-	val height = bounds.height().toFloat() - padding - padding - size - size - 20
-	addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )
+	textStyle.textAlign = Paint.Align.LEFT
+	// addText( centerX - 140f, centerY + 30f, l1, textStyle, canvas )
+	// addText( centerX - 140f, centerY + 50f, l2, textStyle, canvas )
+	// addText( centerX - 140f, centerY + 70f, l3, textStyle, canvas )
 
-	// val strHi = "HIGH"
-	// val textBoundsHi = Rect()
-	// textStyle.getTextBounds( strHi, 0, strHi.length, textBoundsHi)
-	
-	// canvas.drawText(
-	// 	strHi,
-	// 	centerX,
-	// 	padding - textBoundsHi.exactCenterY(),
-	// 	textStyle
-	// )
-	
-	// val strLo = "LOW"
-	// val textBoundsLo = Rect()
-	// textStyle.getTextBounds( strLo, 0, strLo.length, textBoundsLo)
-	
-	// canvas.drawText(
-	// 	strLo,
-	// 	centerX,
-	// 	bounds.height() - padding - textBoundsLo.exactCenterY(),
-	// 	textStyle
-	// )
-	
-	// val items: String[] = [ "0", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8" ]
-	// textStyle.textAlign = Paint.Align.RIGHT
+	// addText( centerX + 20f, centerY + 30f, r1, textStyle, canvas )
+	// addText( centerX + 20f, centerY + 50f, r2, textStyle, canvas )
+	// addText( centerX + 20f, centerY + 70f, r3, textStyle, canvas )
+	// addText( centerX + 20f, centerY + 90f, r4, textStyle, canvas )
 
-	// for (item in items) {
-	// 	val rect = Rect()
-	// 	textStyle.getTextBounds( item, 0, item.length, rect )
-	// 	canvas.drawText(
-	// 		item,
-	// 		centerX,
-	// 		bounds.height() - padding - rect.exactCenterY(),
-	// 		textStyle
-	// 	)
-	// }
 
 }
 

@@ -52,18 +52,15 @@ data class WatchFaceColorPalette(
             ambientColorStyle: ColorStyleIdAndResourceIds
         ): WatchFaceColorPalette {
             return WatchFaceColorPalette(
-                // Active colors
-                activePrimaryColor = context.getColor(activeColorStyle.primaryColorId),
-                activeSecondaryColor = context.getColor(activeColorStyle.secondaryColorId),
-                activeBackgroundColor = context.getColor(activeColorStyle.backgroundColorId),
-                activeOuterElementColor = context.getColor(activeColorStyle.outerElementColorId),
-                // Complication color style
+                activePrimaryColor          = context.getColor(activeColorStyle.primaryColorId),
+                activeSecondaryColor        = context.getColor(activeColorStyle.secondaryColorId),
+                activeBackgroundColor       = context.getColor(activeColorStyle.backgroundColorId),
+                activeOuterElementColor     = context.getColor(activeColorStyle.outerElementColorId),
                 complicationStyleDrawableId = activeColorStyle.complicationStyleDrawableId,
-                // Ambient colors
-                ambientPrimaryColor = context.getColor(ambientColorStyle.primaryColorId),
-                ambientSecondaryColor = context.getColor(ambientColorStyle.secondaryColorId),
-                ambientBackgroundColor = context.getColor(ambientColorStyle.backgroundColorId),
-                ambientOuterElementColor = context.getColor(ambientColorStyle.outerElementColorId)
+                ambientPrimaryColor         = context.getColor(ambientColorStyle.primaryColorId),
+                ambientSecondaryColor       = context.getColor(ambientColorStyle.secondaryColorId),
+                ambientBackgroundColor      = context.getColor(ambientColorStyle.backgroundColorId),
+                ambientOuterElementColor    = context.getColor(ambientColorStyle.outerElementColorId)
             )
         }
     }

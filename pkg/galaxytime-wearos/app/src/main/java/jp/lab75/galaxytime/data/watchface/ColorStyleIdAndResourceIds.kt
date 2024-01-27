@@ -98,8 +98,6 @@ enum class ColorStyleIdAndResourceIds(
     @ColorRes val backgroundColorId: Int,
     @ColorRes val outerElementColorId: Int
 ) {
-
-	// TODO: we may need ambient colors for all styles
     AMBIENT(
         id = AMBIENT_COLOR_STYLE_ID,
         nameResourceId = AMBIENT_COLOR_STYLE_NAME_RESOURCE_ID,
@@ -110,7 +108,6 @@ enum class ColorStyleIdAndResourceIds(
         backgroundColorId = R.color.ambient_background_color,
         outerElementColorId = R.color.ambient_outer_element_color
     ),
-
 	SUN(
 		id = SUN_COLOR_STYLE_ID,
         nameResourceId = SUN_COLOR_STYLE_NAME_RESOURCE_ID,

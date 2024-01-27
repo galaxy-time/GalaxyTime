@@ -17,8 +17,8 @@
 <resources>
 
 	<!-- splash screen -->
-	<dimen name="splash_width">200sp</dimen>
-	<dimen name="splash_height">72sp</dimen>
+	<dimen name="splash_width">450sp</dimen>
+	<dimen name="splash_height">100sp</dimen>
 
     <!-- constants for watch face element renderer. -->
     <dimen name="hour_mark_size">10sp</dimen>

@@ -103,7 +103,6 @@ class WatchFaceCanvasRenderer(
 		// FIFTH VIEW.
 		if ( tapType == TapType.UP ) {
 
-
 			// val intent: Intent = Intent( "android.intent.action.VIEW" )
 			// try {
 			// 	Log.d(TAG,"intent: $intent")
@@ -123,17 +122,22 @@ class WatchFaceCanvasRenderer(
 //				Log.d( TAG, "complication tapped: $tappedComplicationId" )
 //        	}
 
-			// RETURN TO WATCH
-			if ( watchMode != WatchMode.WATCH ) { nextWatchMode = WatchMode.WATCH }
+			// RETURN TO WATCH MODE WHEN TAP ON LEFT TAP AREA
+			if ( watchMode != WatchMode.WATCH ) {
+				if ( tapEvent.xPos < currentWatchFaceSize.width() / 2 ) {
+					nextWatchMode = WatchMode.WATCH
+				}
+			}
+
 			// TRANSITION TO VIEW
 			else {
 				if ( tapEvent.xPos < currentWatchFaceSize.width() / 2 ) {
-					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.BIOMETRICS
-					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.ASTRONOMICS
+					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.ASTRONOMICS
+					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.BIOMETRICS
 				}
 				if ( tapEvent.xPos > currentWatchFaceSize.width() / 2 ) {
-					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.CALENDAR
-					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.MOVEMENT
+					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.DIRECTIONS
+					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.CALENDAR
 				}
 			}
 
@@ -252,6 +256,7 @@ class WatchFaceCanvasRenderer(
 		isLinearText = true
 		isSubpixelText = true
 		letterSpacing = 0.1f
+		typeface = resources.getFont( R.font.stellar )
     }
 
 	// time zones left
@@ -264,6 +269,7 @@ class WatchFaceCanvasRenderer(
 		isLinearText = true
 		isSubpixelText = true
 		letterSpacing = 0.1f
+		typeface = resources.getFont( R.font.stellar )
 	}
 
 	private var armLengthChangedRecalculateClockHands: Boolean = false
@@ -415,6 +421,7 @@ class WatchFaceCanvasRenderer(
 				//
 				WatchMode.BIOMETRICS	-> renderBiometricsView(context, canvas, bounds, textPaint)
 				WatchMode.ASTRONOMICS	-> renderAstronomicsView(context, canvas, bounds, textPaint)
+				WatchMode.DIRECTIONS	-> renderDirectionsView(context, canvas, bounds, textPaint)
 				WatchMode.CALENDAR		-> renderCalendarView(context, canvas, bounds, textPaint)
 				WatchMode.MOVEMENT		-> renderMovementView(context, canvas, bounds, textPaint)
 			}
@@ -653,60 +660,18 @@ class WatchFaceCanvasRenderer(
         bounds: Rect,
         zonedDateTime: ZonedDateTime
     ) {
-        // Only recalculate bounds (watch face size/surface) has changed or
-		// the arm of one of the clock hands has changed (via user input in the settings).
-        // NOTE: Watch face surface usually only updates one time
-		// (when the size of the device is initially broadcasted).
-        // if (currentWatchFaceSize != bounds || armLengthChangedRecalculateClockHands) {
-        //     currentWatchFaceSize = bounds
-        // }
-
-        // val secondOfDay = zonedDateTime.toLocalTime().toSecondOfDay()
-        // val secondsPerHourHandRotation = Duration.ofHours(12).seconds
-        // val secondsPerMinuteHandRotation = Duration.ofHours(1).seconds
-
-		// TODO: get day in seconds from api
-		// e.g. one rotation == one day == 100 hours == 100 * 60 * 60 seconds
-		// val secondsPerDayHandRotation = Duration.ofHours(100).seconds
-
-		// val sRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 1f
-		// val mRot = secondOfDay.rem( secondsPerMinuteHandRotation ) * 60f / secondsPerMinuteHandRotation
-        // val hRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360f / secondsPerHourHandRotation
-		// val dRot = secondOfDay.rem( secondsPerHourHandRotation ) * 360f / secondsPerDayHandRotation
 
 		val sr = -90f + 6f * zonedDateTime.second
 		val mr = -90f + 6f * zonedDateTime.minute
 		val hr = -90f + 15f * zonedDateTime.hour // 24h dial = 15f, 12h dial= 30f
+
 		// TODO: adopt to local solar year length of location
 		val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
-
-		// Log.d(TAG, "drawClockHands() $sr $mr $hr $dr ")
 
 		if (
 			renderParameters.drawMode != DrawMode.AMBIENT // INTERACTIVE
 			// && renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
 		) {
-
-        // canvas.withScale(
-        //     x = WATCH_HAND_SCALE,
-        //     y = WATCH_HAND_SCALE,
-        //     pivotX = bounds.exactCenterX(),
-        //     pivotY = bounds.exactCenterY()
-        // ) {
-
-            // val drawAmbient = renderParameters.drawMode == DrawMode.AMBIENT
-			// color the dials:::
-			// clockHandPaint.color = if (drawAmbient) {
-            //     watchFaceColors.ambientPrimaryColor
-            // } else {
-            //     watchFaceColors.activePrimaryColor
-            // }
-
-            // Draw all the stuff when not in ambient mode
-            // if ( !drawAmbient ) {
-
-			// activePrimaryColor=-1138278, activeSecondaryColor=-2131844710, activeBackgroundColor=-14606819, activeOuterElementColor=1307484570,
-			// ambientPrimaryColor=-1, ambientSecondaryColor=-2130706433, ambientBackgroundColor=869425216, ambientOuterElementColor=1308622847
 
 			val lunetteWidth = 30f
 			val dialWidth = 15f

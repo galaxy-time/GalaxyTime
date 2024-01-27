@@ -35,6 +35,7 @@ import androidx.wear.watchface.style.WatchFaceLayer
 // import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
+
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
 
 import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
@@ -169,21 +170,11 @@ class WatchFaceSettingsState(
 
     fun setComplication(complicationLocation: Int) {
         val complicationSlotId = when (complicationLocation) {
-            TOP_LEFT_COMPLICATION_ID -> {
-                TOP_LEFT_COMPLICATION_ID
-            }
-            TOP_RIGHT_COMPLICATION_ID -> {
-                TOP_RIGHT_COMPLICATION_ID
-            }
-            BOTTOM_LEFT_COMPLICATION_ID -> {
-                BOTTOM_LEFT_COMPLICATION_ID
-            }
-            BOTTOM_RIGHT_COMPLICATION_ID -> {
-                BOTTOM_RIGHT_COMPLICATION_ID
-            }
-            else -> {
-                return
-            }
+            TOP_LEFT_COMPLICATION_ID -> { TOP_LEFT_COMPLICATION_ID }
+            TOP_RIGHT_COMPLICATION_ID -> { TOP_RIGHT_COMPLICATION_ID }
+            BOTTOM_LEFT_COMPLICATION_ID -> { BOTTOM_LEFT_COMPLICATION_ID }
+            BOTTOM_RIGHT_COMPLICATION_ID -> { BOTTOM_RIGHT_COMPLICATION_ID }
+            else -> { return }
         }
         scope.launch(Dispatchers.Main.immediate) {
             editorSession.openComplicationDataSourceChooser(complicationSlotId)
@@ -205,6 +196,7 @@ class WatchFaceSettingsState(
                 for (colorOptions in colorUserStyleSetting.options) {
                     if (colorOptions.id.toString() == newColorStyleId) {
                         setUserStyleOption(colorStyleKey, colorOptions)
+                        Log.d(TAG, "====\nsetColorStyle() $newColorStyleId $colorStyleKey $colorOptions")
                         return
                     }
                 }

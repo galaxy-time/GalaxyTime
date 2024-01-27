@@ -19,6 +19,7 @@ enum class WatchMode {
 	WATCH,
 	BIOMETRICS,
 	ASTRONOMICS,
+	DIRECTIONS,
 	CALENDAR,
 	MOVEMENT,
 }

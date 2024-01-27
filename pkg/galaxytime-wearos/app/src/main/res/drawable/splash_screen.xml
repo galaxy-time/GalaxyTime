@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:width="@dimen/splash_width"
-		android:height="@dimen/splash_height"
+		android:height="@dimen/splash_width"
 		android:drawable="@drawable/esa"
 		android:gravity="center">
 	</item>
