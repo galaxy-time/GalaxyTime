@@ -6,90 +6,96 @@
 
 package jp.lab75.galaxytime
 
+import android.util.Log
 import android.content.Context
 import android.content.res.Resources
-
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.Color
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.graphics.BlendMode
-
-import android.util.Log
-import android.view.SurfaceHolder
-import androidx.core.graphics.withRotation
-import androidx.core.graphics.withScale
-
-import androidx.wear.watchface.ComplicationSlotsManager
-import androidx.wear.watchface.DrawMode
-import androidx.wear.watchface.Renderer
-import androidx.wear.watchface.WatchState
-
-import androidx.wear.watchface.WatchFace.TapListener
-import androidx.wear.watchface.TapType
-import androidx.wear.watchface.TapEvent
-import androidx.wear.watchface.ComplicationSlot
-
-import androidx.wear.watchface.complications.rendering.CanvasComplicationDrawable
-import androidx.wear.watchface.complications.rendering.ComplicationDrawable
-import androidx.wear.watchface.style.CurrentUserStyleRepository
-import androidx.wear.watchface.style.UserStyle
-import androidx.wear.watchface.style.UserStyleSetting
-import androidx.wear.watchface.style.WatchFaceLayer
-
-import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
+import android.graphics.PointF
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
-import jp.lab75.galaxytime.data.watchface.WatchMode
 
-import java.time.Duration
-import java.time.ZonedDateTime
-import kotlin.math.cos
-import kotlin.math.sin
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+//
 
 private lateinit var backgroundImage: Bitmap
 private val padding = 25f
 private val typePadding = 20f
 private val size = 20f
 private val fontSize = 20f
+private val DIRECTION_MARKS = arrayOf("E", "S", "W", "N")
 
 //
-//
-//
 
-fun drawCompass( context: Context, canvas: Canvas, bounds: Rect, textStyle: Paint ) {
+fun drawCompass( context: Context, canvas: Canvas, bounds: Rect, center: PointF, textStyle: Paint ) {
 
-	val HOUR_MARKS = arrayOf("E", "S", "W", "N")
-	var radius = 100f
-	val textBounds = Rect()
+	// val resources: Resources = context.resources
+    // val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as android.hardware.SensorManager
+    // val accelerometer = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER)
 
+	//  if (accelerometer != null) {
+    //     val accelerometerValues = FloatArray(3)
 
-	for (i in 0 until 4) {
+    //     sensorManager.getSensorData(accelerometer, System.currentTimeMillis(), accelerometerValues)
 
-		val rotation = 0.5f * (i + 1).toFloat() * Math.PI
-		val dx = sin(rotation).toFloat() * radius * bounds.width().toFloat()
-		val dy = -cos(rotation).toFloat() * radius * bounds.width().toFloat()
+    //     val rotation = Math.toDegrees(Math.atan2(accelerometerValues[1].toDouble(), accelerometerValues[0].toDouble())).toFloat()
 
-		textStyle.getTextBounds(HOUR_MARKS[i], 0, HOUR_MARKS[i].length, textBounds)
+    //     val radius = 0.5f * bounds.width()
+    //     canvas.drawCircle(
+    //         center.x,
+    //         center.y,
+    //         radius,
+    //         textStyle
+    //     )
 
-		canvas.drawText(
-			HOUR_MARKS[i],
-			bounds.exactCenterX() + dx - textBounds.width() / 2.0f,
-			bounds.exactCenterY() + dy + textBounds.height() / 2.0f,
-			textStyle
-		)
+    //     val lineStyle = Paint().apply {
+    //         isAntiAlias = true
+    //         strokeWidth = 1f
+    //         style = Paint.Style.STROKE
+    //         color = Color.WHITE
+    //     }
 
-	}
+    //     val rotationMatrix = Matrix()
+    //     rotationMatrix.postRotate(rotation, center.x, center.y)
+
+    //     canvas.drawLine(
+    //         center.x,
+    //         center.y - radius,
+    //         center.x + radius * 0.75f,
+    //         center.y - radius * 0.75f,
+    //         lineStyle
+    //     )
+    //     canvas.drawLine(
+    //         center.x,
+    //         center.y - radius,
+    //         center.x + radius * 0.75f,
+    //         center.y + radius * 0.75f,
+    //         lineStyle
+    //     )
+    // }
+	// var radius = 100f
+	// val textBounds = Rect()
+
+	// for (i in 0 until 4) {
+
+	// 	val rotation = 0.5f * (i + 1).toFloat() * Math.PI
+	// 	val dx = sin(rotation).toFloat() * radius * center.x
+	// 	val dy = -cos(rotation).toFloat() * radius * center.y
+
+	// 	textStyle.getTextBounds(DIRECTION_MARKS[i], 0, DIRECTION_MARKS[i].length, textBounds)
+
+	// 	addText(
+	// 		bounds.exactCenterX() + dx - textBounds.width() / 2.0f,
+	// 		bounds.exactCenterY() + dy + textBounds.height() / 2.0f,
+	// 		DIRECTION_MARKS[i],
+	// 		textStyle,
+	// 		canvas
+	// 	)
+
+	// }
 
 }
 
@@ -106,6 +112,8 @@ fun renderDirectionsView(
 
 	val resources: Resources = context.resources
 
+	val center = PointF( bounds.exactCenterX(), bounds.exactCenterY() )
+
 	var watchFaceData: WatchFaceData = WatchFaceData()
 	var watchFaceColors = convertToColorPalette(
 		context,
@@ -113,10 +121,9 @@ fun renderDirectionsView(
 		watchFaceData.ambientColorStyle
 	)
 
-	val t_n = "N"
-	val t_e = "E"
-	val t_s = "S"
-	val t_w = "W"
+	textStyle.color = watchFaceColors.activeOuterElementColor
+	textStyle.textSize = fontSize
+	textStyle.textAlign = Paint.Align.CENTER
 
 	val target_name = watchFaceData.activeColorStyle.toString()
 	val target_info = "1234˚ NW"
@@ -133,20 +140,9 @@ fun renderDirectionsView(
 
 	// view
 
-	drawCompass( context, canvas, bounds, textStyle )
-	// drawArrow( canvas, 123f )
+	drawCompass( context, canvas, bounds, center, textStyle )
+	drawArrow( canvas, center, 123f )
 	// drawInfo( canvas )
-
-	fun drawArrow( canvas: Canvas, direction:Float ) {
-
-		val lineStyle = Paint().apply {
-			isAntiAlias = true
-			strokeWidth = 1f
-			style = Paint.Style.STROKE
-			color = Color.WHITE
-		}
-
-	}
 
 	val lineStyle = Paint().apply {
         isAntiAlias = true
@@ -158,32 +154,28 @@ fun renderDirectionsView(
 	val centerX = 0.5f * bounds.width().toFloat()
 	val centerY = 0.5f * bounds.height().toFloat()
 
+	// draw arrow
+
 	canvas.drawLine(
 		centerX,
+		padding,
+		bounds.width().toFloat(),
+		bounds.height().toFloat(),
+		lineStyle
+	)
+	canvas.drawLine(
+		centerX,
+		padding,
 		0f,
-		bounds.width().toFloat() - 105f ,
-		centerY - 20f,
+		bounds.height().toFloat(),
 		lineStyle
 	)
 
-	textStyle.color = watchFaceColors.activeOuterElementColor
-	textStyle.textSize = fontSize
-	textStyle.textAlign = Paint.Align.CENTER
+	// draw data
 
-	val destination = "EARTH"
 	val location  = watchFaceData.activeColorStyle.toString()
-	addText( centerX, centerY - 140f, "$location — $destination", textStyle, canvas )
-
-	textStyle.textAlign = Paint.Align.LEFT
-	// addText( centerX - 140f, centerY + 30f, l1, textStyle, canvas )
-	// addText( centerX - 140f, centerY + 50f, l2, textStyle, canvas )
-	// addText( centerX - 140f, centerY + 70f, l3, textStyle, canvas )
-
-	// addText( centerX + 20f, centerY + 30f, r1, textStyle, canvas )
-	// addText( centerX + 20f, centerY + 50f, r2, textStyle, canvas )
-	// addText( centerX + 20f, centerY + 70f, r3, textStyle, canvas )
-	// addText( centerX + 20f, centerY + 90f, r4, textStyle, canvas )
-
+	addText( centerX, centerY - 20f, target_name, textStyle, canvas )
+	addText( centerX, centerY + 20f, target_info, textStyle, canvas )
 
 }
 
