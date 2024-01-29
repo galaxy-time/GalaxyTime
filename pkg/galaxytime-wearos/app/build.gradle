@@ -120,8 +120,11 @@ dependencies {
     implementation libs.wear.watchface.style
 	implementation libs.appcompat
 	implementation libs.preference
+	implementation libs.play.services.location
 
-    // implementation libs.androidx.wear.tooling.preview
+	implementation 'com.github.cosinekitty:astronomy:2.1.19'
+	implementation libs.androidx.wear.tooling.preview
+	// implementation libs.androidx.wear.tooling.preview
     // implementation libs.compose.ui.tooling.preview
     // debugImplementation libs.androidx.ui.tooling
 }

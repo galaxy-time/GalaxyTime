@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
+import androidx.wear.tooling.preview.devices.WearDevices
 import jp.lab75.galaxytime.R
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			WearApp("GalaxyTime App")
 		}
+
 
 	}
 
@@ -73,7 +75,7 @@ fun Greeting(greetingName: String) {
 	)
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
 	WearApp("GalaxyTime Preview")
