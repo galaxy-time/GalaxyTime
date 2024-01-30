@@ -137,7 +137,7 @@ class WatchFaceCanvasRenderer(
 				}
 				if ( tapEvent.xPos > currentWatchFaceSize.width() / 2 ) {
 					if ( tapEvent.yPos < currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.DIRECTIONS
-					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.CALENDAR
+					if ( tapEvent.yPos > currentWatchFaceSize.height() / 2 ) nextWatchMode = WatchMode.MOVEMENT
 				}
 			}
 

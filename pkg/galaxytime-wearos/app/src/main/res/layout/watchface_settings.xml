@@ -28,7 +28,7 @@
 	android:paddingEnd="@dimen/settings_padding"
 
 	android:paddingBottom="@dimen/settings_padding"
-	tools:context=".editor.WatchFaceSettingsActivity"
+	tools:context=".settings.WatchFaceSettingsActivity"
 	tools:deviceIds="wear">
 
 	<androidx.constraintlayout.widget.ConstraintLayout
@@ -68,8 +68,8 @@
 			<include
 				android:id="@+id/preview"
 				layout="@layout/watchface_preview"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
+				android:layout_width="161dp"
+				android:layout_height="148dp"
 				android:layout_gravity="center_horizontal"
 				android:contentDescription="@string/settings_preview_of_watch_face_content_description" />
 
@@ -89,8 +89,7 @@
 		</LinearLayout>
 
 		<!--
-
-				<com.google.android.material.switchmaterial.SwitchMaterial
+				<com.google.android.material.switchMaterial.SwitchMaterial
 					android:id="@+id/ticks_enabled_switch"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
