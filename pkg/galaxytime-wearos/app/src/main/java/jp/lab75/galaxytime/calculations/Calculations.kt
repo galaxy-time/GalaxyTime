@@ -26,7 +26,7 @@ class Calculations(private val context: Context) {
 	private var latLonElev = Triple(0.0, 0.0, 0.0)
 
 	val bodyList = arrayOf(
-		Body.Sun, Body.Moon, Body.Mercury, Body.Venus, Body.Mars,
+		Body.Earth, Body.Sun, Body.Moon, Body.Mercury, Body.Venus, Body.Mars,
 		Body.Jupiter, Body.Saturn, Body.Uranus, Body.Neptune, Body.Pluto
 	)
 
@@ -146,12 +146,7 @@ class Calculations(private val context: Context) {
 
 
 			// Write data to map or update existing data
-			val data = Data()
-			data.equatorial = equatorial
-			data.horizontal = horizontal
-			data.rightAscension = convertedRa
-			data.declination = convertedDec
-			bodyDataMap[it] = data
+			bodyDataMap[it] = Data(equatorial, horizontal, convertedRa, convertedDec)
 		}
 	};
 }

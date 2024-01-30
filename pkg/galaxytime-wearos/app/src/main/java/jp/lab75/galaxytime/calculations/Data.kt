@@ -3,16 +3,11 @@ package jp.lab75.galaxytime.calculations;
 import io.github.cosinekitty.astronomy.Equatorial;
 import io.github.cosinekitty.astronomy.Topocentric;
 
-
-
-public class Data  {
-
-	Equatorial equatorial;
-	Topocentric horizontal;
-
+data class Data(
+	var equatorial: Equatorial,
+	var horizontal: Topocentric,
 	// for getting time in hours, minutes, seconds
-	DMS rightAscension;
-
+	var rightAscension: DMS,
 	// for getting time in degrees, minutes, seconds of arc
-	DMS declination;
-}
+	var declination: DMS
+)

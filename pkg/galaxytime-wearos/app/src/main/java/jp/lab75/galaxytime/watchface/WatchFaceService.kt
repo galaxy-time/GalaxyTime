@@ -98,7 +98,8 @@ class WatchFaceService : WatchFaceService() {
 			watchState = watchState,
 			complicationSlotsManager = complicationSlotsManager,
 			currentUserStyleRepository = currentUserStyleRepository,
-			canvasType = CanvasType.HARDWARE
+			canvasType = CanvasType.HARDWARE,
+			calculations = calculations
 		)
 
 		return WatchFace(
