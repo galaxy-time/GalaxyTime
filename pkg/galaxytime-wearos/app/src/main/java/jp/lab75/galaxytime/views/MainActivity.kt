@@ -12,6 +12,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.util.Log
+
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
@@ -35,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-
-import jp.lab75.galaxytime.*
+import androidx.wear.compose.material.TimeText
+import androidx.wear.tooling.preview.devices.WearDevices
 import jp.lab75.galaxytime.R
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity(), SensorEventListener1 {
 		setContent {
 			WearApp("GalaxyTime")
 		}
+
 
 	}
 
@@ -116,7 +118,7 @@ fun Greeting(greetingName: String) {
 	)
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
 	WearApp("GalaxyTime Preview")

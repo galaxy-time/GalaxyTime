@@ -40,6 +40,7 @@ import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.UserStyle
 import androidx.wear.watchface.style.UserStyleSetting
 import androidx.wear.watchface.style.WatchFaceLayer
+import io.github.cosinekitty.astronomy.Body
 
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
@@ -48,7 +49,9 @@ import jp.lab75.galaxytime.data.watchface.WatchMode
 
 import java.time.Duration
 import java.time.ZonedDateTime
+import jp.lab75.galaxytime.calculations.Calculations
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 import kotlinx.coroutines.CoroutineScope
@@ -72,6 +75,7 @@ fun renderAstronomicsView(
 	canvas: Canvas,
 	bounds: Rect,
 	textStyle: Paint,
+	calculations: Calculations
 ) {
 
 	val resources: Resources = context.resources
@@ -85,8 +89,23 @@ fun renderAstronomicsView(
 
 	val name = watchFaceData.activeColorStyle.toString()
 
-	val l1 = "AZI 272° ELE -2°"
-	val l2 = "RAS 12h14m16s"
+	val earthData = calculations.getBodyData(Body.Earth)
+
+	val l1 = "AZI ${
+		earthData?.horizontal?.azimuth?.roundToInt()?.or(272)
+	}° ELE ${earthData?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
+
+	// Create time with padding for this
+	val timeFormat = "RAS %02dh:%02dm:%02ds"
+	val l2 = timeFormat.format(
+		earthData?.rightAscension?.degrees?.or(12),
+		earthData?.rightAscension?.minutes?.or(14),
+		earthData?.rightAscension?.seconds?.roundToInt()?.or(16)
+	)
+
+
+	//val l1 = "AZI 272° ELE -2°"
+	//val l2 = "RAS 12h14m16s"
 	val l3 = "DEC +00°36'26''"
 	val l4 = ""
 
@@ -97,21 +116,22 @@ fun renderAstronomicsView(
 
 	// background
 
-	val backgroundBitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_planet_neutral )
-	backgroundImage = Bitmap.createScaledBitmap( backgroundBitmap, bounds.width(), bounds.height(), false )
-	canvas.drawBitmap( backgroundImage, bounds, bounds, null )
+	val backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_planet_neutral)
+	backgroundImage =
+		Bitmap.createScaledBitmap(backgroundBitmap, bounds.width(), bounds.height(), false)
+	canvas.drawBitmap(backgroundImage, bounds, bounds, null)
 
 	val overlayColor = watchFaceColors.activePrimaryColor
-	canvas.drawColor( overlayColor, BlendMode.OVERLAY )
+	canvas.drawColor(overlayColor, BlendMode.OVERLAY)
 
 	// view
 
 	val lineStyle = Paint().apply {
-        isAntiAlias = true
+		isAntiAlias = true
 		strokeWidth = 1f
 		style = Paint.Style.STROKE
 		color = Color.WHITE
-    }
+	}
 
 	val centerX = 0.5f * bounds.width().toFloat()
 	val centerY = 0.5f * bounds.height().toFloat()
@@ -119,7 +139,7 @@ fun renderAstronomicsView(
 	canvas.drawLine(
 		115f,
 		centerY - 20f,
-		bounds.width().toFloat() - 105f ,
+		bounds.width().toFloat() - 105f,
 		centerY - 20f,
 		lineStyle
 	)
@@ -142,18 +162,18 @@ fun renderAstronomicsView(
 	textStyle.textAlign = Paint.Align.CENTER
 
 	val destination = "EARTH"
-	val location  = watchFaceData.activeColorStyle.toString()
-	addText( centerX, centerY - 140f, "$location — $destination", textStyle, canvas )
+	val location = watchFaceData.activeColorStyle.toString()
+	addText(centerX, centerY - 140f, "$location — $destination", textStyle, canvas)
 
 	textStyle.textAlign = Paint.Align.LEFT
-	addText( centerX - 140f, centerY + 30f, l1, textStyle, canvas )
-	addText( centerX - 140f, centerY + 50f, l2, textStyle, canvas )
-	addText( centerX - 140f, centerY + 70f, l3, textStyle, canvas )
+	addText(centerX - 140f, centerY + 30f, l1, textStyle, canvas)
+	addText(centerX - 140f, centerY + 50f, l2, textStyle, canvas)
+	addText(centerX - 140f, centerY + 70f, l3, textStyle, canvas)
 
-	addText( centerX + 20f, centerY + 30f, r1, textStyle, canvas )
-	addText( centerX + 20f, centerY + 50f, r2, textStyle, canvas )
-	addText( centerX + 20f, centerY + 70f, r3, textStyle, canvas )
-	addText( centerX + 20f, centerY + 90f, r4, textStyle, canvas )
+	addText(centerX + 20f, centerY + 30f, r1, textStyle, canvas)
+	addText(centerX + 20f, centerY + 50f, r2, textStyle, canvas)
+	addText(centerX + 20f, centerY + 70f, r3, textStyle, canvas)
+	addText(centerX + 20f, centerY + 90f, r4, textStyle, canvas)
 
 	// val height = bounds.height().toFloat() - padding - padding - size - size - 20
 	// addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )

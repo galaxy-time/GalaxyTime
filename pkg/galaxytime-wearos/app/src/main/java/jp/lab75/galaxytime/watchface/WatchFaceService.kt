@@ -15,6 +15,8 @@
  */
 package jp.lab75.galaxytime
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.SurfaceHolder
 import androidx.wear.watchface.CanvasType
@@ -26,14 +28,16 @@ import androidx.wear.watchface.WatchFaceType
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.UserStyleSchema
+import jp.lab75.galaxytime.calculations.Calculations
 
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
 
 class WatchFaceService : WatchFaceService() {
-
-  override fun createUserStyleSchema(): UserStyleSchema =
-  createUserStyleSchema(context = applicationContext)
+	private val handler = Handler(Looper.getMainLooper())
+	private lateinit var calculations: Calculations
+	override fun createUserStyleSchema(): UserStyleSchema =
+		createUserStyleSchema(context = applicationContext)
 
 	override fun createComplicationSlotsManager(
 		currentUserStyleRepository: CurrentUserStyleRepository
@@ -42,31 +46,69 @@ class WatchFaceService : WatchFaceService() {
 		currentUserStyleRepository = currentUserStyleRepository
 	)
 
+	private val updateLocationLoop = object : Runnable {
+		override fun run() {
+			// Update location every 10 seconds
+			calculations.updateLocation();
+			handler.postDelayed(this, 1000 * 10)
+		}
+	}
+
+	private val updateCalculationsLoop = object : Runnable {
+		override fun run() {
+			// Maybe we should not update every second? its a little crazy but ok for testing
+			// Add Time mesurmants for performance information
+			val startTime = System.currentTimeMillis()
+			calculations.update();
+			val endTime = System.currentTimeMillis()
+			Log.d(TAG, "updateCalculationsLoop() ${endTime - startTime}ms")
+			handler.postDelayed(this, 1000 * 1)
+		}
+	}
+
+	override fun onCreate() {
+		super.onCreate()
+
+		// Add location update to main loop
+		calculations = Calculations(this)
+		handler.post(updateLocationLoop)
+		handler.post(updateCalculationsLoop)
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		handler.removeCallbacks(updateLocationLoop)
+		handler.removeCallbacks(updateCalculationsLoop)
+	}
+
 	override suspend fun createWatchFace(
 		surfaceHolder: SurfaceHolder,
 		watchState: WatchState,
 		complicationSlotsManager: ComplicationSlotsManager,
 		currentUserStyleRepository: CurrentUserStyleRepository
-		): WatchFace {
+	): WatchFace {
+
+
 
 		Log.d(TAG, "createWatchFace()")
 
-        val renderer = WatchFaceCanvasRenderer(
-            context = applicationContext,
-            surfaceHolder = surfaceHolder,
-            watchState = watchState,
-            complicationSlotsManager = complicationSlotsManager,
-            currentUserStyleRepository = currentUserStyleRepository,
-            canvasType = CanvasType.HARDWARE
-        )
+		val renderer = WatchFaceCanvasRenderer(
+			context = applicationContext,
+			surfaceHolder = surfaceHolder,
+			watchState = watchState,
+			complicationSlotsManager = complicationSlotsManager,
+			currentUserStyleRepository = currentUserStyleRepository,
+			canvasType = CanvasType.HARDWARE,
+			calculations = calculations
+		)
 
 		return WatchFace(
 			WatchFaceType.ANALOG,
 			renderer
 		).setTapListener(renderer)
-    }
+	}
 
-    companion object {
-        const val TAG = "WatchFaceService"
-    }
+	companion object {
+		const val TAG = "WatchFaceService"
+	}
 }

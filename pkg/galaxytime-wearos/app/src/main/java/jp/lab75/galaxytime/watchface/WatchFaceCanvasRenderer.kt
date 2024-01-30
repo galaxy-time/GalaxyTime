@@ -57,6 +57,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import jp.lab75.galaxytime.calculations.Calculations
 
 //	shaders
 
@@ -69,14 +70,16 @@ class WatchFaceCanvasRenderer(
     watchState: WatchState,
     private val complicationSlotsManager: ComplicationSlotsManager,
     currentUserStyleRepository: CurrentUserStyleRepository,
-    canvasType: Int
+    canvasType: Int,
+	private val calculations: Calculations
 ) : Renderer.CanvasRenderer2<WatchFaceCanvasRenderer.AnalogSharedAssets>(
     surfaceHolder,
     currentUserStyleRepository,
     watchState,
     canvasType,
     FRAME_PERIOD_MS_DEFAULT,
-    clearWithBackgroundTintBeforeRenderingHighlightLayer = false
+    clearWithBackgroundTintBeforeRenderingHighlightLayer = false,
+
 ), TapListener {
 
     class AnalogSharedAssets : SharedAssets {
@@ -94,6 +97,7 @@ class WatchFaceCanvasRenderer(
 	private var transitionMode: TransitionMode = TransitionMode.IDLE
 	private var prevMode: TransitionMode = TransitionMode.IDLE
 	private var transitionAlpha = 0f
+
 
 	override fun onTapEvent(tapType: Int, tapEvent: TapEvent, complicationSlot: ComplicationSlot? ) {
 
@@ -404,6 +408,7 @@ class WatchFaceCanvasRenderer(
         bounds: Rect,
         zonedDateTime: ZonedDateTime,
         sharedAssets: AnalogSharedAssets
+
     ) {
 
 		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
@@ -420,7 +425,7 @@ class WatchFaceCanvasRenderer(
 				WatchMode.WATCH -> renderWatchView(context, canvas, bounds, zonedDateTime)
 				//
 				WatchMode.BIOMETRICS	-> renderBiometricsView(context, canvas, bounds, textPaint)
-				WatchMode.ASTRONOMICS	-> renderAstronomicsView(context, canvas, bounds, textPaint)
+				WatchMode.ASTRONOMICS	-> renderAstronomicsView(context, canvas, bounds, textPaint, calculations)
 				WatchMode.DIRECTIONS	-> renderDirectionsView(context, canvas, bounds, textPaint)
 				WatchMode.CALENDAR		-> renderCalendarView(context, canvas, bounds, textPaint)
 				WatchMode.MOVEMENT		-> renderMovementView(context, canvas, bounds, textPaint)
