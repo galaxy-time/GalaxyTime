@@ -12,6 +12,9 @@ import android.graphics.Color
 import android.graphics.RadialGradient
 import android.graphics.Shader
 import android.graphics.Typeface
+import android.graphics.BlendMode
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 
 import android.util.Log
 import android.view.SurfaceHolder
@@ -276,8 +279,17 @@ class WatchFaceCanvasRenderer(
 		typeface = resources.getFont( R.font.stellar )
 	}
 
+	var blendPaint = Paint().apply{
+		blendMode = BlendMode.SRC_OVER
+//		alpha = 192
+	}
+
 	private var armLengthChangedRecalculateClockHands: Boolean = false
     private var currentWatchFaceSize = Rect(0, 0, 0, 0)
+
+	// grain overlay
+	private lateinit var grainImage: Bitmap
+	var grainBitmap: Bitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_grain )
 
 	//
 	//
@@ -440,6 +452,10 @@ class WatchFaceCanvasRenderer(
 
 		// gradient
 		if ( watchMode == WatchMode.WATCH ) drawGradient( canvas, currentWatchFaceSize )
+
+		// grain
+		grainImage = Bitmap.createScaledBitmap( grainBitmap, bounds.width(), bounds.height(), false )
+		canvas.drawBitmap( grainImage, bounds, bounds, blendPaint )
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT && watchMode == WatchMode.WATCH ) {
 
@@ -680,7 +696,7 @@ class WatchFaceCanvasRenderer(
 
 			val lunetteWidth = 30f
 			val dialWidth = 15f
-			val dialGap = 1f
+			val dialGap = 0f
 			var ri = ( bounds.width().toFloat() / 2f ) - lunetteWidth - dialWidth
 			var ro = ( bounds.width().toFloat() / 2f ) - lunetteWidth
 			drawGradientArc( canvas, bounds, ri, ro, sr, 60f, watchFaceColors.activePrimaryColor, 255 )
