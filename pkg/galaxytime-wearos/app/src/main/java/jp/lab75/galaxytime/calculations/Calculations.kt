@@ -1,6 +1,7 @@
 package jp.lab75.galaxytime.calculations
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -18,6 +19,7 @@ import io.github.cosinekitty.astronomy.equator
 import io.github.cosinekitty.astronomy.horizon
 import java.util.Calendar
 import java.util.TimeZone
+import jp.lab75.galaxytime.views.MainActivity
 import kotlin.math.roundToInt
 
 class Calculations(private val context: Context) {
@@ -48,7 +50,7 @@ class Calculations(private val context: Context) {
 				Manifest.permission.ACCESS_COARSE_LOCATION
 			) != PackageManager.PERMISSION_GRANTED
 		) {
-			// TODO: Extract permission check and...
+			// Open permission dialog
 			println("No permissions")
 			return
 		}

@@ -1,5 +1,6 @@
 package jp.lab75.galaxytime
 
+import android.Manifest
 import android.content.Context
 import android.content.res.Resources
 
@@ -57,6 +58,8 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import jp.lab75.galaxytime.calculations.Calculations
 
 //	shaders
@@ -410,7 +413,6 @@ class WatchFaceCanvasRenderer(
         sharedAssets: AnalogSharedAssets
 
     ) {
-
 		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
 
 		// val backgroundColor =
