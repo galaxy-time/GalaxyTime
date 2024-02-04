@@ -18,6 +18,7 @@ package jp.lab75.galaxytime
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -41,7 +42,9 @@ import jp.lab75.galaxytime.views.PermissionRequestActivity
 class WatchFaceService : WatchFaceService() {
 	private val handler = Handler(Looper.getMainLooper())
 	private lateinit var calculations: Calculations
+
 	val hasPermissions = false;
+
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)
 
@@ -73,7 +76,9 @@ class WatchFaceService : WatchFaceService() {
 	}
 
 	override fun onCreate() {
+
 		super.onCreate()
+
 		calculations = Calculations(this)
 		// Check permission status
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -86,6 +91,10 @@ class WatchFaceService : WatchFaceService() {
 		}
 
 		// Permission granted, enable full functionality
+
+		// Add location update to main loop
+		calculations = Calculations(this)
+
 		handler.post(updateLocationLoop)
 		handler.post(updateCalculationsLoop)
 	}

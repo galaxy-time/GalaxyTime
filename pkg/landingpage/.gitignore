@@ -1,9 +1,3 @@
-.DS_Store
-pkg/wfs/GalaxyTime/**
-pkg/galaxytime-wearos/app/debug/app-debug.aab
-pkg/galaxytime-wearos/app/release/app-release.aab
-pkg/assets
-
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
