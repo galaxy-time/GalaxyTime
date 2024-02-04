@@ -86,13 +86,18 @@
 			</intent-filter>
 		</activity>
 
-		<!-- PERMISSIONS -->
+		<!-- PERMISSIONS ACTIVITY -->
+		<!--  Task affinity should be the same as .main? -->
+		<!-- https://stackoverflow.com/questions/9772927/flag-activity-new-task-clarification-needed -->
+
 		<activity
 			android:name=".views.PermissionRequestActivity"
+			android:label="Permission Request"
+			android:exported="true"
 			android:launchMode="singleTask"
 			android:taskAffinity="" />
 
-		<!-- TILE + COMPLICATION -->
+		<!-- ASTRONOMICS TILE + COMPLICATION -->
 
 		<service
 			android:name=".views.AstronomicComplicationService"
@@ -123,6 +128,9 @@
 				android:name="androidx.wear.tiles.PREVIEW"
 				android:resource="@drawable/tile_preview" />
 		</service>
+
+		<!--  -->
+
 	</application>
 
 </manifest>

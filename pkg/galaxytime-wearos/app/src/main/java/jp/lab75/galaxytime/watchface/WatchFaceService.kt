@@ -40,10 +40,14 @@ import jp.lab75.galaxytime.utils.createUserStyleSchema
 import jp.lab75.galaxytime.views.PermissionRequestActivity
 
 class WatchFaceService : WatchFaceService() {
+
 	private val handler = Handler(Looper.getMainLooper())
 	private lateinit var calculations: Calculations
 
-	val hasPermissions = false;
+	val hasPermissions = false
+
+	val refreshLocationInterval: Long = 1000 * 60		// maybe every minute
+	val refreshCalculationsInterval: Long = 1000 * 1	// maybe every minute
 
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)
@@ -57,21 +61,21 @@ class WatchFaceService : WatchFaceService() {
 
 	private val updateLocationLoop = object : Runnable {
 		override fun run() {
-			// Update location every 10 seconds
+			// Update location every 600 seconds
 			calculations.updateLocation();
-			handler.postDelayed(this, 1000 * 10)
+			handler.postDelayed(this, refreshLocationInterval)
 		}
 	}
 
 	private val updateCalculationsLoop = object : Runnable {
 		override fun run() {
 			// Maybe we should not update every second? its a little crazy but ok for testing
-			// Add Time mesurmants for performance information
+			// Add Time mesurements for performance information
 			val startTime = System.currentTimeMillis()
 			calculations.update();
 			val endTime = System.currentTimeMillis()
 			Log.d(TAG, "updateCalculationsLoop() ${endTime - startTime}ms")
-			handler.postDelayed(this, 1000 * 1)
+			handler.postDelayed(this, refreshCalculationsInterval)
 		}
 	}
 
@@ -80,23 +84,30 @@ class WatchFaceService : WatchFaceService() {
 		super.onCreate()
 
 		calculations = Calculations(this)
+
 		// Check permission status
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
 			!= PackageManager.PERMISSION_GRANTED
 		) {
-			// Permission not granted, start PermissionRequestActivity
+
+			Log.d(TAG, "Location permission not granted")
+
 			val intent = Intent(this, PermissionRequestActivity::class.java)
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 			startActivity(intent)
+
+		} else {
+
+			Log.d(TAG, "Location permission granted")
+
+			// Add location update to main loop
+			calculations = Calculations(this)
+
+			handler.post(updateLocationLoop)
+			handler.post(updateCalculationsLoop)
+
 		}
 
-		// Permission granted, enable full functionality
-
-		// Add location update to main loop
-		calculations = Calculations(this)
-
-		handler.post(updateLocationLoop)
-		handler.post(updateCalculationsLoop)
 	}
 
 	override fun onDestroy() {

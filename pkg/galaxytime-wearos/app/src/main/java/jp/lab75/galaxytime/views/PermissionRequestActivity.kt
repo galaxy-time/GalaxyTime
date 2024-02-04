@@ -66,7 +66,7 @@ class PermissionRequestActivity : AppCompatActivity() {
 						// TODO: Open settings page after the second time android will not show the dialog again so we need to disable everything that needs location data, and open the settings page if he want to use the
 						// TODO: Build dialog with ok and cancel button, if ok open settings page, if cancel close and hide everything that needs location data
 						AlertDialog.Builder(this)
-							.setMessage("The app needs location permission to calculate the position and time of the planets.")
+							.setMessage("Galaxytime needs location permission to calculate the position and time of the planets.")
 							.setPositiveButton("App Settings") { _, _ ->
 								val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
 									data = Uri.fromParts("package", packageName, null)
