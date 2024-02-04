@@ -15,10 +15,15 @@
  */
 package jp.lab75.galaxytime
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.SurfaceHolder
+import androidx.core.content.ContextCompat
 import androidx.wear.watchface.CanvasType
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.WatchFace
@@ -32,10 +37,14 @@ import jp.lab75.galaxytime.calculations.Calculations
 
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
+import jp.lab75.galaxytime.views.PermissionRequestActivity
 
 class WatchFaceService : WatchFaceService() {
 	private val handler = Handler(Looper.getMainLooper())
 	private lateinit var calculations: Calculations
+
+	val hasPermissions = false;
+
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)
 
@@ -67,10 +76,25 @@ class WatchFaceService : WatchFaceService() {
 	}
 
 	override fun onCreate() {
+
 		super.onCreate()
+
+		calculations = Calculations(this)
+		// Check permission status
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+			!= PackageManager.PERMISSION_GRANTED
+		) {
+			// Permission not granted, start PermissionRequestActivity
+			val intent = Intent(this, PermissionRequestActivity::class.java)
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			startActivity(intent)
+		}
+
+		// Permission granted, enable full functionality
 
 		// Add location update to main loop
 		calculations = Calculations(this)
+
 		handler.post(updateLocationLoop)
 		handler.post(updateCalculationsLoop)
 	}
@@ -87,8 +111,6 @@ class WatchFaceService : WatchFaceService() {
 		complicationSlotsManager: ComplicationSlotsManager,
 		currentUserStyleRepository: CurrentUserStyleRepository
 	): WatchFace {
-
-
 
 		Log.d(TAG, "createWatchFace()")
 

@@ -7,7 +7,10 @@
 package jp.lab75.galaxytime.views
 
 import android.hardware.SensorEventListener as SensorEventListener1
+import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
@@ -33,12 +36,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import androidx.wear.tooling.preview.devices.WearDevices
 import jp.lab75.galaxytime.R
+import jp.lab75.galaxytime.WatchFaceService
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 
 class MainActivity : ComponentActivity(), SensorEventListener1 {
@@ -47,7 +53,6 @@ class MainActivity : ComponentActivity(), SensorEventListener1 {
     private var heartRateSensor: Sensor? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-
 		installSplashScreen()
 
 		super.onCreate(savedInstanceState)
@@ -59,8 +64,6 @@ class MainActivity : ComponentActivity(), SensorEventListener1 {
 		setContent {
 			WearApp("GalaxyTime")
 		}
-
-
 	}
 
 	override fun onResume() {
@@ -87,6 +90,8 @@ class MainActivity : ComponentActivity(), SensorEventListener1 {
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
         // Handle sensor accuracy changes if needed
     }
+
+
 	companion object {
         const val TAG = "MainActivity"
 	}
