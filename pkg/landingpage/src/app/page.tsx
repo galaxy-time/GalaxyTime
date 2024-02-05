@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
 	<div>
-		<StarRenderer/>
+		<StarRenderer />
 
 		<nav className="bg-black dark:bg-black fixed w-full z-20 top-0 start-0" >
 			<div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
