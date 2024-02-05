@@ -6,7 +6,7 @@ import * as random from 'maath/random'
 export default function StarRenderer() {
   return (
     <Canvas
-		style={{ position: 'absolute', top: 0, left: 0, zIndex: 900, width: '100vw', height: '100vh' }}
+		style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh' }}
 		camera={{ position: [0, 0, 1] }}>
       <Stars />
     </Canvas>
