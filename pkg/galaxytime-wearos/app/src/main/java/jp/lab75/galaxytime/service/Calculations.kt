@@ -1,7 +1,6 @@
-package jp.lab75.galaxytime.calculations
+package jp.lab75.galaxytime.service
 
 import android.Manifest
-import android.app.Activity
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -21,7 +20,6 @@ import io.github.cosinekitty.astronomy.horizon
 import java.util.Calendar
 import java.util.TimeZone
 
-import jp.lab75.galaxytime.views.MainActivity
 import kotlin.math.roundToInt
 
 class Calculations(private val context: Context) {
@@ -41,6 +39,11 @@ class Calculations(private val context: Context) {
 		}
 
 		return bodyDataMap[body]
+	}
+
+
+	fun getBodyFromThemeName(name: String): Body? {
+		return bodyList.find { it.name.lowercase() == name.lowercase() }
 	}
 
 	fun updateLocation() {
@@ -142,7 +145,21 @@ class Calculations(private val context: Context) {
 			println("Altitude ${horizontal.altitude}")
 			println("RA ${equatorial.ra}")
 			// Convert RA to hh mm ss
-			val convertedRa = convertToDMS(equatorial.ra);
+			var convertedRa: DMS;
+
+			convertedRa = if (it != Body.Earth) {
+				convertToDMS(equatorial.ra);
+			} else {
+				// Get hours, minutes, seconds from local time
+				val localTime = Calendar.getInstance()
+				DMS(
+					localTime.get(Calendar.HOUR_OF_DAY),
+					localTime.get(Calendar.MINUTE),
+					localTime.get(Calendar.SECOND).toDouble(),
+					false
+				);
+			}
+
 			println("RA: ${convertedRa.degrees}h ${convertedRa.minutes}m ${convertedRa.seconds}s ${convertedRa.negative}")
 
 			// Convert Dec to

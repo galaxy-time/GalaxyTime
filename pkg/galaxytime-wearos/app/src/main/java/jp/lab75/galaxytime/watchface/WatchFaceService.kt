@@ -33,7 +33,8 @@ import androidx.wear.watchface.WatchFaceType
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.UserStyleSchema
-import jp.lab75.galaxytime.calculations.Calculations
+import jp.lab75.galaxytime.service.Calculations
+import jp.lab75.galaxytime.service.MeetingService
 
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
@@ -43,11 +44,13 @@ class WatchFaceService : WatchFaceService() {
 
 	private val handler = Handler(Looper.getMainLooper())
 	private lateinit var calculations: Calculations
+	private lateinit var meetingService: MeetingService
 
 	val hasPermissions = false
 
-	val refreshLocationInterval: Long = 1000 * 60		// maybe every minute
-	val refreshCalculationsInterval: Long = 1000 * 60	// maybe every minute
+	val refreshLocationInterval: Long = 1000 * 60               // maybe every minute
+	val refreshCalculationsInterval: Long = 1000 * 1            // maybe every minute
+	val refreshMeetingServiceInterval: Long = 1000 * 60 * 15    // maybe every 15 minutes
 
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)
@@ -70,44 +73,57 @@ class WatchFaceService : WatchFaceService() {
 	private val updateCalculationsLoop = object : Runnable {
 		override fun run() {
 			// Maybe we should not update every second? its a little crazy but ok for testing
-			// Add Time mesurements for performance information
-			val startTime = System.currentTimeMillis()
 			calculations.update();
-			val endTime = System.currentTimeMillis()
-			Log.d(TAG, "updateCalculationsLoop() ${endTime - startTime}ms")
 			handler.postDelayed(this, refreshCalculationsInterval)
 		}
 	}
+
+	private val updateMeetingServiceLoop = object : Runnable {
+		override fun run() {
+			// Update location every 15 minutes
+			// Check meeting
+			meetingService.update();
+			handler.postDelayed(this, refreshMeetingServiceInterval)
+		}
+	}
+
 
 	override fun onCreate() {
 
 		super.onCreate()
 
 		calculations = Calculations(this)
+		meetingService = MeetingService(this)
 
-		// Check permission status
+		// Check permission status location or calendar
+
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-			!= PackageManager.PERMISSION_GRANTED
+			!= PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+				this,
+				Manifest.permission.READ_CALENDAR
+			) != PackageManager.PERMISSION_GRANTED
 		) {
 
-			Log.d(TAG, "Location permission not granted")
-
+			Log.d(
+				TAG,
+				"Location permission or calendar permission not granted. Starting permission request activity."
+			)
 			val intent = Intent(this, PermissionRequestActivity::class.java)
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 			startActivity(intent)
 
 		} else {
 
-			Log.d(TAG, "Location permission granted")
+			Log.d(TAG, "Permissions granted")
 
-			// Add location update to main loop
-			calculations = Calculations(this)
+			calculations.updateLocation();
+			meetingService.update();
+			calculations.update()
 
 			handler.post(updateLocationLoop)
 			handler.post(updateCalculationsLoop)
-
+			handler.post(updateMeetingServiceLoop)
 		}
-
 	}
 
 	override fun onDestroy() {
@@ -132,7 +148,8 @@ class WatchFaceService : WatchFaceService() {
 			complicationSlotsManager = complicationSlotsManager,
 			currentUserStyleRepository = currentUserStyleRepository,
 			canvasType = CanvasType.HARDWARE,
-			calculations = calculations
+			calculations = calculations,
+			meetingService = meetingService
 		)
 
 		return WatchFace(

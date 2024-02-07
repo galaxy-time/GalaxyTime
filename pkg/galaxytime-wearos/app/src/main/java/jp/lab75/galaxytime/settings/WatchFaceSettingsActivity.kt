@@ -41,118 +41,120 @@ import kotlinx.coroutines.launch
  * loaded.)
  */
 class WatchFaceSettingsActivity : ComponentActivity() {
-    private val stateHolder: WatchFaceSettingsState by lazy {
-        WatchFaceSettingsState(
-            lifecycleScope,
-            this@WatchFaceSettingsActivity
-        )
-    }
+	private val stateHolder: WatchFaceSettingsState by lazy {
+		WatchFaceSettingsState(
+			lifecycleScope,
+			this@WatchFaceSettingsActivity
+		)
+	}
 
-    private lateinit var binding: WatchfaceSettingsBinding
+	private lateinit var binding: WatchfaceSettingsBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate()")
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		Log.d(TAG, "onCreate()")
 
-        binding = WatchfaceSettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+		binding = WatchfaceSettingsBinding.inflate(layoutInflater)
+		setContentView(binding.root)
 
-        // Disable widgets until data loads and values are set.
-        binding.colorStylePickerButton.isEnabled = false
-        // binding.ticksEnabledSwitch.isEnabled = false
+		// Disable widgets until data loads and values are set.
+		binding.colorStylePickerButton.isEnabled = false
+		// binding.ticksEnabledSwitch.isEnabled = false
 		// binding.backgroundImage.isEnabled = false
-        // binding.minuteHandLengthSlider.isEnabled = false
+		// binding.minuteHandLengthSlider.isEnabled = false
 
-        // Set max and min.
-        // binding.minuteHandLengthSlider.valueTo = MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
-        // binding.minuteHandLengthSlider.valueFrom = MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
-        // binding.minuteHandLengthSlider.value = MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
+		// Set max and min.
+		// binding.minuteHandLengthSlider.valueTo = MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
+		// binding.minuteHandLengthSlider.valueFrom = MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
+		// binding.minuteHandLengthSlider.value = MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
 
-        // binding.minuteHandLengthSlider.addOnChangeListener { slider, value, fromUser ->
-        //     Log.d(TAG, "addOnChangeListener(): $slider, $value, $fromUser")
-        //     if (fromUser) {
-        //         stateHolder.setMinuteHandArmLength(value)
-        //     }
-        // }
+		// binding.minuteHandLengthSlider.addOnChangeListener { slider, value, fromUser ->
+		//     Log.d(TAG, "addOnChangeListener(): $slider, $value, $fromUser")
+		//     if (fromUser) {
+		//         stateHolder.setMinuteHandArmLength(value)
+		//     }
+		// }
 
-        lifecycleScope.launch(Dispatchers.Main.immediate) {
-            stateHolder.uiState
-                .collect { uiState: WatchFaceSettingsState.EditWatchFaceUiState ->
-                    when (uiState) {
-                        is WatchFaceSettingsState.EditWatchFaceUiState.Loading -> {
-                            Log.d(TAG, "StateFlow Loading: ${uiState.message}")
-                        }
-                        is WatchFaceSettingsState.EditWatchFaceUiState.Success -> {
-                            Log.d(TAG, "StateFlow Success.")
-                            updateWatchFaceEditorPreview(uiState.userStylesAndPreview)
-                        }
-                        is WatchFaceSettingsState.EditWatchFaceUiState.Error -> {
-                            Log.e(TAG, "Flow error: ${uiState.exception}")
-                        }
-                    }
-                }
-        }
-    }
+		lifecycleScope.launch(Dispatchers.Main.immediate) {
+			stateHolder.uiState
+				.collect { uiState: WatchFaceSettingsState.EditWatchFaceUiState ->
+					when (uiState) {
+						is WatchFaceSettingsState.EditWatchFaceUiState.Loading -> {
+							Log.d(TAG, "StateFlow Loading: ${uiState.message}")
+						}
 
-    private fun updateWatchFaceEditorPreview(
-        userStylesAndPreview: WatchFaceSettingsState.UserStylesAndPreview
-    ) {
-        Log.d(TAG, "updateWatchFacePreview: $userStylesAndPreview")
+						is WatchFaceSettingsState.EditWatchFaceUiState.Success -> {
+							Log.d(TAG, "StateFlow Success.")
+							updateWatchFaceEditorPreview(uiState.userStylesAndPreview)
+						}
 
-        val colorStyleId: String = userStylesAndPreview.colorStyleId
-        Log.d(TAG, "\tselected color style: $colorStyleId")
+						is WatchFaceSettingsState.EditWatchFaceUiState.Error -> {
+							Log.e(TAG, "Flow error: ${uiState.exception}")
+						}
+					}
+				}
+		}
+	}
 
-        // binding.ticksEnabledSwitch.isChecked = userStylesAndPreview.ticksEnabled
-        // binding.minuteHandLengthSlider.value = userStylesAndPreview.minuteHandLength
+	private fun updateWatchFaceEditorPreview(
+		userStylesAndPreview: WatchFaceSettingsState.UserStylesAndPreview
+	) {
+		Log.d(TAG, "updateWatchFacePreview: $userStylesAndPreview")
+
+		val colorStyleId: String = userStylesAndPreview.colorStyleId
+		Log.d(TAG, "\tselected color style: $colorStyleId")
+
+		// binding.ticksEnabledSwitch.isChecked = userStylesAndPreview.ticksEnabled
+		// binding.minuteHandLengthSlider.value = userStylesAndPreview.minuteHandLength
 		binding.preview.watchFaceBackground.setImageBitmap(userStylesAndPreview.previewImage)
 
-        enabledWidgets()
-    }
+		enabledWidgets()
+	}
 
-    private fun enabledWidgets() {
-        binding.colorStylePickerButton.isEnabled = true
+	private fun enabledWidgets() {
+		binding.colorStylePickerButton.isEnabled = true
 		// binding.backgroundImage.isEnabled = false
-        // binding.ticksEnabledSwitch.isEnabled = true
-        // binding.minuteHandLengthSlider.isEnabled = true
-    }
+		// binding.ticksEnabledSwitch.isEnabled = true
+		// binding.minuteHandLengthSlider.isEnabled = true
+	}
 
-    // TODO: this needs a propoer dropdown or scroll selector
-    fun onClickColorStylePickerButton(view: View) {
-        Log.d(TAG, "onClickColorStylePickerButton() $view")
+	// TODO: this needs a propoer dropdown or scroll selector
+	fun onClickColorStylePickerButton(view: View) {
+		Log.d(TAG, "onClickColorStylePickerButton() $view")
 
-        // Selects a random color style from list.
-        val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
-        val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
+		// Selects a random color style from list.
+		val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
+		val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
 
-        stateHolder.setColorStyle(newColorStyle.id)
-    }
+		stateHolder.setColorStyle(newColorStyle.id)
+	}
 
-    // fun onClickTopLeftComplicationButton(view: View) {
-    //     Log.d(TAG, "onClickTopLeftComplicationButton() $view")
-    //     stateHolder.setComplication(TOP_LEFT_COMPLICATION_ID)
-    // }
+	// fun onClickTopLeftComplicationButton(view: View) {
+	//     Log.d(TAG, "onClickTopLeftComplicationButton() $view")
+	//     stateHolder.setComplication(TOP_LEFT_COMPLICATION_ID)
+	// }
 
-    // fun onClickTopRightComplicationButton(view: View) {
-    //     Log.d(TAG, "onClickTopRightComplicationButton() $view")
-    //     stateHolder.setComplication(TOP_RIGHT_COMPLICATION_ID)
-    // }
+	// fun onClickTopRightComplicationButton(view: View) {
+	//     Log.d(TAG, "onClickTopRightComplicationButton() $view")
+	//     stateHolder.setComplication(TOP_RIGHT_COMPLICATION_ID)
+	// }
 
 	// fun onClickBottomLeftComplicationButton(view: View) {
-    //     Log.d(TAG, "onClickBottomLeftComplicationButton() $view")
-    //     stateHolder.setComplication(BOTTOM_LEFT_COMPLICATION_ID)
-    // }
+	//     Log.d(TAG, "onClickBottomLeftComplicationButton() $view")
+	//     stateHolder.setComplication(BOTTOM_LEFT_COMPLICATION_ID)
+	// }
 
-    // fun onClickBottomRightComplicationButton(view: View) {
-    //     Log.d(TAG, "onClickBottomRightComplicationButton() $view")
-    //     stateHolder.setComplication(BOTTOM_RIGHT_COMPLICATION_ID)
-    // }
+	// fun onClickBottomRightComplicationButton(view: View) {
+	//     Log.d(TAG, "onClickBottomRightComplicationButton() $view")
+	//     stateHolder.setComplication(BOTTOM_RIGHT_COMPLICATION_ID)
+	// }
 
-    // fun onClickTicksEnabledSwitch(view: View) {
-    //     Log.d(TAG, "onClickTicksEnabledSwitch() $view")
-    //     stateHolder.setDrawPips(binding.ticksEnabledSwitch.isChecked)
-    // }
+	// fun onClickTicksEnabledSwitch(view: View) {
+	//     Log.d(TAG, "onClickTicksEnabledSwitch() $view")
+	//     stateHolder.setDrawPips(binding.ticksEnabledSwitch.isChecked)
+	// }
 
-    companion object {
-        const val TAG = "WatchFaceSettingsActivity"
-    }
+	companion object {
+		const val TAG = "WatchFaceSettingsActivity"
+	}
 }

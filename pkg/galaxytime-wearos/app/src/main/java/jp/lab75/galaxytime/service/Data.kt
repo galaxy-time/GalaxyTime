@@ -1,4 +1,4 @@
-package jp.lab75.galaxytime.calculations;
+package jp.lab75.galaxytime.service;
 
 import io.github.cosinekitty.astronomy.Equatorial;
 import io.github.cosinekitty.astronomy.Topocentric;
