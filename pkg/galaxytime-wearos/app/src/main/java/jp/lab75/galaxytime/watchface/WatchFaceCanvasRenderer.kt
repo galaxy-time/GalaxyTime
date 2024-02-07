@@ -1,74 +1,58 @@
 package jp.lab75.galaxytime
 
-import android.Manifest
+// import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
+
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
-
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Rect
-import android.graphics.RectF
-import android.graphics.Color
-import android.graphics.RadialGradient
-import android.graphics.Shader
-import android.graphics.Typeface
-import android.graphics.BlendMode
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-
+import android.graphics.BlendMode
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RadialGradient
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.Shader
 import android.util.Log
 import android.view.SurfaceHolder
-
+import androidx.wear.watchface.ComplicationSlot
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.DrawMode
 import androidx.wear.watchface.Renderer
-import androidx.wear.watchface.WatchState
-
-import androidx.wear.watchface.WatchFace.TapListener
-import androidx.wear.watchface.TapType
 import androidx.wear.watchface.TapEvent
-import androidx.wear.watchface.ComplicationSlot
-
+import androidx.wear.watchface.TapType
+import androidx.wear.watchface.WatchFace.TapListener
+import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.complications.rendering.CanvasComplicationDrawable
 import androidx.wear.watchface.complications.rendering.ComplicationDrawable
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.UserStyle
 import androidx.wear.watchface.style.UserStyleSetting
 import androidx.wear.watchface.style.WatchFaceLayer
-
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import jp.lab75.galaxytime.calculations.Calculations
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
 import jp.lab75.galaxytime.data.watchface.WatchMode
-
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-// import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
-
 import jp.lab75.galaxytime.utils.drawGradientArc
-
-import java.time.format.DateTimeFormatter
-import java.time.ZonedDateTime
-import java.time.ZoneOffset
-import java.time.OffsetDateTime
-import java.time.Instant
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-import android.animation.ValueAnimator
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.content.ActivityNotFoundException
-import android.content.Intent
-
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
-import jp.lab75.galaxytime.calculations.Calculations
 
 //	shaders
 
@@ -582,67 +566,59 @@ class WatchFaceCanvasRenderer(
 		bounds: Rect
 	) {
 
-		// if ( watchFaceData.drawHourPips ) {
-			// drawNumberStyleOuterElement(
-			// 	canvas,
-			// 	bounds,
-			// 	watchFaceData.numberRadiusFraction,
-			// 	watchFaceData.numberStyleOuterCircleRadiusFraction,
-			// 	watchFaceColors.activeOuterElementColor,
-			// 	watchFaceData.numberStyleOuterCircleRadiusFraction,
-			// 	watchFaceData.gapBetweenOuterCircleAndBorderFraction
-			// 	)
-		// } else {
+		val offset = 20f // offset from border of lunette
+		val arcOffset = 2f // leap between zone arcs
+		val rect = RectF( offset, offset, bounds.width().toFloat() - offset, bounds.height().toFloat() - offset )
 
-			val offset = 20f
-			val space = 10f
+		val p = Paint().apply {
+			color = Color.RED
+			strokeWidth = 0.5f
+			style = Paint.Style.STROKE
+			typeface = typeface
+			// bold arcs at bezel:
+			// strokeWidth = 20f
+			// strokeJoin = Paint.Join.ROUND
+			// strokeCap = Paint.Cap.ROUND
+		}
+		p.setPathEffect( DashPathEffect( floatArrayOf(4f, 8f), 0f) )
 
-			val arcOffset = 1f
-			val arcSweep = 90f - arcOffset - arcOffset
+		// val arcSweep = 90f - arcOffset - arcOffset
+		// val r01 = RectF( space, space, bounds.width().toFloat() - space, bounds.height().toFloat() - space )
+		// canvas.drawArc(r01, -90f + arcOffset ,arcSweep, false, p)
+		// canvas.drawArc(r01,   0f + arcOffset, arcSweep, false, p)
+		// canvas.drawArc(r01, 180f + arcOffset, arcSweep, false, p)
+		// canvas.drawArc(r01,  90f + arcOffset, arcSweep, false, p)
 
-			val rect = RectF( offset, offset, bounds.width().toFloat() - offset, bounds.height().toFloat() - offset )
-			val r01 = RectF( space, space, bounds.width().toFloat() - space, bounds.height().toFloat() - space )
+		// only for debugging
+		canvas.drawLine( bounds.exactCenterX(), 0f, bounds.exactCenterX(), bounds.height().toFloat(), p )
+		canvas.drawLine( 0f, bounds.exactCenterY(), bounds.width().toFloat(), bounds.exactCenterY(), p )
 
-			val p = Paint().apply {
-				color = Color.YELLOW
-				strokeWidth = 18f
-				style = Paint.Style.STROKE
-				typeface = typeface
-				// strokeJoin = Paint.Join.ROUND
-				// strokeCap = Paint.Cap.ROUND
-			}
+		textPaint.textSize = 16f
+		textPaint.color = Color.WHITE
 
-			// canvas.drawArc(r01, -90f + arcOffset ,arcSweep, false, p)
-			// canvas.drawArc(r01,   0f + arcOffset, arcSweep, false, p)
-			// canvas.drawArc(r01, 180f + arcOffset, arcSweep, false, p)
-			// canvas.drawArc(r01,  90f + arcOffset, arcSweep, false, p)
+		// top right
+		val t0 = "1 SOL=1234 EARTH DAYS"
+		val p0 = Path()
+		p0.addArc( rect, -90f + arcOffset, 90f - arcOffset)
+		canvas.drawTextOnPath( t0, p0, 0f, 0f, textPaint )
 
-			//
+		// bottom right
+		val t1 = "12:30 LT — ESA MEETING WITH JPL"
+		val p1 = Path()
+		p1.addArc( rect, 90f - arcOffset, -90f + arcOffset )
+		canvas.drawTextOnPath( t1, p1, 0f, 12f, textPaint )
 
-			textPaint.textSize = 16f
-			textPaint.color = Color.WHITE
+		// bottom left
+		val t2 = "0123456789ABCDEF0123456789ABCDEF"
+		val p2 = Path()
+		p2.addArc( rect, 180f - arcOffset, -90f + arcOffset )
+		canvas.drawTextOnPath( t2, p2, 0f, 12f, textPaint )
 
-			val t0 = "0123456789abcdef"
-			val p0 = Path()
-			p0.addArc( rect, -90f + arcOffset, 90f )
-			canvas.drawTextOnPath( t0, p0, 0f, 0f, textPaint )
-
-			val t1 = "ZONE 2"
-			val p1 = Path()
-			p1.addArc( rect, 0f + arcOffset, 90f )
-			canvas.drawTextOnPath( t1, p1, 0f, 0f, textPaint )
-
-			val t2 = "ZONE 3"
-			val p2 = Path()
-			p2.addArc( rect, 90f + arcOffset, 90f )
-			canvas.drawTextOnPath( t2, p2, 0f, 0f, textPaint )
-
-			val t3 = "ZONE 4"
-			val p3 = Path()
-			p3.addArc( rect, 180f + arcOffset, 90f )
-			canvas.drawTextOnPath( t3, p3, 0f, 0f, textPaint )
-
-		// }
+		// top left
+		val t3 = "0123456789ABCDEF0123456789ABCDEF"
+		val p3 = Path()
+		p3.addArc( rect, 180f + arcOffset, 90f - arcOffset)
+		canvas.drawTextOnPath( t3, p3, 0f, 0f, textPaint )
 
 	}
 
@@ -704,62 +680,58 @@ class WatchFaceCanvasRenderer(
 		}
 	}
 
-    private fun drawNumberStyleOuterElement(
-        canvas: Canvas,
-        bounds: Rect,
-        numberRadiusFraction: Float,
-        outerCircleStokeWidthFraction: Float,
-        outerElementColor: Int,
-        numberStyleOuterCircleRadiusFraction: Float,
-        gapBetweenOuterCircleAndBorderFraction: Float
-    ) {
-
-        outerElementPaint.strokeWidth = outerCircleStokeWidthFraction * bounds.width()
-        outerElementPaint.color = outerElementColor
-        canvas.save()
-
-        for (i in 0 until 60) {
-            // if (i % 15 != 0) {
-                drawTopMiddleCircle(
-                    canvas,
-                    bounds,
-                    numberStyleOuterCircleRadiusFraction/4,
-                    gapBetweenOuterCircleAndBorderFraction
-                )
-            // }
-            canvas.rotate(360.0f / 60.0f, bounds.exactCenterX(), bounds.exactCenterY() )
-        }
-        canvas.restore()
-
-    }
+//    private fun drawNumberStyleOuterElement(
+//        canvas: Canvas,
+//        bounds: Rect,
+//        numberRadiusFraction: Float,
+//        outerCircleStokeWidthFraction: Float,
+//        outerElementColor: Int,
+//        numberStyleOuterCircleRadiusFraction: Float,
+//        gapBetweenOuterCircleAndBorderFraction: Float
+//    ) {
+//
+//        outerElementPaint.strokeWidth = outerCircleStokeWidthFraction * bounds.width()
+//        outerElementPaint.color = outerElementColor
+//        canvas.save()
+//
+//        for (i in 0 until 60) {
+//            // if (i % 15 != 0) {
+//                drawTopMiddleCircle(
+//                    canvas,
+//                    bounds,
+//                    numberStyleOuterCircleRadiusFraction/4,
+//                    gapBetweenOuterCircleAndBorderFraction
+//                )
+//            // }
+//            canvas.rotate(360.0f / 60.0f, bounds.exactCenterX(), bounds.exactCenterY() )
+//        }
+//        canvas.restore()
+//
+//    }
 
     /** Draws the outer circle on the top middle of the given bounds. */
-    private fun drawTopMiddleCircle(
-        canvas: Canvas,
-        bounds: Rect,
-        radiusFraction: Float,
-        gapBetweenOuterCircleAndBorderFraction: Float
-    ) {
-
-        outerElementPaint.style = Paint.Style.FILL_AND_STROKE
-
-        val centerX = 0.5f * bounds.width().toFloat()
-        val centerY = bounds.width() * (gapBetweenOuterCircleAndBorderFraction + radiusFraction)
-
-        canvas.drawCircle(
-            centerX,
-            centerY,
-            radiusFraction * bounds.width(),
-            outerElementPaint
-        )
-
-    }
+//    private fun drawTopMiddleCircle(
+//        canvas: Canvas,
+//        bounds: Rect,
+//        radiusFraction: Float,
+//        gapBetweenOuterCircleAndBorderFraction: Float
+//    ) {
+//
+//        outerElementPaint.style = Paint.Style.FILL_AND_STROKE
+//
+//        val centerX = 0.5f * bounds.width().toFloat()
+//        val centerY = bounds.width() * (gapBetweenOuterCircleAndBorderFraction + radiusFraction)
+//
+//        canvas.drawCircle(
+//            centerX,
+//            centerY,
+//            radiusFraction * bounds.width(),
+//            outerElementPaint
+//        )
+//
+//    }
 
     companion object {
         private const val TAG = "CanvasRenderer"
-        // Painted between pips on watch face for hour marks.
-        private val HOUR_MARKS = arrayOf("3", "6", "9", "12")
-        // Used to canvas.scale() to scale watch hands in proper bounds. This will always be 1.0.
-        private const val WATCH_HAND_SCALE = 1.0f
     }
 }
