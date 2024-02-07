@@ -61,10 +61,11 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 private lateinit var backgroundImage: Bitmap
+
 private val padding = 25f
 private val typePadding = 20f
 private val size = 20f
-private val fontSize = 20f
+private val fontSize = 16f
 
 //
 //
@@ -87,7 +88,7 @@ fun renderAstronomicsView(
 		watchFaceData.ambientColorStyle
 	)
 
-	val name = watchFaceData.activeColorStyle.toString()
+	// val name = watchFaceData.activeColorStyle.toString()
 
 	val earthData = calculations.getBodyData(Body.Earth)
 
@@ -165,15 +166,19 @@ fun renderAstronomicsView(
 	val location = watchFaceData.activeColorStyle.toString()
 	addText(centerX, centerY - 140f, "$location — $destination", textStyle, canvas)
 
-	textStyle.textAlign = Paint.Align.LEFT
-	addText(centerX - 140f, centerY + 30f, l1, textStyle, canvas)
-	addText(centerX - 140f, centerY + 50f, l2, textStyle, canvas)
-	addText(centerX - 140f, centerY + 70f, l3, textStyle, canvas)
+	val xoff_left = 160f
+	val xoff_right = 20f
 
-	addText(centerX + 20f, centerY + 30f, r1, textStyle, canvas)
-	addText(centerX + 20f, centerY + 50f, r2, textStyle, canvas)
-	addText(centerX + 20f, centerY + 70f, r3, textStyle, canvas)
-	addText(centerX + 20f, centerY + 90f, r4, textStyle, canvas)
+	textStyle.textAlign = Paint.Align.LEFT
+
+	addText(centerX - xoff_left, centerY + 30f, l1, textStyle, canvas)
+	addText(centerX - xoff_left, centerY + 50f, l2, textStyle, canvas)
+	addText(centerX - xoff_left, centerY + 70f, l3, textStyle, canvas)
+
+	addText(centerX + xoff_right, centerY + 30f, r1, textStyle, canvas)
+	addText(centerX + xoff_right, centerY + 50f, r2, textStyle, canvas)
+	addText(centerX + xoff_right, centerY + 70f, r3, textStyle, canvas)
+	addText(centerX + xoff_right, centerY + 90f, r4, textStyle, canvas)
 
 	// val height = bounds.height().toFloat() - padding - padding - size - size - 20
 	// addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )

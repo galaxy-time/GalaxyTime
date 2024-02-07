@@ -63,7 +63,7 @@ class PermissionRequestActivity : AppCompatActivity() {
 						ensureLocationPermission()
 					} else {
 						// Permission denied, open settings page and finish activity
-						// TODO: Open settings page after the second time android will not show the dialog again so we need to disable everything that needs location data, and open the settings page if he want to use the
+						// TODO: Open settings page after the second time android will not show the dialog again so we need to disable everything that needs location data, and open the settings page if we want to use the
 						// TODO: Build dialog with ok and cancel button, if ok open settings page, if cancel close and hide everything that needs location data
 						AlertDialog.Builder(this)
 							.setMessage("Galaxytime needs location permission to calculate the position and time of the planets.")

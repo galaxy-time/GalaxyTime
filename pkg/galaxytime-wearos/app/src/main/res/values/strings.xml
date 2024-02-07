@@ -18,10 +18,10 @@
     <string name="watchface_name" translatable="false">GalaxyTime</string>
 
     <!-- Name of watchface style category for selecting the color theme [CHAR LIMIT=20] -->
-    <string name="colors_style_setting">Locations</string>
+    <string name="colors_style_setting">Select</string>
 
     <!-- Subtitle for the menu option to select the watch face color theme -->
-    <string name="colors_style_setting_description">Select a location in space.</string>
+    <string name="colors_style_setting_description">Select a location in space</string>
 
     <!-- Name of watchface style [CHAR LIMIT=20] -->
     <string name="ambient_style_name">AMBIENT</string>
@@ -94,7 +94,7 @@
     <string name="title_activity_watch_face_config">Configuration</string>
 
 	<!-- Use of "\n" is to conserve horizontal space in config menu. -->
-    <string name="settings_color_style_picker_label">Location</string>
+    <string name="settings_color_style_picker_label">Select</string>
     <string name="settings_ticks_enabled_label">Ticks\nEnabled</string>
     <string name="settings_slider_text_label">Minute Hand Size</string>
 

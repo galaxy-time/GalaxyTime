@@ -48,7 +48,11 @@ import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
 
 import jp.lab75.galaxytime.utils.drawGradientArc
 
+import java.time.format.DateTimeFormatter
 import java.time.ZonedDateTime
+import java.time.ZoneOffset
+import java.time.OffsetDateTime
+import java.time.Instant
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -238,23 +242,27 @@ class WatchFaceCanvasRenderer(
 
 	// NOPE
 	// object FontUtils {
-	// 	private const val FONT_PATH = "font/pp_stellar_light_ttf.ttf"
+	// 	private const val FONT_PATH = "font/pp_b612_light_ttf.ttf"
 	// 	fun getDefaultTypeface(context: Context): Typeface {
 	// 		return Typeface.createFromAsset( context.assets, FONT_PATH )
 	// 	}
 	// }
 	// val typeface = FontUtils.getDefaultTypeface(context)
 
-	val typeface = resources.getFont( R.font.stellar )
+	val default_typeface = resources.getFont( R.font.b612_mono )
+	val default_fontsize = 20f
+	val detail_fontsize = 16f
+	val lunette_fontsize = 20f
+	val small_fontsize = 12f
 
 	// general text
 	val textPaint = Paint().apply{
 		isAntiAlias = true
 		color = Color.YELLOW
-        textSize = 18f
+        textSize = default_fontsize
 		isSubpixelText = true
 		// textPaint.letterSpacing = 0.1f
-		typeface = resources.getFont( R.font.stellar )
+		typeface = resources.getFont( R.font.b612 )
 	}
 
 	// location zone top
@@ -262,12 +270,12 @@ class WatchFaceCanvasRenderer(
         isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-        textSize = 18f
+        textSize = default_fontsize
 		textAlign = Paint.Align.CENTER
 		isLinearText = true
 		isSubpixelText = true
 		letterSpacing = 0.1f
-		typeface = resources.getFont( R.font.stellar )
+		typeface = resources.getFont( R.font.b612 )
     }
 
 	// time zones left
@@ -275,25 +283,36 @@ class WatchFaceCanvasRenderer(
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-        textSize = 16f
+        textSize = default_fontsize
 		textAlign = Paint.Align.RIGHT
 		isLinearText = true
 		isSubpixelText = true
 		letterSpacing = 0.1f
-		typeface = resources.getFont( R.font.stellar )
+		typeface = resources.getFont( R.font.b612 )
+	}
+
+	var p3 = Paint().apply {
+		isAntiAlias = true
+		color = Color.WHITE
+		typeface = typeface
+        textSize = small_fontsize
+		textAlign = Paint.Align.RIGHT
+		isLinearText = true
+		isSubpixelText = true
+		letterSpacing = 0.1f
+		typeface = resources.getFont( R.font.b612_mono )
 	}
 
 	var blendPaint = Paint().apply{
 		blendMode = BlendMode.SRC_OVER
-//		alpha = 192
 	}
 
 	private var armLengthChangedRecalculateClockHands: Boolean = false
-    private var currentWatchFaceSize = Rect(0, 0, 0, 0)
+    private var currentWatchFaceSize = Rect(0,0,450,450)
 
 	// grain overlay
-	private lateinit var grainImage: Bitmap
-	var grainBitmap: Bitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_grain )
+	private var grainBitmap: Bitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_grain )
+	private var grainImage: Bitmap = Bitmap.createScaledBitmap( grainBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false )
 
 	//
 	//
@@ -320,6 +339,9 @@ class WatchFaceCanvasRenderer(
         Log.d(TAG, "updateWatchFace(): $userStyle")
 
 		themeName = watchFaceData.activeColorStyle.toString()
+		if(currentWatchFaceSize.width()!=0) {
+			grainImage = Bitmap.createScaledBitmap( grainBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false )
+		}
 
 		p1.setShadowLayer(10f, 0f, 0f, Color.BLACK)
 		p2.setShadowLayer(10f, 0f, 0f, Color.BLACK)
@@ -419,25 +441,21 @@ class WatchFaceCanvasRenderer(
 	//	main render loop
 	//
 
+
 	override fun render(
         canvas: Canvas,
         bounds: Rect,
         zonedDateTime: ZonedDateTime,
         sharedAssets: AnalogSharedAssets
-    ) {
-		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
 
-		// val backgroundColor =
-		// if ( renderParameters.drawMode == DrawMode.AMBIENT ) { watchFaceColors.ambientBackgroundColor }
-		// else {	watchFaceColors.activeBackgroundColor }
-        // canvas.drawColor( backgroundColor )
+    ) {
+
+		if ( currentWatchFaceSize != bounds ) currentWatchFaceSize = bounds
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT ) {
 
 			when ( watchMode ) {
-				//
-				WatchMode.WATCH -> renderWatchView(context, canvas, bounds, zonedDateTime)
-				//
+				WatchMode.WATCH 		-> renderWatchView(context, canvas, bounds, zonedDateTime)
 				WatchMode.BIOMETRICS	-> renderBiometricsView(context, canvas, bounds, textPaint)
 				WatchMode.ASTRONOMICS	-> renderAstronomicsView(context, canvas, bounds, textPaint, calculations)
 				WatchMode.DIRECTIONS	-> renderDirectionsView(context, canvas, bounds, textPaint)
@@ -446,64 +464,26 @@ class WatchFaceCanvasRenderer(
 			}
 
 		} else if ( renderParameters.drawMode == DrawMode.AMBIENT ) {
-
 			val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
 			drawGradientArc( canvas, bounds,   0f, 200f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
-
 		}
 
-		// gradient
-		if ( watchMode == WatchMode.WATCH ) drawGradient( canvas, currentWatchFaceSize )
-
-		// grain
-		grainImage = Bitmap.createScaledBitmap( grainBitmap, bounds.width(), bounds.height(), false )
-		canvas.drawBitmap( grainImage, bounds, bounds, blendPaint )
+		if ( watchMode == WatchMode.WATCH ) {
+			drawGradient( canvas, currentWatchFaceSize )
+			if(currentWatchFaceSize.width()!=0) {
+				canvas.drawBitmap( grainImage, bounds, bounds, blendPaint )
+			}
+		}
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT && watchMode == WatchMode.WATCH ) {
-
-			// lunette overlay
 			drawLunette( canvas, bounds )
-
-			// text zones
 			drawTextZones(canvas, bounds, themeName, zonedDateTime )
-
 		}
 
-		// overlay transition
 		val paint = Paint().apply { alpha = transitionAlpha.toInt() }
 		canvas.drawPaint(paint)
 
-		// drawShaderLayer( canvas, bounds, zonedDateTime )
-
 	}
-
-	//
-	//	shader
-	//
-
-	// @Language("AGSL")
-	// private val SIMPLE = """
-	// 	uniform float2 resolution;
-	// 	half4 main(float2 coord) {
-	// 		float2 uv = coord.xy / resolution;
-	// 		// R G B A
-	// 		return half4( uv.x, uv.y, 0.0, 1.0);
-	// 	}
-	// """.trimIndent()
-
-	// private fun drawShaderLayer(canvas: Canvas, bounds: Rect, zonedDateTime: ZonedDateTime ) {
-
-		// Log.d(TAG, "drawShaderLayer()")
-		// val shaderSource = RuntimeShader( SIMPLE )
-		// 	shaderSource.setFloatUniform( "resolution", bounds.width().toFloat(), bounds.height().toFloat() )
-		// 	// shaderSource.setFloatUniform( "time", zonedDateTime.second.toFloat() ) //toEpochMilli
-		// val shaderPaint = Paint().apply {
-		// 	shader = shaderSource
-		// 	alpha = 64
-		// 	blendMode = BlendMode.MULTIPLY
-		// }
-		// canvas.drawPaint(shaderPaint)
-	// }
 
 	//
 	//	watch view
@@ -572,18 +552,24 @@ class WatchFaceCanvasRenderer(
 	//	draw text
 	//
 
-	private fun drawTextZones( canvas: Canvas, bounds: Rect, themeName: String, zonedDateTime: ZonedDateTime ) {
+	private fun drawTextZones( canvas: Canvas, bounds: Rect, location: String, zonedDateTime: ZonedDateTime ) {
 
 		val xc = bounds.exactCenterX()
 		val yc = bounds.exactCenterY()
+		val off1 = 10f
+		val off2 = 30f
 
-		val t1 = themeName
-		canvas.drawText( t1, xc, yc / 2f + 8f, p1 )
+		val zero = ""
 
-		val t2 = zonedDateTime.hour.toString() + "'" + zonedDateTime.minute.toString() + "'" + zonedDateTime.second.toString() + " LT"
-		val t3 = "13'37'00 UT"
-		canvas.drawText( t2, xc - 16, yc - 8f, p2 )
-		canvas.drawText( t3, xc - 16, yc + 20f, p2 )
+
+		var localtime = DateTimeFormatter.ofPattern("HH:mm:ss").format(zonedDateTime).replace("0", zero)
+		var universaltime = DateTimeFormatter.ofPattern("HH:mm:ss").format(OffsetDateTime.now(ZoneOffset.UTC)).replace("0", zero)
+
+		canvas.drawText( location     , xc       , yc / 2f + 8f, p1 )
+		canvas.drawText( "LT"         , xc - off1, yc - 6f     , p3 )
+		canvas.drawText( "UT"         , xc - off1, yc + 20f    , p3 )
+		canvas.drawText( localtime    , xc - off2, yc - 6f     , p2 )
+		canvas.drawText( universaltime, xc - off2, yc + 20f    , p2 )
 
 	}
 

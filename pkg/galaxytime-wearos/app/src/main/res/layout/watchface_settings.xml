@@ -18,6 +18,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 
+	android:id="@+id/selector"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:animateLayoutChanges="true"
@@ -25,8 +26,8 @@
 	android:fillViewport="true"
 	android:paddingStart="@dimen/settings_padding"
 	android:paddingTop="@dimen/settings_padding"
-	android:paddingEnd="@dimen/settings_padding"
 
+	android:paddingEnd="@dimen/settings_padding"
 	android:paddingBottom="@dimen/settings_padding"
 	tools:context=".settings.WatchFaceSettingsActivity"
 	tools:deviceIds="wear">
@@ -37,12 +38,13 @@
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:overScrollMode="ifContentScrolls"
-		android:paddingStart="@dimen/settings_padding"
+		android:paddingStart="40sp"
 		android:paddingTop="@dimen/settings_padding"
-		android:paddingEnd="@dimen/settings_padding"
+		android:paddingEnd="40sp"
 		android:paddingBottom="@dimen/settings_padding"
 		android:scrollbarStyle="insideOverlay"
-		android:scrollbars="vertical">
+		android:scrollbars="vertical"
+		android:textAlignment="center">
 
 		<!-- <ImageView
             android:id="@+id/more_options_image_view"
@@ -56,38 +58,149 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/preview" /> -->
 
-		<LinearLayout
-			android:id="@+id/linear_wrapper"
+		<include
+			android:id="@+id/preview"
+			layout="@layout/watchface_preview"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:gravity="center_horizontal"
-			android:orientation="vertical"
+			android:layout_gravity="center_horizontal"
+			android:contentDescription="@string/settings_preview_of_watch_face_content_description"
+			android:visibility="visible"
+			tools:layout_editor_absoluteX="12dp"
+			tools:layout_editor_absoluteY="12dp" />
+
+		<TextView
+			android:id="@+id/text_view"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingVertical="5sp"
+			android:text="@string/colors_style_setting_description"
+			android:textColor="@color/white"
+			app:layout_constraintTop_toBottomOf="@+id/preview"
+			tools:layout_editor_absoluteX="6dp" />
+
+		<RadioGroup
+			android:id="@+id/radio_group"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_constraintTop_toBottomOf="@+id/text_view"
 			tools:layout_editor_absoluteX="6dp"
 			tools:layout_editor_absoluteY="6dp">
 
-			<include
-				android:id="@+id/preview"
-				layout="@layout/watchface_preview"
+			<RadioButton
+				android:id="@+id/id_sun"
 				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_horizontal"
-				android:contentDescription="@string/settings_preview_of_watch_face_content_description" />
-
-			<com.google.android.material.button.MaterialButton
-				android:id="@+id/color_style_picker_button"
-				style="@style/Widget.WatchFace.Button"
-				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:contentDescription="@string/settings_change_color_style_button_content_description"
-				android:gravity="center_horizontal|center_vertical"
-				android:onClick="onClickColorStylePickerButton"
-				android:padding="@dimen/no_padding"
-				android:text="@string/settings_color_style_picker_label"
-				android:textAppearance="?attr/textAppearanceButton"
-				app:icon="@drawable/circle"
-				app:iconPadding="@dimen/settings_style_picker_icon_padding" />
+				android:paddingVertical="5sp"
+				android:text="@string/sun_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
 
-		</LinearLayout>
+			<RadioButton
+				android:id="@+id/id_mercury"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/mercury_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_venus"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/venus_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_earth"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/earth_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_moon"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/moon_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_mars"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/mars_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_saturn"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/saturn_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_jupiter"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/jupiter_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_uranus"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/uranus_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			<RadioButton
+				android:id="@+id/id_neptune"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/neptune_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+		</RadioGroup>
+
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/color_style_picker_button"
+			style="@style/Widget.WatchFace.Button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="@string/settings_change_color_style_button_content_description"
+			android:gravity="center_horizontal|center_vertical"
+			android:onClick="onClickColorStylePickerButton"
+			android:padding="@dimen/no_padding"
+			android:text="@string/settings_color_style_picker_label"
+			android:textAppearance="?attr/textAppearanceButton"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/radio_group" />
+
+		<Space
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/color_style_picker_button" />
 
 		<!--
 				<com.google.android.material.switchMaterial.SwitchMaterial

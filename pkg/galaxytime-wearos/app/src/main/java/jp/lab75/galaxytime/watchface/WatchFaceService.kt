@@ -47,7 +47,7 @@ class WatchFaceService : WatchFaceService() {
 	val hasPermissions = false
 
 	val refreshLocationInterval: Long = 1000 * 60		// maybe every minute
-	val refreshCalculationsInterval: Long = 1000 * 1	// maybe every minute
+	val refreshCalculationsInterval: Long = 1000 * 60	// maybe every minute
 
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)

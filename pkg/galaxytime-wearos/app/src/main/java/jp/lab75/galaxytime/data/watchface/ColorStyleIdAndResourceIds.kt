@@ -236,7 +236,8 @@ enum class ColorStyleIdAndResourceIds(
 				SATURN.id -> SATURN
 				URANUS.id -> URANUS
 				NEPTUNE.id -> NEPTUNE
-                else -> WHITE
+                WHITE.id -> WHITE
+				else -> WHITE
             }
         }
 

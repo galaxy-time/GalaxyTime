@@ -17,17 +17,15 @@
 <!--
     ImageView to load preview of watch face.
 -->
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/analog_complication_settings_preview_size"
-    android:layout_height="@dimen/analog_complication_settings_preview_size"
-    tools:context=".editor.WatchFaceSettingsActivity"
-    android:fontFamily="@font/stellar"
-    >
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fontFamily="@font/b612"
+	tools:context=".editor.WatchFaceSettingsActivity">
 
-    <!-- <Button
+	<!-- <Button
         android:id="@+id/left_complication"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -52,51 +50,52 @@
         app:layout_constraintWidth_percent="0.5" /> -->
 
 
-    <TextView
-        android:id="@+id/txt1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:rotationX="0"
-        android:text="123123123"
-        android:textColor="#FF0000"
-        android:textSize="10sp"
-        android:visibility="visible"
-        tools:layout_editor_absoluteX="88dp"
-        tools:layout_editor_absoluteY="141dp"
-        android:fontFamily="@font/stellar" />
+	<TextView
+		android:id="@+id/txt1"
+		android:layout_width="43dp"
+		android:layout_height="14dp"
+		android:fontFamily="@font/b612"
+		android:rotationX="0"
+		android:text="PREVIEW"
+		android:textColor="#ffffff"
+		android:textSize="10sp"
+		android:visibility="visible"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		tools:layout_editor_absoluteY="180dp" />
 
-    <ImageView
-        android:id="@+id/watch_face_seconds"
-        android:layout_width="@dimen/analog_complication_settings_preview_size"
-        android:layout_height="@dimen/analog_complication_settings_preview_size"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/settings_screenshot_content_description"
-        android:padding="@dimen/watchface_preview_background_padding"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mm"
-        android:fontFamily="@font/stellar" />
+	<ImageView
+		android:id="@+id/watch_face_seconds"
+		android:layout_width="@dimen/analog_complication_settings_preview_size"
+		android:layout_height="@dimen/analog_complication_settings_preview_size"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="true"
+		android:layout_marginStart="16dp"
+		android:layout_marginTop="16dp"
+		android:layout_marginEnd="16dp"
+		android:layout_marginBottom="16dp"
+		android:contentDescription="@string/settings_screenshot_content_description"
+		android:fontFamily="@font/stellar"
+		android:padding="@dimen/watchface_preview_background_padding"
+		android:scaleType="fitXY"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		app:srcCompat="@drawable/mm" />
 
-    <ImageView
-        android:id="@+id/watch_face_background"
-        android:layout_width="@dimen/analog_complication_settings_preview_size"
-        android:layout_height="@dimen/analog_complication_settings_preview_size"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@color/black"
-        android:contentDescription="@string/settings_screenshot_content_description"
-        android:padding="@dimen/watchface_preview_background_padding"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:fontFamily="@font/stellar" />
+	<ImageView
+		android:id="@+id/watch_face_background"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="true"
+		android:background="@color/black"
+		android:contentDescription="@string/settings_screenshot_content_description"
+		android:fontFamily="@font/stellar"
+		android:padding="@dimen/watchface_preview_background_padding"
+		android:scaleType="centerInside"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
