@@ -1,7 +1,7 @@
-package jp.lab75.galaxytime.service;
+package jp.lab75.galaxytime.service
 
-import io.github.cosinekitty.astronomy.Equatorial;
-import io.github.cosinekitty.astronomy.Topocentric;
+import io.github.cosinekitty.astronomy.Equatorial
+import io.github.cosinekitty.astronomy.Topocentric
 
 data class Data(
 	var equatorial: Equatorial,
@@ -9,5 +9,7 @@ data class Data(
 	// for getting time in hours, minutes, seconds
 	var rightAscension: DMS,
 	// for getting time in degrees, minutes, seconds of arc
-	var declination: DMS
+	var declination: DMS,
+	// get planetary time in days, hours, minutes, seconds
+	var time: PT
 )

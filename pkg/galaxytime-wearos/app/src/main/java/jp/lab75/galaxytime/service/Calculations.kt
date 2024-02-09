@@ -1,6 +1,7 @@
 package jp.lab75.galaxytime.service
 
 import android.Manifest
+import android.util.Log
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -23,27 +24,28 @@ import java.util.TimeZone
 import kotlin.math.roundToInt
 
 class Calculations(private val context: Context) {
+
 	private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 	private val bodyDataMap = mutableMapOf<Body, Data>()
 	private var latLonElev = Triple(0.0, 0.0, 0.0)
 
 	val bodyList = arrayOf(
-		Body.Earth, Body.Sun, Body.Moon, Body.Mercury, Body.Venus, Body.Mars,
-		Body.Jupiter, Body.Saturn, Body.Uranus, Body.Neptune, Body.Pluto
+		Body.Sun, Body.Mercury, Body.Venus,
+		Body.Earth, Body.Moon, Body.Mars,
+		Body.Jupiter, Body.Saturn,
+		Body.Uranus, Body.Neptune,
+		Body.Pluto
 	)
-
-	// Function to get data for calculated bodies
-	fun getBodyData(body: Body): Data? {
-		if (!bodyDataMap.containsKey(body)) {
-			return null
-		}
-
-		return bodyDataMap[body]
-	}
-
 
 	fun getBodyFromThemeName(name: String): Body? {
 		return bodyList.find { it.name.lowercase() == name.lowercase() }
+	}
+
+	fun getBodyData(body: Body): Data? {
+		if (!bodyDataMap.containsKey(body)) {
+			return bodyDataMap[getBodyFromThemeName("Earth")]
+		}
+		return bodyDataMap[body]
 	}
 
 	fun updateLocation() {
@@ -57,7 +59,7 @@ class Calculations(private val context: Context) {
 		) {
 			// Open permission dialog
 			// TODO: Extract permission check and...
-			println("No permissions")
+			Log.d("Calculations", "No permissions")
 			return
 		}
 
@@ -68,7 +70,7 @@ class Calculations(private val context: Context) {
 				.build(), null
 		).addOnSuccessListener { location: Location? ->
 
-			println("Update location $location");
+			Log.d("Calculations","Update location $location");
 
 			if (location != null) {
 				this.latLonElev = Triple(location.latitude, location.longitude, location.altitude);
@@ -102,6 +104,22 @@ class Calculations(private val context: Context) {
 		return DMS(degrees, minutes, seconds, negative)
 	}
 
+	private fun dmsToTime( d: Int, m: Int, s: Int, tRotation: Int ): PT {
+
+		val totalDegrees = d + m / 60 + s / 3600
+		val rotationFraction = totalDegrees / 360
+		val timeInSeconds = ( rotationFraction * tRotation )
+
+		Log.d("Calculations", "$totalDegrees, $rotationFraction, $timeInSeconds")
+
+		val days = 0
+		val hours = (timeInSeconds / 3600).toInt()
+		val minutes = ((timeInSeconds % 3600) / 60).toInt()
+		val seconds = (timeInSeconds % 60).toInt()
+
+		return PT( days, hours, minutes, seconds )
+	}
+
 	private fun calculateDayValue(): Double {
 		val now = Calendar.getInstance().timeInMillis
 
@@ -133,17 +151,18 @@ class Calculations(private val context: Context) {
 			latLonElev.third
 		)
 
-		// Crete calculations for each body
+		// Create calculations for each body
 		bodyList.forEach {
-			val equatorial =
-				equator(it, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected);
-			val horizontal =
-				horizon(timeA, observer, equatorial.ra, equatorial.dec, Refraction.Normal);
-			println("------------------------------------------------------------")
-			println("Body ${it.name}")
-			println("Azimuth ${horizontal.azimuth}")
-			println("Altitude ${horizontal.altitude}")
-			println("RA ${equatorial.ra}")
+			val equatorial = equator(it, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected);
+			val horizontal = horizon(timeA, observer, equatorial.ra, equatorial.dec, Refraction.Normal);
+			Log.d("Calculations","------------------------------------------------------------")
+			Log.d("Calculations","Body       ${it.name}")
+			Log.d("Calculations","RA         ${equatorial.ra}")
+			Log.d("Calculations","DEC        ${equatorial.dec}")
+			// Log.d("Calculations","horizontal ${horizontal.ra}")
+			// Log.d("Calculations","Azimuth    ${horizontal.azimuth}")
+			// Log.d("Calculations","Altitude   ${horizontal.altitude}")
+
 			// Convert RA to hh mm ss
 			var convertedRa: DMS;
 
@@ -160,15 +179,19 @@ class Calculations(private val context: Context) {
 				);
 			}
 
-			println("RA: ${convertedRa.degrees}h ${convertedRa.minutes}m ${convertedRa.seconds}s ${convertedRa.negative}")
+			// Log.d("Calculations","RA: ${convertedRa.degrees}h ${convertedRa.minutes}m ${convertedRa.seconds}s ${convertedRa.negative}")
 
 			// Convert Dec to
 			val convertedDec = convertToDMS(equatorial.dec);
-			println("Dec: ${if (convertedDec.negative) "-" else ""}${convertedDec.degrees}° ${convertedDec.minutes}' ${convertedDec.seconds}\" ${convertedDec.negative}")
+			// Log.d("Calculations","Dec: ${if (convertedDec.negative) "-" else ""}${convertedDec.degrees}° ${convertedDec.minutes}' ${convertedDec.seconds}\" ${convertedDec.negative}")
 
+			// dd:hh:mm:ss
+			val rotationTime = getReferenceDataFromThemeName(it.name)?.rotationTime?: 0
+			val time = dmsToTime( convertedRa.degrees, convertedRa.minutes, convertedRa.seconds.toInt(), rotationTime )
+			Log.d("Calculations","Localtime: ${time.d}:${time.h}:${time.m}:${time.s}")
 
 			// Write data to map or update existing data
-			bodyDataMap[it] = Data(equatorial, horizontal, convertedRa, convertedDec)
+			bodyDataMap[it] = Data( equatorial, horizontal, convertedRa, convertedDec, time )
 		}
 	};
 }
