@@ -179,4 +179,50 @@ fun renderDirectionsView(
 
 }
 
+//    private fun drawNESW(
+//        canvas: Canvas,
+//        bounds: Rect,
+//        numberRadiusFraction: Float,
+//        outerCircleStokeWidthFraction: Float,
+//        outerElementColor: Int,
+//        numberStyleOuterCircleRadiusFraction: Float,
+//        gapBetweenOuterCircleAndBorderFraction: Float
+//    ) {
+//
+//		canvas.save()
+//        for (i in 0 until 4) {
+//			// draw letter from array
+//                drawTopMiddleCircle(
+//                    canvas,
+//                    bounds,
+//                    numberStyleOuterCircleRadiusFraction/4,
+//                    gapBetweenOuterCircleAndBorderFraction
+//                )
+////             }
+//            canvas.rotate(360.0f / 60.0f, bounds.exactCenterX(), bounds.exactCenterY() )
+//        }
+//        canvas.restore()
+//    }
 
+//	private var elements: Array<String> = ["N", "E", "S", "W"]
+
+//	private fun drawTopMiddleCircle(
+//        canvas: Canvas,
+//        bounds: Rect,
+//        radiusFraction: Float,
+//        gapBetweenOuterCircleAndBorderFraction: Float
+//    ) {
+//
+//        outerElementPaint.style = Paint.Style.FILL_AND_STROKE
+//
+//        val centerX = 0.5f * bounds.width().toFloat()
+//        val centerY = bounds.width() * (gapBetweenOuterCircleAndBorderFraction + radiusFraction)
+//
+//        canvas.drawCircle(
+//            centerX,
+//            centerY,
+//            radiusFraction * bounds.width(),
+//            outerElementPaint
+//        )
+//
+//    }

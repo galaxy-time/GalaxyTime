@@ -54,136 +54,126 @@ fun renderAstronomicsView(
 	)
 
 	// val name = watchFaceData.activeColorStyle.toString()
+	val body = calculations.getBodyFromThemeName( watchFaceData.activeColorStyle.toString() )
+	val planetData = if ( body != null ) { calculations.getBodyData( body ) } else { null }
 
-	val earthData = calculations.getBodyData(Body.Earth)
+	if ( planetData != null ) {
 
-	val l1 = "AZI ${
-		earthData?.horizontal?.azimuth?.roundToInt()?.or(272)
-	}° ELE ${earthData?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
+		val l1 = "AZI ${
+			planetData?.horizontal?.azimuth?.roundToInt()?.or(272)
+		}° ELE ${planetData?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
 
-	// Create time with padding for this
-	val timeFormat = "RAS %02dh:%02dm:%02ds"
-	val l2 = timeFormat.format(
-		earthData?.rightAscension?.degrees?.or(12),
-		earthData?.rightAscension?.minutes?.or(14),
-		earthData?.rightAscension?.seconds?.roundToInt()?.or(16)
-	)
+		val ras = "RAS %02dh:%02dm:%02ds"
+		val l2 = ras.format(
+			planetData.rightAscension.degrees.or(12),
+			planetData.rightAscension.minutes.or(14),
+			planetData.rightAscension.seconds.roundToInt().or(16)
+		)
 
+		val dec = "DEC %02d˚%02d'%02d\""
+		val l3 = dec.format(
+			planetData.declination.degrees.or(12),
+			planetData.declination.minutes.or(14),
+			planetData.declination.seconds.roundToInt().or(16)
+		)
 
-	//val l1 = "AZI 272° ELE -2°"
-	//val l2 = "RAS 12h14m16s"
-	val l3 = "DEC +00°36'26''"
-	val l4 = ""
+		//	val l1 = "AZI 272° ELE -2°"
+		//	val l2 = "RAS 12h14m16s"
+		//	val l3 = "DEC +00°36'26''"
+		// val l4 = ""
 
-	val r1 = "24h 37min"
-	val r2 = "687 EARTH DAYS"
-	val r3 = "1.63118 × 1011 km³"
-	val r4 = "SATELLITES · ·"
+		val r1 = "24M 37M"
+		val r2 = "687 EARTH DAYS"
+		val r3 = "1.63118 × 1011 km³"
+		val r4 = "" // satellites
 
-	// background
+		// background
 
-	val backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_planet_neutral)
-	backgroundImage =
+		val backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_planet_neutral)
+		backgroundImage =
 		Bitmap.createScaledBitmap(backgroundBitmap, bounds.width(), bounds.height(), false)
-	canvas.drawBitmap(backgroundImage, bounds, bounds, null)
+		canvas.drawBitmap(backgroundImage, bounds, bounds, null)
 
-	val overlayColor = watchFaceColors.activePrimaryColor
-	canvas.drawColor(overlayColor, BlendMode.OVERLAY)
+		val overlayColor = watchFaceColors.activePrimaryColor
+		canvas.drawColor(overlayColor, BlendMode.OVERLAY)
 
-	// view
+		// view
 
-	val lineStyle = Paint().apply {
-		isAntiAlias = true
-		strokeWidth = 1f
-		style = Paint.Style.STROKE
-		color = Color.WHITE
+		val lineStyle = Paint().apply {
+			isAntiAlias = true
+			strokeWidth = 1f
+			style = Paint.Style.STROKE
+			color = Color.WHITE
+		}
+
+		val centerX = 0.5f * bounds.width().toFloat()
+		val centerY = 0.5f * bounds.height().toFloat()
+
+		canvas.drawLine( 115f, centerY - 20f, bounds.width().toFloat() - 105f, centerY - 20f, lineStyle )
+		canvas.drawCircle( centerX - 140, centerY - 20f, 30f, lineStyle )
+		canvas.drawCircle( centerX + 140, centerY - 20f, 20f, lineStyle )
+
+		textStyle.color = watchFaceColors.activeOuterElementColor
+		textStyle.textSize = fontSize
+		textStyle.textAlign = Paint.Align.CENTER
+
+		val destination = "EARTH"
+		val location = watchFaceData.activeColorStyle.toString()
+		addText(centerX, centerY - 140f, "$location — $destination", textStyle, canvas)
+
+		val xoff_left = 160f
+		val xoff_right = 20f
+
+		textStyle.textAlign = Paint.Align.LEFT
+
+		addText(centerX - xoff_left, centerY + 30f, l1, textStyle, canvas)
+		addText(centerX - xoff_left, centerY + 50f, l2, textStyle, canvas)
+		addText(centerX - xoff_left, centerY + 70f, l3, textStyle, canvas)
+
+		addText(centerX + xoff_right, centerY + 30f, r1, textStyle, canvas)
+		addText(centerX + xoff_right, centerY + 50f, r2, textStyle, canvas)
+		addText(centerX + xoff_right, centerY + 70f, r3, textStyle, canvas)
+		addText(centerX + xoff_right, centerY + 90f, r4, textStyle, canvas)
+
+		// val height = bounds.height().toFloat() - padding - padding - size - size - 20
+		// addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )
+
+		// val strHi = "HIGH"
+		// val textBoundsHi = Rect()
+		// textStyle.getTextBounds( strHi, 0, strHi.length, textBoundsHi)
+
+		// canvas.drawText(
+			// 	strHi,
+			// 	centerX,
+			// 	padding - textBoundsHi.exactCenterY(),
+			// 	textStyle
+			// )
+
+			// val strLo = "LOW"
+			// val textBoundsLo = Rect()
+			// textStyle.getTextBounds( strLo, 0, strLo.length, textBoundsLo)
+
+			// canvas.drawText(
+				// 	strLo,
+				// 	centerX,
+				// 	bounds.height() - padding - textBoundsLo.exactCenterY(),
+				// 	textStyle
+				// )
+
+				// val items: String[] = [ "0", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8" ]
+				// textStyle.textAlign = Paint.Align.RIGHT
+
+				// for (item in items) {
+					// 	val rect = Rect()
+					// 	textStyle.getTextBounds( item, 0, item.length, rect )
+					// 	canvas.drawText(
+						// 		item,
+						// 		centerX,
+						// 		bounds.height() - padding - rect.exactCenterY(),
+						// 		textStyle
+						// 	)
+						// }
 	}
-
-	val centerX = 0.5f * bounds.width().toFloat()
-	val centerY = 0.5f * bounds.height().toFloat()
-
-	canvas.drawLine(
-		115f,
-		centerY - 20f,
-		bounds.width().toFloat() - 105f,
-		centerY - 20f,
-		lineStyle
-	)
-
-	canvas.drawCircle(
-		centerX - 140,
-		centerY - 20f,
-		30f,
-		lineStyle
-	)
-	canvas.drawCircle(
-		centerX + 140,
-		centerY - 20f,
-		20f,
-		lineStyle
-	)
-
-	textStyle.color = watchFaceColors.activeOuterElementColor
-	textStyle.textSize = fontSize
-	textStyle.textAlign = Paint.Align.CENTER
-
-	val destination = "EARTH"
-	val location = watchFaceData.activeColorStyle.toString()
-	addText(centerX, centerY - 140f, "$location — $destination", textStyle, canvas)
-
-	val xoff_left = 160f
-	val xoff_right = 20f
-
-	textStyle.textAlign = Paint.Align.LEFT
-
-	addText(centerX - xoff_left, centerY + 30f, l1, textStyle, canvas)
-	addText(centerX - xoff_left, centerY + 50f, l2, textStyle, canvas)
-	addText(centerX - xoff_left, centerY + 70f, l3, textStyle, canvas)
-
-	addText(centerX + xoff_right, centerY + 30f, r1, textStyle, canvas)
-	addText(centerX + xoff_right, centerY + 50f, r2, textStyle, canvas)
-	addText(centerX + xoff_right, centerY + 70f, r3, textStyle, canvas)
-	addText(centerX + xoff_right, centerY + 90f, r4, textStyle, canvas)
-
-	// val height = bounds.height().toFloat() - padding - padding - size - size - 20
-	// addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )
-
-	// val strHi = "HIGH"
-	// val textBoundsHi = Rect()
-	// textStyle.getTextBounds( strHi, 0, strHi.length, textBoundsHi)
-
-	// canvas.drawText(
-	// 	strHi,
-	// 	centerX,
-	// 	padding - textBoundsHi.exactCenterY(),
-	// 	textStyle
-	// )
-
-	// val strLo = "LOW"
-	// val textBoundsLo = Rect()
-	// textStyle.getTextBounds( strLo, 0, strLo.length, textBoundsLo)
-
-	// canvas.drawText(
-	// 	strLo,
-	// 	centerX,
-	// 	bounds.height() - padding - textBoundsLo.exactCenterY(),
-	// 	textStyle
-	// )
-
-	// val items: String[] = [ "0", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8" ]
-	// textStyle.textAlign = Paint.Align.RIGHT
-
-	// for (item in items) {
-	// 	val rect = Rect()
-	// 	textStyle.getTextBounds( item, 0, item.length, rect )
-	// 	canvas.drawText(
-	// 		item,
-	// 		centerX,
-	// 		bounds.height() - padding - rect.exactCenterY(),
-	// 		textStyle
-	// 	)
-	// }
-
 }
 
 

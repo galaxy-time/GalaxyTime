@@ -25,8 +25,7 @@ var next = 0f
 fun drawGradientArc ( canvas: Canvas, bounds: Rect, innerRadius: Float, outerRadius: Float, start: Float, segments: Float, color: Int, alpha: Int ) {
 
 	// gradient
-
-	val colors = intArrayOf( Color.BLACK, color.toInt() )
+	val colors = intArrayOf( Color.BLACK, color )
 
 	// next = Math.max(start,next) - Math.min(start,next) / 2f
 

@@ -27,8 +27,12 @@ import androidx.activity.compose.setContent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.unit.dp
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -103,9 +107,11 @@ fun WearApp(greetingName: String) {
 	GalaxyTimeTheme {
 		Box(
 			modifier = Modifier
-				.fillMaxSize()
+				.padding(32.dp)
+				.wrapContentSize()
 				.background(MaterialTheme.colors.background),
 			contentAlignment = Alignment.Center
+
 		) {
 			// TimeText()
 			Greeting(greetingName = greetingName)
