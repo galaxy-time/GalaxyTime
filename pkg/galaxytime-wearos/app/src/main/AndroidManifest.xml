@@ -100,6 +100,8 @@
 
 		<!-- ASTRONOMICS TILE + COMPLICATION -->
 
+		<!--
+
 		<service
 			android:name=".views.AstronomicComplicationService"
 			android:exported="true"
@@ -130,7 +132,7 @@
 				android:resource="@drawable/tile_preview" />
 		</service>
 
-		<!--  -->
+		-->
 
 	</application>
 
