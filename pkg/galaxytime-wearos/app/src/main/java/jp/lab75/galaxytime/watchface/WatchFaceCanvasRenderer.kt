@@ -607,7 +607,7 @@ class WatchFaceCanvasRenderer (
 		canvas.save()
 
 		// draw centered timezones
-		canvas.translate(80f,80f)
+		canvas.translate(83f,80f)
 		canvas.drawText("LT", xc - off1, yc - 6f, p3)
 		canvas.drawText("UT", xc - off1, yc + 20f, p3)
 		canvas.drawText(localtime, xc - off2, yc - 6f, p2)
@@ -637,17 +637,20 @@ class WatchFaceCanvasRenderer (
 			bounds.height().toFloat() - offset
 		)
 
-		val p = Paint().apply {
-			color = Color.RED
-			strokeWidth = 0.5f
-			style = Paint.Style.STROKE
-			typeface = typeface
-			// bold arcs at bezel:
-			// strokeWidth = 20f
-			// strokeJoin = Paint.Join.ROUND
-			// strokeCap = Paint.Cap.ROUND
-		}
-		p.setPathEffect(DashPathEffect(floatArrayOf(4f, 8f), 0f))
+		// val p = Paint().apply {
+		// 	color = Color.RED
+		// 	strokeWidth = 0.5f
+		// 	style = Paint.Style.STROKE
+		// 	typeface = typeface
+		// 	// bold arcs at bezel:
+		// 	// strokeWidth = 20f
+		// 	// strokeJoin = Paint.Join.ROUND
+		// 	// strokeCap = Paint.Cap.ROUND
+		// }
+		// p.setPathEffect(DashPathEffect(floatArrayOf(4f, 8f), 0f))
+		// only for debugging
+		// canvas.drawLine( bounds.exactCenterX(), 0f, bounds.exactCenterX(), bounds.height().toFloat(), p )
+		// canvas.drawLine( 0f, bounds.exactCenterY(), bounds.width().toFloat(), bounds.exactCenterY(), p )
 
 		// val arcSweep = 90f - arcOffset - arcOffset
 		// val r01 = RectF( space, space, bounds.width().toFloat() - space, bounds.height().toFloat() - space )
@@ -656,9 +659,6 @@ class WatchFaceCanvasRenderer (
 		// canvas.drawArc(r01, 180f + arcOffset, arcSweep, false, p)
 		// canvas.drawArc(r01,  90f + arcOffset, arcSweep, false, p)
 
-		// only for debugging
-		canvas.drawLine( bounds.exactCenterX(), 0f, bounds.exactCenterX(), bounds.height().toFloat(), p )
-		canvas.drawLine( 0f, bounds.exactCenterY(), bounds.width().toFloat(), bounds.exactCenterY(), p )
 
 		textPaint.textSize = 16f
 		textPaint.color = themeColor
