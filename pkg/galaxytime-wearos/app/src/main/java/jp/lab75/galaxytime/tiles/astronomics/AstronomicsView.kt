@@ -64,7 +64,7 @@ fun renderAstronomicsView(
 			planetData.horizontal.azimuth.roundToInt().or(272)
 		}° ELE ${planetData.horizontal.altitude.roundToInt().or(-2)}°"
 
-		val ras = "RAS %02dh:%02dm:%02ds"
+		val ras = "RAS %02dH:%02dM:%02dS"
 		val l2 = ras.format(
 			planetData.rightAscension.degrees.or(12),
 			planetData.rightAscension.minutes.or(14),
@@ -83,8 +83,11 @@ fun renderAstronomicsView(
 		//	val l3 = "DEC +00°36'26''"
 		// val l4 = ""
 
-		val r1 = "24M 37M"
+		// ?
+		val r1 = "24H 37M"
+		// ROT DURATION
 		val r2 = "687 EARTH DAYS"
+		// SURFACE
 		val r3 = "1.63118 × 1011 km³"
 		val r4 = "" // satellites
 

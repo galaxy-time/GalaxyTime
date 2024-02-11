@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2024 The Galaxy Time Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package jp.lab75.galaxytime.settings
 
 import android.os.Bundle
@@ -21,25 +22,19 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 
+import jp.lab75.galaxytime.R
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.databinding.WatchfaceSettingsBinding
-// import jp.lab75.galaxytime.settings.SettingsState.Companion.MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
-// import jp.lab75.galaxytime.settings.SettingsState.Companion.MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
-// import jp.lab75.galaxytime.settings.SettingsState.Companion.MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
 
 import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.BOTTOM_LEFT_COMPLICATION_ID
-import jp.lab75.galaxytime.utils.BOTTOM_RIGHT_COMPLICATION_ID
+
+import android.widget.RadioGroup
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-/**
- * Allows user to edit certain parts of the watch face (color style, ticks displayed, minute arm
- * length) by using the [WatchFaceConfigStateHolder]. (All widgets are disabled until data is
- * loaded.)
- */
 class WatchFaceSettingsActivity : ComponentActivity() {
 	private val stateHolder: WatchFaceSettingsState by lazy {
 		WatchFaceSettingsState(
@@ -54,19 +49,32 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		Log.d(TAG, "onCreate()")
 
+		// inflate xml layout
 		binding = WatchfaceSettingsBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 
 		// Disable widgets until data loads and values are set.
 		binding.colorStylePickerButton.isEnabled = false
-		// binding.ticksEnabledSwitch.isEnabled = false
-		// binding.backgroundImage.isEnabled = false
-		// binding.minuteHandLengthSlider.isEnabled = false
+		// binding.radioGroup = false
+		// binding.randomPlanetPickerButton.isEnabled = false
 
-		// Set max and min.
-		// binding.minuteHandLengthSlider.valueTo = MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER
-		// binding.minuteHandLengthSlider.valueFrom = MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER
-		// binding.minuteHandLengthSlider.value = MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER
+		val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
+
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+			when (checkedId) {
+                R.id.id_sun -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SUN.id )
+				R.id.id_mercury -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MERCURY.id )
+				R.id.id_venus -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.VENUS.id )
+				R.id.id_earth -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.EARTH.id )
+				R.id.id_mars -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MARS.id )
+				R.id.id_jupiter -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.JUPITER.id )
+				R.id.id_saturn -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SATURN.id )
+				R.id.id_uranus -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.URANUS.id )
+				R.id.id_neptune -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.NEPTUNE.id )
+				R.id.id_pluto -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.PLUTO.id )
+				else -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.EARTH.id )
+			}
+        }
 
 		// binding.minuteHandLengthSlider.addOnChangeListener { slider, value, fromUser ->
 		//     Log.d(TAG, "addOnChangeListener(): $slider, $value, $fromUser")
@@ -100,32 +108,31 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		userStylesAndPreview: WatchFaceSettingsState.UserStylesAndPreview
 	) {
 		Log.d(TAG, "updateWatchFacePreview: $userStylesAndPreview")
-
 		val colorStyleId: String = userStylesAndPreview.colorStyleId
 		Log.d(TAG, "\tselected color style: $colorStyleId")
-
-		// binding.ticksEnabledSwitch.isChecked = userStylesAndPreview.ticksEnabled
-		// binding.minuteHandLengthSlider.value = userStylesAndPreview.minuteHandLength
 		binding.preview.watchFaceBackground.setImageBitmap(userStylesAndPreview.previewImage)
-
-		enabledWidgets()
+		enableWidgets()
 	}
 
-	private fun enabledWidgets() {
+	private fun enableWidgets() {
 		binding.colorStylePickerButton.isEnabled = true
-		// binding.backgroundImage.isEnabled = false
-		// binding.ticksEnabledSwitch.isEnabled = true
-		// binding.minuteHandLengthSlider.isEnabled = true
+		// binding.randomPlanetPickerButton.isEnabled = true
+		// binding.radioGroup = true
+	}
+
+	fun onClickRandomPlanetPickerButton(view: View) {
+		Log.d(TAG, "random() $view")
+		val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
+		val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
+		stateHolder.setColorStyle(newColorStyle.id)
 	}
 
 	// TODO: this needs a propoer dropdown or scroll selector
 	fun onClickColorStylePickerButton(view: View) {
 		Log.d(TAG, "onClickColorStylePickerButton() $view")
-
 		// Selects a random color style from list.
 		val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
 		val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
-
 		stateHolder.setColorStyle(newColorStyle.id)
 	}
 

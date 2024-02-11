@@ -21,7 +21,7 @@
     <string name="colors_style_setting">Select</string>
 
     <!-- Subtitle for the menu option to select the watch face color theme -->
-    <string name="colors_style_setting_description">Select a location in space</string>
+    <string name="colors_style_setting_description">LOCATION</string>
 
     <!-- Name of watchface style [CHAR LIMIT=20] -->
     <string name="ambient_style_name">AMBIENT</string>

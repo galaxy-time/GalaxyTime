@@ -47,6 +47,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import androidx.wear.tooling.preview.devices.WearDevices
+
 import jp.lab75.galaxytime.R
 import jp.lab75.galaxytime.WatchFaceService
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme

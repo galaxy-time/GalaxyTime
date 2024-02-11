@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2021 The Android Open Source Project
+  Copyright 2024 The Galaxy Time Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -62,104 +62,122 @@
 			android:id="@+id/preview"
 			layout="@layout/watchface_preview"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:layout_gravity="center_horizontal"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal|center_vertical"
 			android:contentDescription="@string/settings_preview_of_watch_face_content_description"
 			android:visibility="visible"
-			tools:layout_editor_absoluteX="12dp"
-			tools:layout_editor_absoluteY="12dp" />
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintBottom_toTopOf="@+id/text_view"
+			tools:layout_editor_absoluteX="12dp" />
 
 		<TextView
 			android:id="@+id/text_view"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:gravity="center_horizontal|center_vertical"
 			android:paddingVertical="5sp"
 			android:text="@string/colors_style_setting_description"
 			android:textColor="@color/white"
 			app:layout_constraintTop_toBottomOf="@+id/preview"
 			tools:layout_editor_absoluteX="6dp" />
 
-		<RadioGroup
+		<!-- <com.google.android.material.button.MaterialButton
+			android:id="@+id/random_planet_picker_button"
+			style="@style/Widget.WatchFace.Button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:contentDescription="@string/settings_change_color_style_button_content_description"
+			android:gravity="center_horizontal|center_vertical"
+			android:onClick="onClickColorStylePickerButton"
+			android:padding="@dimen/no_padding"
+			android:text="RANDOM"
+			android:textAppearance="?attr/textAppearanceButton"
+			app:layout_constraintTop_toBottomOf="@+id/text_view"
+			tools:layout_editor_absoluteX="21dp" /> -->
+
+			<RadioGroup
 			android:id="@+id/radio_group"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			app:layout_constraintTop_toBottomOf="@+id/text_view"
-			tools:layout_editor_absoluteX="6dp"
-			tools:layout_editor_absoluteY="6dp">
+			tools:layout_editor_absoluteX="6dp">
 
-			<RadioButton
-				android:id="@+id/id_sun"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/sun_style_name"
+				<RadioButton
+					android:id="@+id/id_sun"
+					android:text="@string/sun_style_name"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:checked="true"
+					android:paddingVertical="5sp"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+				<RadioButton
+					android:id="@+id/id_mercury"
+					android:text="@string/mercury_style_name"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+				<RadioButton
+					android:id="@+id/id_venus"
+					android:text="@string/venus_style_name"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+					<RadioButton
+					android:id="@+id/id_earth"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:text="@string/earth_style_name"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+					<RadioButton
+					android:id="@+id/id_moon"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:text="@string/moon_style_name"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+					<RadioButton
+					android:id="@+id/id_mars"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:text="@string/mars_style_name"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+					<RadioButton
+					android:id="@+id/id_saturn"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:text="@string/saturn_style_name"
+					android:textColor="#FFFFFF"
+					android:textSize="12sp" />
+
+					<RadioButton
+					android:id="@+id/id_jupiter"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingVertical="5sp"
+					android:text="@string/jupiter_style_name"
 				android:textColor="#FFFFFF"
 				android:textSize="12sp" />
 
-			<RadioButton
-				android:id="@+id/id_mercury"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/mercury_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
-				android:id="@+id/id_venus"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/venus_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
-				android:id="@+id/id_earth"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/earth_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
-				android:id="@+id/id_moon"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/moon_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
-				android:id="@+id/id_mars"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/mars_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
-				android:id="@+id/id_saturn"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/saturn_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
-				android:id="@+id/id_jupiter"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingVertical="5sp"
-				android:text="@string/jupiter_style_name"
-				android:textColor="#FFFFFF"
-				android:textSize="12sp" />
-
-			<RadioButton
+				<RadioButton
 				android:id="@+id/id_uranus"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -168,7 +186,7 @@
 				android:textColor="#FFFFFF"
 				android:textSize="12sp" />
 
-			<RadioButton
+				<RadioButton
 				android:id="@+id/id_neptune"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -176,7 +194,16 @@
 				android:text="@string/neptune_style_name"
 				android:textColor="#FFFFFF"
 				android:textSize="12sp" />
-		</RadioGroup>
+				<RadioButton
+				android:id="@+id/id_pluto"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/pluto_style_name"
+				android:textColor="#FFFFFF"
+				android:textSize="12sp" />
+
+			</RadioGroup>
 
 
 		<com.google.android.material.button.MaterialButton
