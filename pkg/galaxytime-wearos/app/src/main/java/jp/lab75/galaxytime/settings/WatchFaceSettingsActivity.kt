@@ -17,6 +17,9 @@
 package jp.lab75.galaxytime.settings
 
 import android.os.Bundle
+import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
@@ -26,14 +29,16 @@ import jp.lab75.galaxytime.R
 import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.databinding.WatchfaceSettingsBinding
 
-import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
-import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
-import jp.lab75.galaxytime.utils.BOTTOM_LEFT_COMPLICATION_ID
+// import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
+// import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
+// import jp.lab75.galaxytime.utils.BOTTOM_LEFT_COMPLICATION_ID
+// import jp.lab75.galaxytime.utils.BOTTOM_RIGHT_COMPLICATION_
 
 import android.widget.RadioGroup
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import android.R.anim
 
 class WatchFaceSettingsActivity : ComponentActivity() {
 	private val stateHolder: WatchFaceSettingsState by lazy {
@@ -44,6 +49,11 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 	}
 
 	private lateinit var binding: WatchfaceSettingsBinding
+
+	override fun finish(){
+		super.finish()
+		overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -74,6 +84,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 				R.id.id_pluto -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.PLUTO.id )
 				else -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.EARTH.id )
 			}
+			finish()
         }
 
 		// binding.minuteHandLengthSlider.addOnChangeListener { slider, value, fromUser ->

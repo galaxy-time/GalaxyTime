@@ -109,7 +109,6 @@
 					android:text="@string/sun_style_name"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:checked="true"
 					android:paddingVertical="5sp"
 					android:textColor="#FFFFFF"
 					android:textSize="12sp" />
