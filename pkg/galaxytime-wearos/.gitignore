@@ -16,6 +16,7 @@
 # built application files
 *.apk
 *.ap_
+output-metadata.json
 
 # Mac files
 .DS_Store
