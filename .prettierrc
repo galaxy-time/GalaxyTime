@@ -1,0 +1,7 @@
+# prettier
+semi: false
+singleQuote: true
+printWidth: 140
+singleQuote: true
+tabWidth: 4
+useTabs: true
