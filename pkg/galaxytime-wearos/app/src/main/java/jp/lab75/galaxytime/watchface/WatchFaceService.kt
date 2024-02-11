@@ -116,8 +116,8 @@ class WatchFaceService : WatchFaceService() {
 
 			Log.d(TAG, "Permissions granted")
 
-			calculations.updateLocation();
-			meetingService.update();
+			calculations.updateLocation()
+			meetingService.update()
 			calculations.update()
 
 			handler.post(updateLocationLoop)
