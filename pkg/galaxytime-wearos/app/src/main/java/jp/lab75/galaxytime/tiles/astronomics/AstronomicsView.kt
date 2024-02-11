@@ -19,6 +19,8 @@ import android.graphics.BlendMode
 
 import io.github.cosinekitty.astronomy.Body
 
+import jp.lab75.galaxytime.WatchFaceCanvasRenderer
+
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
 
@@ -41,27 +43,26 @@ fun renderAstronomicsView(
 	canvas: Canvas,
 	bounds: Rect,
 	textStyle: Paint,
-	calculations: Calculations
+	calculations: Calculations,
+	watchFaceData: WatchFaceData,
 ) {
 
 	val resources: Resources = context.resources
-
-	var watchFaceData: WatchFaceData = WatchFaceData()
 	var watchFaceColors = convertToColorPalette(
 		context,
 		watchFaceData.activeColorStyle,
 		watchFaceData.ambientColorStyle
-	)
+		)
 
-	// val name = watchFaceData.activeColorStyle.toString()
-	val body = calculations.getBodyFromThemeName( watchFaceData.activeColorStyle.toString() )
+	val name = watchFaceData.activeColorStyle.toString()
+	val body = calculations.getBodyFromThemeName( name )
 	val planetData = if ( body != null ) { calculations.getBodyData( body ) } else { null }
 
 	if ( planetData != null ) {
 
 		val l1 = "AZI ${
-			planetData?.horizontal?.azimuth?.roundToInt()?.or(272)
-		}° ELE ${planetData?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
+			planetData.horizontal.azimuth.roundToInt().or(272)
+		}° ELE ${planetData.horizontal.altitude.roundToInt().or(-2)}°"
 
 		val ras = "RAS %02dh:%02dm:%02ds"
 		val l2 = ras.format(
@@ -98,42 +99,41 @@ fun renderAstronomicsView(
 		canvas.drawColor(overlayColor, BlendMode.OVERLAY)
 
 		// view
-
 		val lineStyle = Paint().apply {
 			isAntiAlias = true
 			strokeWidth = 1f
 			style = Paint.Style.STROKE
 			color = Color.WHITE
 		}
-
 		val centerX = 0.5f * bounds.width().toFloat()
 		val centerY = 0.5f * bounds.height().toFloat()
 
-		canvas.drawLine( 115f, centerY - 20f, bounds.width().toFloat() - 105f, centerY - 20f, lineStyle )
-		canvas.drawCircle( centerX - 140, centerY - 20f, 30f, lineStyle )
-		canvas.drawCircle( centerX + 140, centerY - 20f, 20f, lineStyle )
+		// distance to sun
+		val y = centerY - 50f
+		canvas.drawLine( centerX - 110f, y, centerX + 110, y, lineStyle )
+		canvas.drawCircle( centerX - 130, y, 20f, lineStyle )
+		canvas.drawCircle( centerX + 130, y, 20f, lineStyle )
 
 		textStyle.color = watchFaceColors.activeOuterElementColor
 		textStyle.textSize = fontSize
 		textStyle.textAlign = Paint.Align.CENTER
+		val destination = "SUN"
+		addText(centerX, y - 50f, "$name › $destination", textStyle, canvas)
 
-		val destination = "EARTH"
-		val location = watchFaceData.activeColorStyle.toString()
-		addText(centerX, centerY - 140f, "$location — $destination", textStyle, canvas)
-
+		// planet details
 		val xoff_left = 160f
 		val xoff_right = 20f
-
+		val yOff = centerY - 20f
 		textStyle.textAlign = Paint.Align.LEFT
 
-		addText(centerX - xoff_left, centerY + 30f, l1, textStyle, canvas)
-		addText(centerX - xoff_left, centerY + 50f, l2, textStyle, canvas)
-		addText(centerX - xoff_left, centerY + 70f, l3, textStyle, canvas)
+		addText(centerX - xoff_left, yOff + 30f, l1, textStyle, canvas)
+		addText(centerX - xoff_left, yOff + 50f, l2, textStyle, canvas)
+		addText(centerX - xoff_left, yOff + 70f, l3, textStyle, canvas)
 
-		addText(centerX + xoff_right, centerY + 30f, r1, textStyle, canvas)
-		addText(centerX + xoff_right, centerY + 50f, r2, textStyle, canvas)
-		addText(centerX + xoff_right, centerY + 70f, r3, textStyle, canvas)
-		addText(centerX + xoff_right, centerY + 90f, r4, textStyle, canvas)
+		addText(centerX + xoff_right, yOff + 30f, r1, textStyle, canvas)
+		addText(centerX + xoff_right, yOff + 50f, r2, textStyle, canvas)
+		addText(centerX + xoff_right, yOff + 70f, r3, textStyle, canvas)
+		addText(centerX + xoff_right, yOff + 90f, r4, textStyle, canvas)
 
 		// val height = bounds.height().toFloat() - padding - padding - size - size - 20
 		// addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )
