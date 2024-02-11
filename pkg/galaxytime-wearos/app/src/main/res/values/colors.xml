@@ -78,7 +78,11 @@
     <color name="neptune_secondary_color">@color/neptune</color>
     <color name="neptune_background_color">@color/black</color>
     <color name="neptune_outer_element_color">@color/white</color>
-
+    <!-- Pluto Style -->
+    <color name="pluto_primary_color">@color/pluto</color>
+    <color name="pluto_secondary_color">@color/pluto</color>
+    <color name="pluto_background_color">@color/black</color>
+    <color name="pluto_outer_element_color">@color/white</color>
 
     <!-- Red Style -->
     <!-- <color name="red_primary_color">@color/maroon_light</color>

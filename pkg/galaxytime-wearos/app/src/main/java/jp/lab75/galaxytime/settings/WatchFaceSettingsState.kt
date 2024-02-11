@@ -35,9 +35,7 @@ import androidx.wear.watchface.style.WatchFaceLayer
 // import jp.lab75.galaxytime.utils.WATCH_HAND_LENGTH_STYLE_SETTING
 
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
-
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
-
 import jp.lab75.galaxytime.utils.TOP_LEFT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.TOP_RIGHT_COMPLICATION_ID
 import jp.lab75.galaxytime.utils.BOTTOM_LEFT_COMPLICATION_ID
@@ -254,21 +252,6 @@ class WatchFaceSettingsState(
 
     companion object {
         private const val TAG = "WatchFaceSettingsState"
-
-        // To convert the double representing the arm length to valid float value in the range the
-        // slider can support, we need to multiply the original value times 1,000.
         private const val MULTIPLE_FOR_SLIDER: Float = 1000f
-
-        // const val MINUTE_HAND_LENGTH_MINIMUM_FOR_SLIDER =
-        //     MINUTE_HAND_LENGTH_FRACTION_MINIMUM * MULTIPLE_FOR_SLIDER
-
-        // const val MINUTE_HAND_LENGTH_MAXIMUM_FOR_SLIDER =
-        //     MINUTE_HAND_LENGTH_FRACTION_MAXIMUM * MULTIPLE_FOR_SLIDER
-
-        // const val MINUTE_HAND_LENGTH_DEFAULT_FOR_SLIDER =
-        //     MINUTE_HAND_LENGTH_FRACTION_DEFAULT * MULTIPLE_FOR_SLIDER
-
-        // private fun multiplyByMultipleForSlider(lengthFraction: Double) =
-        //     lengthFraction * MULTIPLE_FOR_SLIDER
     }
 }

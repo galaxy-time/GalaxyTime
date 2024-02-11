@@ -75,6 +75,10 @@ const val NEPTUNE_COLOR_STYLE_ID = "neptune_style_id"
 private val NEPTUNE_COLOR_STYLE_NAME_RESOURCE_ID = R.string.neptune_style_name
 private val NEPTUNE_COLOR_STYLE_ICON_ID = R.drawable.neptune_style
 
+const val PLUTO_COLOR_STYLE_ID = "pluto_style_id"
+private val PLUTO_COLOR_STYLE_NAME_RESOURCE_ID = R.string.pluto_style_name
+private val PLUTO_COLOR_STYLE_ICON_ID = R.drawable.pluto_style
+
 const val WHITE_COLOR_STYLE_ID = "white_style_id"
 private val WHITE_COLOR_STYLE_NAME_RESOURCE_ID = R.string.white_style_name
 private val WHITE_COLOR_STYLE_ICON_ID = R.drawable.white_style
@@ -208,16 +212,26 @@ enum class ColorStyleIdAndResourceIds(
         backgroundColorId = R.color.neptune_background_color,
         outerElementColorId = R.color.neptune_outer_element_color
 	),
-    WHITE(
-        id = WHITE_COLOR_STYLE_ID,
-        nameResourceId = WHITE_COLOR_STYLE_NAME_RESOURCE_ID,
-        iconResourceId = WHITE_COLOR_STYLE_ICON_ID,
+	PLUTO(
+		id = PLUTO_COLOR_STYLE_ID,
+        nameResourceId = PLUTO_COLOR_STYLE_NAME_RESOURCE_ID,
+        iconResourceId = PLUTO_COLOR_STYLE_ICON_ID,
         complicationStyleDrawableId = R.drawable.complication_white_style,
-        primaryColorId = R.color.white_primary_color,
-        secondaryColorId = R.color.white_secondary_color,
-        backgroundColorId = R.color.white_background_color,
-        outerElementColorId = R.color.white_outer_element_color
-    );
+        primaryColorId = R.color.pluto_primary_color,
+        secondaryColorId = R.color.pluto_secondary_color,
+		backgroundColorId = R.color.pluto_background_color,
+        outerElementColorId = R.color.pluto_outer_element_color
+	);
+    // WHITE(
+    //     id = WHITE_COLOR_STYLE_ID,
+    //     nameResourceId = WHITE_COLOR_STYLE_NAME_RESOURCE_ID,
+    //     iconResourceId = WHITE_COLOR_STYLE_ICON_ID,
+    //     complicationStyleDrawableId = R.drawable.complication_white_style,
+    //     primaryColorId = R.color.white_primary_color,
+    //     secondaryColorId = R.color.white_secondary_color,
+    //     backgroundColorId = R.color.white_background_color,
+    //     outerElementColorId = R.color.white_outer_element_color
+    // );
 
     companion object {
         /**
@@ -225,7 +239,8 @@ enum class ColorStyleIdAndResourceIds(
          */
         fun getColorStyleConfig(id: String): ColorStyleIdAndResourceIds {
             return when (id) {
-                AMBIENT.id -> AMBIENT
+                // AMBIENT.id -> AMBIENT
+                // WHITE.id -> WHITE
                 SUN.id -> SUN
 				MERCURY.id -> MERCURY
 				VENUS.id -> VENUS
@@ -236,8 +251,8 @@ enum class ColorStyleIdAndResourceIds(
 				SATURN.id -> SATURN
 				URANUS.id -> URANUS
 				NEPTUNE.id -> NEPTUNE
-                WHITE.id -> WHITE
-				else -> WHITE
+				PLUTO.id -> PLUTO
+				else -> EARTH
             }
         }
 

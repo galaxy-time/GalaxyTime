@@ -47,8 +47,9 @@
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="neptune_style_name">NEPTUNE</string>
 	<!-- Name of watchface style [CHAR LIMIT=20] -->
+	<string name="pluto_style_name">PLUTO</string>
+	<!-- Name of watchface style [CHAR LIMIT=20] -->
 	<string name="white_style_name">WHITE</string>
-
 
     <!-- An option within the analog watch face to draw pips to mark each hour [CHAR LIMIT=20] -->
     <string name="watchface_pips_setting">Hour Pips</string>
