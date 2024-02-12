@@ -10,11 +10,13 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.util.Log
 
 class PermissionRequestActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		// setTheme(android.R.style.Theme_DeviceDefault)
 		requestPermissionsIfNeeded()
 	}
 
@@ -36,7 +38,6 @@ class PermissionRequestActivity : AppCompatActivity() {
 		) {
 			permissionsNeeded.add(Manifest.permission.READ_CALENDAR)
 		}
-
 
 		if (permissionsNeeded.isNotEmpty()) {
 			ActivityCompat.requestPermissions(
@@ -68,8 +69,9 @@ class PermissionRequestActivity : AppCompatActivity() {
 	}
 
 	private fun showSettingsDialog() {
+		Log.d(TAG, "showSettingsDialog")
 		AlertDialog.Builder(this)
-			.setMessage("Some permissions are denied. The app needs location and calendar read permissions to function properly. Please allow them in app settings.")
+			.setMessage("Some permissions are missing. The app needs location and calendar read permissions to function properly. Please allow them in app settings.")
 			.setPositiveButton("App Settings") { _, _ ->
 				val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
 					data = Uri.fromParts("package", packageName, null)
@@ -87,5 +89,7 @@ class PermissionRequestActivity : AppCompatActivity() {
 
 	companion object {
 		const val MY_PERMISSIONS_REQUEST = 101
+		private const val TAG = "PermissionRequestActivity"
+
 	}
 }
