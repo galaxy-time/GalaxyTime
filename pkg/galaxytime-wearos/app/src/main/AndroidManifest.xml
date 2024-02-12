@@ -55,21 +55,6 @@
 				android:value="true" />
 		</service>
 
-		<!-- SETTINGS -->
-
-		<activity
-			android:name=".settings.WatchFaceSettingsActivity"
-			android:exported="true"
-			android:label="@string/settings_title"
-			android:taskAffinity="">
-			<intent-filter>
-				<action android:name="androidx.wear.watchface.editor.action.WATCH_FACE_EDITOR" />
-
-				<category android:name="com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-
 		<!-- MAIN ACTIVITY -->
 
 		<activity
@@ -96,7 +81,26 @@
 			android:label="Permission Request"
 			android:exported="true"
 			android:launchMode="singleTask"
-			android:taskAffinity="" />
+			android:taskAffinity=".main">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<!-- SETTINGS -->
+
+		<activity
+			android:name=".settings.WatchFaceSettingsActivity"
+			android:exported="true"
+			android:label="@string/settings_title"
+			android:taskAffinity=".main">
+			<intent-filter>
+				<action android:name="androidx.wear.watchface.editor.action.WATCH_FACE_EDITOR" />
+				<category android:name="com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 
 		<!-- ASTRONOMICS TILE + COMPLICATION -->
 

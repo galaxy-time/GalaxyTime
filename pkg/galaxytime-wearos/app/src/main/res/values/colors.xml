@@ -83,25 +83,6 @@
     <color name="pluto_secondary_color">@color/pluto</color>
     <color name="pluto_background_color">@color/black</color>
     <color name="pluto_outer_element_color">@color/white</color>
-
-    <!-- Red Style -->
-    <!-- <color name="red_primary_color">@color/maroon_light</color>
-    <color name="red_secondary_color">@color/maroon_50</color>
-    <color name="red_background_color">@color/dark_gray</color>
-    <color name="red_outer_element_color">@color/maroon_30</color> -->
-
-    <!-- Green Style -->
-    <!-- <color name="green_primary_color">@color/light_green</color>
-    <color name="green_secondary_color">@color/dark_green</color>
-    <color name="green_background_color">@color/dark_gray</color>
-    <color name="green_outer_element_color">@color/light_green</color> -->
-
-    <!-- Blue Style -->
-    <!-- <color name="blue_primary_color">@color/light_blue</color>
-    <color name="blue_secondary_color">@color/dark_blue</color>
-    <color name="blue_background_color">@color/dark_gray</color>
-    <color name="blue_outer_element_color">@color/light_blue</color> -->
-
     <!-- White Style -->
     <color name="white_primary_color">@color/white_70</color>
     <color name="white_secondary_color">@color/white_50</color>
@@ -137,28 +118,19 @@
     <color name="gray_50">#80424242</color>
     <color name="gray_70">#B3424242</color>
     <color name="dark_gray">#211E1D</color>
-    <!-- <color name="maroon_light">#EEA19A</color>
-    <color name="maroon_30">#4DEEA19A</color>
-    <color name="maroon_50">#80EEA19A</color>
-    <color name="maroon_60">#96EEA19A</color>
-    <color name="maroon_70">#B3EEA19A</color> -->
-    <!-- <color name="yellow">#FDE7B1</color>
-    <color name="yellow_30">#4DFDE7B1</color>
-    <color name="yellow_50">#80FDE7B1</color>
-    <color name="yellow_70">#B3FDE7B1</color> -->
     <color name="gray_white">#EEEEEE</color>
     <color name="dark_pink">#F50057</color>
     <color name="dark_blue">#1565C0</color>
 <!-- solar system -->
 	<color name="sun">#fff716</color>
-	<color name="mercury">#707070</color>
-	<color name="venus">#d3670c</color>
-	<color name="earth">#002981</color>
+	<color name="mercury">#757575</color>
+    <color name="venus">#a8631a</color>
+	<color name="earth">#1c6ef2</color>
 	<color name="moon">#656565</color>
-	<color name="mars">#d6402b</color>
+	<color name="mars">#c64f2f</color>
 	<color name="jupiter">#696d64</color>
 	<color name="saturn">#edcc8e</color>
-	<color name="uranus">#7fc5cb</color>
-	<color name="neptune">#4770ec</color>
+	<color name="uranus">#3d828a</color>
+	<color name="neptune">#5a6bd8</color>
 	<color name="pluto">#ff1591</color>
 </resources>
