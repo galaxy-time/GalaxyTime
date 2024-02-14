@@ -21,7 +21,7 @@ jobs:
         cache: gradle
 
     - name: Change dir
-      run: cd ./pkg/galaxytime-wearos/
+      run: cd ./pkg/galaxytime-wearos/ && ls
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
     - name: Build with Gradle
