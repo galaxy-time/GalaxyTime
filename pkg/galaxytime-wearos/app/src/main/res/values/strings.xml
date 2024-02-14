@@ -34,22 +34,22 @@
     <string name="venus_style_name">VENUS</string>
     <!-- Name of watchface style [CHAR LIMIT=20] -->
     <string name="earth_style_name">EARTH</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="moon_style_name">MOON</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="mars_style_name">MARS</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="jupiter_style_name">JUPITER</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="saturn_style_name">SATURN</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="uranus_style_name">URANUS</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="neptune_style_name">NEPTUNE</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="pluto_style_name">PLUTO</string>
-	<!-- Name of watchface style [CHAR LIMIT=20] -->
-	<string name="white_style_name">WHITE</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="moon_style_name">MOON</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="mars_style_name">MARS</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="jupiter_style_name">JUPITER</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="saturn_style_name">SATURN</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="uranus_style_name">URANUS</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="neptune_style_name">NEPTUNE</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="pluto_style_name">PLUTO</string>
+    <!-- Name of watchface style [CHAR LIMIT=20] -->
+    <string name="white_style_name">WHITE</string>
 
     <!-- An option within the analog watch face to draw pips to mark each hour [CHAR LIMIT=20] -->
     <string name="watchface_pips_setting">Hour Pips</string>
@@ -94,12 +94,12 @@
     <!-- Title for config activity for watch face (settings). -->
     <string name="title_activity_watch_face_config">Configuration</string>
 
-	<!-- Use of "\n" is to conserve horizontal space in config menu. -->
+    <!-- Use of "\n" is to conserve horizontal space in config menu. -->
     <string name="settings_color_style_picker_label">Select</string>
     <string name="settings_ticks_enabled_label">Ticks\nEnabled</string>
     <string name="settings_slider_text_label">Minute Hand Size</string>
 
-	<!-- Content Descriptions -->
+    <!-- Content Descriptions -->
     <string name="settings_preview_of_watch_face_content_description">Preview of Watch Face.</string>
     <string name="settings_more_options_icon_content_description">Icon to indicate there are more options if you scroll down.</string>
     <string name="settings_change_color_style_button_content_description">Button to change the color style of the watch face.</string>
@@ -112,8 +112,8 @@
     <string name="settings_title">SettingsActivity</string>
 
 
-	<string name="hello_world">Welcome to %1$s! We aim to make space and time more approachable. It is a fascinating universe out there, keep exploring!</string>
-	<string name="tile_label">Example tile</string>
-	<string name="complication_label">Example complication</string>
+    <string name="hello_world">Welcome to %1$s! We aim to make space and time more approachable. It is a fascinating universe out there, keep exploring!</string>
+    <string name="tile_label">Example tile</string>
+    <string name="complication_label">Example complication</string>
 
 </resources>

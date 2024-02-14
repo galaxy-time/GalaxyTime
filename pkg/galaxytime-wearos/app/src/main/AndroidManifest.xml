@@ -2,14 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="jp.lab75.galaxytime">
 
-	<uses-feature android:name="android.hardware.type.watch" />
-	<!-- <uses-feature android:glEsVersion="0x00020000" android:required="true" /> -->
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-	<uses-permission android:name="android.permission.READ_CALENDAR"/>
-    <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA" /> -->
+	<uses-feature android:name="android.hardware.type.watch" /> <!-- <uses-feature android:glEsVersion="0x00020000" android:required="true" /> -->
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.READ_CALENDAR" />
+	<uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA" /> -->
 	<!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA_PRIVILEGED" /> -->
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -55,17 +53,28 @@
 				android:value="true" />
 		</service>
 
-		<!-- MAIN ACTIVITY -->
+		<!-- SPLASH SCREEN -->
+		<activity
+			android:name=".views.SplashScreenActivity"
+			android:exported="true"
+			android:taskAffinity=".main"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
+		<!-- MAIN ACTIVITY -->
 		<activity
 			android:name=".views.MainActivity"
 			android:exported="true"
 			android:taskAffinity=".main"
 			android:theme="@style/MainActivityTheme.Starting">
-			<intent-filter>
+			<!-- <intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+			</intent-filter> -->
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -73,23 +82,22 @@
 		</activity>
 
 		<!-- PERMISSIONS ACTIVITY -->
-		<!--  Task affinity should be the same as .main? -->
+		<!-- Task affinity should be the same as .main? -->
 		<!-- https://stackoverflow.com/questions/9772927/flag-activity-new-task-clarification-needed -->
-
 		<activity
 			android:name=".views.PermissionRequestActivity"
-			android:label="Permission Request"
 			android:exported="true"
+			android:label="Permission Request"
 			android:launchMode="singleTask"
 			android:taskAffinity=".main">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
+
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
 
 		<!-- SETTINGS -->
-
 		<activity
 			android:name=".settings.WatchFaceSettingsActivity"
 			android:exported="true"
@@ -101,42 +109,6 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-
-		<!-- ASTRONOMICS TILE + COMPLICATION -->
-
-		<!--
-
-		<service
-			android:name=".views.AstronomicComplicationService"
-			android:exported="true"
-			android:label="Astronomic Complication"
-			android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
-			<intent-filter>
-				<action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
-			</intent-filter>
-
-			<meta-data
-				android:name="android.support.wearable.complications.SUPPORTED_TYPES"
-				android:value="LONG_TEXT" />
-			<meta-data
-				android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
-				android:value="0" />
-		</service>
-		<service
-			android:name=".views.AstronomicTileService"
-			android:exported="true"
-			android:label="Astronomic Tile"
-			android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
-			<intent-filter>
-				<action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
-			</intent-filter>
-
-			<meta-data
-				android:name="androidx.wear.tiles.PREVIEW"
-				android:resource="@drawable/tile_preview" />
-		</service>
-
-		-->
 
 	</application>
 

@@ -59,9 +59,6 @@ android {
         jvmTarget = JavaVersion.VERSION_17.majorVersion
     }
 	lint {
-		// disable 'TypographyFractions','TypographyQuotes'
-		// enable 'RtlHardcoded','RtlCompat', 'RtlEnabled'
-		// checkOnly 'NewApi', 'InlinedApi'
 		quiet true
 		abortOnError false
 		ignoreWarnings true

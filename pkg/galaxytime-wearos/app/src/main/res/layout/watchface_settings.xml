@@ -205,6 +205,7 @@
 			</RadioGroup>
 
 
+			<!--
 		<com.google.android.material.button.MaterialButton
 			android:id="@+id/color_style_picker_button"
 			style="@style/Widget.WatchFace.Button"
@@ -228,7 +229,6 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/color_style_picker_button" />
 
-		<!--
 				<com.google.android.material.switchMaterial.SwitchMaterial
 					android:id="@+id/ticks_enabled_switch"
 					android:layout_width="0dp"
