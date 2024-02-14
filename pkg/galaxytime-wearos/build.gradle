@@ -17,7 +17,7 @@
 buildscript {
 	ext {
 
-		ktor_version = '2.3.6'
+		// ktor_version = '2.3.6'
 
 		// Dependncy versions.
 		activity_compose_version = '1.7.2'
@@ -41,22 +41,22 @@ buildscript {
 }
 
 plugins {
-    alias(libs.plugins.com.diffplug.spotless) apply(false)
+    // alias(libs.plugins.com.diffplug.spotless) apply(false)
     alias(libs.plugins.com.android.application) apply(false)
 	alias(libs.plugins.org.jetbrains.kotlin.android) apply false
 }
 
 allprojects {
-    apply plugin: "com.diffplug.spotless"
+    // apply plugin: "com.diffplug.spotless"
 
-    spotless {
-        kotlin {
-            target "**/*.kt"
-            targetExclude("$buildDir/**/*.kt")
-            targetExclude("bin/**/*.kt")
+    // spotless {
+    //     kotlin {
+    //         target "**/*.kt"
+    //         targetExclude("$buildDir/**/*.kt")
+    //         targetExclude("bin/**/*.kt")
 
-            ktlint(libs.versions.ktlint.get())
-            licenseHeaderFile rootProject.file("../spotless/copyright.kt")
-        }
-    }
+    //         ktlint(libs.versions.ktlint.get())
+    //         licenseHeaderFile rootProject.file("../spotless/copyright.kt")
+    //     }
+    // }
 }

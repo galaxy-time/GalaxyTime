@@ -28,8 +28,8 @@ android {
         applicationId "jp.lab75.galaxytime"
         minSdk 33
         targetSdk 33
-        versionCode 4
-        versionName '1.1'
+        versionCode 7
+        versionName '1'
 	}
 
     buildFeatures {
@@ -58,12 +58,22 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.majorVersion
     }
+	lint {
+		// disable 'TypographyFractions','TypographyQuotes'
+		// enable 'RtlHardcoded','RtlCompat', 'RtlEnabled'
+		// checkOnly 'NewApi', 'InlinedApi'
+		quiet true
+		abortOnError false
+		ignoreWarnings true
+		checkDependencies true
+	}
+
 }
 
 dependencies {
 
-	implementation "io.ktor:ktor-client-core:$ktor_version"
-	implementation "io.ktor:ktor-client-cio:$ktor_version"
+	// implementation "io.ktor:ktor-client-core:$ktor_version"
+	// implementation "io.ktor:ktor-client-cio:$ktor_version"
 
 	implementation "androidx.core:core-splashscreen:1.0.1"
 	implementation "androidx.wear.tiles:tiles:1.1.0"
@@ -124,6 +134,7 @@ dependencies {
 
 	implementation 'com.github.cosinekitty:astronomy:2.1.19'
 	implementation libs.androidx.wear.tooling.preview
+	implementation libs.constraintlayout
 	// implementation libs.androidx.wear.tooling.preview
     // implementation libs.compose.ui.tooling.preview
     // debugImplementation libs.androidx.ui.tooling
