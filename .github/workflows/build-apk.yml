@@ -21,6 +21,6 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x ./pkg/galaxytime-wearos/gradlew
     - name: Build with Gradle
       run: ./pkg/galaxytime-wearos/gradlew build
