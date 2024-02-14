@@ -35,24 +35,24 @@ jobs:
 
       # Run Tests Build
       - name: Run gradle tests
-        run: cd ./pkg/galaxytime-wearos/ && gradlew test
+        run: cd ./pkg/galaxytime-wearos/ && ./gradlew test
 
       # Run Build Project
       - name: Build gradle project
-        run: cd ./pkg/galaxytime-wearos/ && gradlew build
+        run: cd ./pkg/galaxytime-wearos/ && ./gradlew build
 
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
-        run: cd ./pkg/galaxytime-wearos/ && gradlew assembleDebug
+        run: cd ./pkg/galaxytime-wearos/ && ./gradlew assembleDebug
 
       # Create APK Release
       - name: Build apk release project (APK) - ${{ env.main_project_module }} module
-        run: cd ./pkg/galaxytime-wearos/ && gradlew assemble
+        run: cd ./pkg/galaxytime-wearos/ && ./gradlew assemble
 
       # Create Bundle AAB Release
       # Noted for main module build [main_project_module]:bundleRelease
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
-        run: cd ./pkg/galaxytime-wearos/ && gradlew ${{ env.main_project_module }}:bundleRelease
+        run: cd ./pkg/galaxytime-wearos/ && ./gradlew ${{ env.main_project_module }}:bundleRelease
 
       # Upload Artifact Build
 
