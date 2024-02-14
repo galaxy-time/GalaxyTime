@@ -16,7 +16,7 @@ class PermissionRequestActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		// setTheme(android.R.style.Theme_DeviceDefault)
+		setTheme(android.R.style.Theme_DeviceDefault)
 		requestPermissionsIfNeeded()
 	}
 
@@ -90,6 +90,5 @@ class PermissionRequestActivity : AppCompatActivity() {
 	companion object {
 		const val MY_PERMISSIONS_REQUEST = 101
 		private const val TAG = "PermissionRequestActivity"
-
 	}
 }

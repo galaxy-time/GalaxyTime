@@ -54,17 +54,17 @@ import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 
 class MainActivity : ComponentActivity(), SensorEventListener1 {
 
-    private lateinit var sensorManager: SensorManager
-    private var heartRateSensor: Sensor? = null
+//    private lateinit var sensorManager: SensorManager
+//    private var heartRateSensor: Sensor? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-		installSplashScreen()
+//		installSplashScreen()
 
 		super.onCreate(savedInstanceState)
 		setTheme(android.R.style.Theme_DeviceDefault)
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
+//        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+//        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
 
 		setContent {
 			WearApp("GalaxyTime")
@@ -74,22 +74,22 @@ class MainActivity : ComponentActivity(), SensorEventListener1 {
 	override fun onResume() {
         super.onResume()
         // Register the listener
-        heartRateSensor?.also { heartRate ->
-            sensorManager.registerListener(this, heartRate, SensorManager.SENSOR_DELAY_NORMAL)
-        }
+//        heartRateSensor?.also { heartRate ->
+//            sensorManager.registerListener(this, heartRate, SensorManager.SENSOR_DELAY_NORMAL)
+//        }
     }
 
     override fun onPause() {
         super.onPause()
         // Don't receive any more updates
-        sensorManager.unregisterListener(this)
+//        sensorManager.unregisterListener(this)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        if (event.sensor.type == Sensor.TYPE_HEART_RATE) {
-            val heartRate = event.values[0]
-            // Update your UI here with the new heart rate value
-        }
+//        if (event.sensor.type == Sensor.TYPE_HEART_RATE) {
+//            val heartRate = event.values[0]
+//            // Update your UI here with the new heart rate value
+//        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {

@@ -6,6 +6,7 @@
 
 package jp.lab75.galaxytime
 
+import android.util.Log
 import android.content.Context
 import android.content.res.Resources
 
@@ -20,11 +21,11 @@ import android.graphics.BlendMode
 import io.github.cosinekitty.astronomy.Body
 
 import jp.lab75.galaxytime.WatchFaceCanvasRenderer
-
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
-
 import jp.lab75.galaxytime.service.Calculations
+import jp.lab75.galaxytime.service.getReferenceDataFromThemeName
+
 import kotlin.math.roundToInt
 
 private lateinit var backgroundImage: Bitmap
@@ -32,7 +33,8 @@ private lateinit var backgroundImage: Bitmap
 private val padding = 25f
 private val typePadding = 20f
 private val size = 20f
-private val fontSize = 16f
+private val fontSize = 20f
+private val fontSizeSM = 16f
 
 //
 //
@@ -47,18 +49,30 @@ fun renderAstronomicsView(
 	watchFaceData: WatchFaceData,
 ) {
 
-	val resources: Resources = context.resources
 	var watchFaceColors = convertToColorPalette(
 		context,
 		watchFaceData.activeColorStyle,
 		watchFaceData.ambientColorStyle
-		)
+	)
 
 	val name = watchFaceData.activeColorStyle.toString()
 	val body = calculations.getBodyFromThemeName( name )
 	val planetData = if ( body != null ) { calculations.getBodyData( body ) } else { null }
 
-	if ( planetData != null ) {
+	Log.d("Astronomics", "${name} ${body} ${planetData} ${calculations.bodyList.size}")
+
+	if ( planetData == null ) {
+		// no data error
+		textStyle.color = watchFaceColors.activeOuterElementColor
+		textStyle.textAlign = Paint.Align.CENTER
+		textStyle.textSize = fontSize
+		addText(bounds.exactCenterX(), bounds.exactCenterY() / 2 + 25f, "NO DATA", textStyle, canvas)
+		return
+	} else {
+
+		val resources: Resources = context.resources
+		val refData = getReferenceDataFromThemeName(name)
+		val sunRefData = getReferenceDataFromThemeName("SUN")
 
 		val l1 = "AZI ${
 			planetData.horizontal.azimuth.roundToInt().or(272)
@@ -78,15 +92,11 @@ fun renderAstronomicsView(
 			planetData.declination.seconds.roundToInt().or(16)
 		)
 
-		//	val l1 = "AZI 272° ELE -2°"
-		//	val l2 = "RAS 12h14m16s"
-		//	val l3 = "DEC +00°36'26''"
-		// val l4 = ""
-
 		// ?
 		val r1 = "24H 37M"
 		// ROT DURATION
-		val r2 = "687 EARTH DAYS"
+		val dayLength = if ( refData?.totalRotationTimeHours!= null ) { (refData.totalRotationTimeHours / 24).toInt() } else { "UNKNOWN"}
+		val r2 = "${dayLength} EARTH DAYS"
 		// SURFACE
 		val r3 = "1.63118 × 1011 km³"
 		val r4 = "" // satellites
@@ -108,25 +118,30 @@ fun renderAstronomicsView(
 			style = Paint.Style.STROKE
 			color = Color.WHITE
 		}
-		val centerX = 0.5f * bounds.width().toFloat()
-		val centerY = 0.5f * bounds.height().toFloat()
+		val centerX = bounds.exactCenterX()
+		val centerY = bounds.exactCenterY()
 
-		// distance to sun
+		// distance to sun graph
 		val y = centerY - 50f
-		canvas.drawLine( centerX - 110f, y, centerX + 110, y, lineStyle )
-		canvas.drawCircle( centerX - 130, y, 20f, lineStyle )
-		canvas.drawCircle( centerX + 130, y, 20f, lineStyle )
+		val locationRadius = if ( refData?.radius!= null ) { refData.radius.toFloat() } else { 20f }
+		val sunRadius = if ( sunRefData?.radius!= null ) { sunRefData.radius.toFloat() } else { 20f }
 
+		canvas.drawLine( centerX - 130f + locationRadius, y, centerX + 130 - sunRadius, y, lineStyle )
+		canvas.drawCircle( centerX - 130, y, locationRadius, lineStyle ) // location
+		canvas.drawCircle( centerX + 130, y, sunRadius, lineStyle ) // sun
+
+		// header
 		textStyle.color = watchFaceColors.activeOuterElementColor
 		textStyle.textSize = fontSize
 		textStyle.textAlign = Paint.Align.CENTER
 		val destination = "SUN"
-		addText(centerX, y - 50f, "$name › $destination", textStyle, canvas)
+		addText(centerX, centerY / 2 + 25f, "$name › $destination", textStyle, canvas)
 
 		// planet details
 		val xoff_left = 160f
 		val xoff_right = 20f
 		val yOff = centerY - 20f
+		textStyle.textSize = fontSizeSM
 		textStyle.textAlign = Paint.Align.LEFT
 
 		addText(centerX - xoff_left, yOff + 30f, l1, textStyle, canvas)
@@ -138,44 +153,6 @@ fun renderAstronomicsView(
 		addText(centerX + xoff_right, yOff + 70f, r3, textStyle, canvas)
 		addText(centerX + xoff_right, yOff + 90f, r4, textStyle, canvas)
 
-		// val height = bounds.height().toFloat() - padding - padding - size - size - 20
-		// addRange( centerX + 40f, padding + size + 10, height, 9, 0, 100 , textStyle, canvas )
-
-		// val strHi = "HIGH"
-		// val textBoundsHi = Rect()
-		// textStyle.getTextBounds( strHi, 0, strHi.length, textBoundsHi)
-
-		// canvas.drawText(
-			// 	strHi,
-			// 	centerX,
-			// 	padding - textBoundsHi.exactCenterY(),
-			// 	textStyle
-			// )
-
-			// val strLo = "LOW"
-			// val textBoundsLo = Rect()
-			// textStyle.getTextBounds( strLo, 0, strLo.length, textBoundsLo)
-
-			// canvas.drawText(
-				// 	strLo,
-				// 	centerX,
-				// 	bounds.height() - padding - textBoundsLo.exactCenterY(),
-				// 	textStyle
-				// )
-
-				// val items: String[] = [ "0", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8" ]
-				// textStyle.textAlign = Paint.Align.RIGHT
-
-				// for (item in items) {
-					// 	val rect = Rect()
-					// 	textStyle.getTextBounds( item, 0, item.length, rect )
-					// 	canvas.drawText(
-						// 		item,
-						// 		centerX,
-						// 		bounds.height() - padding - rect.exactCenterY(),
-						// 		textStyle
-						// 	)
-						// }
 	}
 }
 

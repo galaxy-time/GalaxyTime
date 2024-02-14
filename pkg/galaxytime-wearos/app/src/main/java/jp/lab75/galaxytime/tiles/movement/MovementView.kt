@@ -61,22 +61,8 @@ fun renderMovementView(
         watchFaceData.ambientColorStyle
     )
 
-    val style = Paint().apply {
-        isAntiAlias = true
-        style = Paint.Style.FILL_AND_STROKE
-        textSize = 20f
-    }
-
-    val centerX = bounds.exactCenterX().toFloat()
-    val centerY = bounds.exactCenterY().toFloat()
-
-    // val radius = 0.5f * bounds.width()
-    // canvas.drawCircle(
-    // 	centerX,
-    // 	centerY,
-    // 	radius,
-    // 	style
-    // )
+    val centerX = bounds.exactCenterX()
+    val centerY = bounds.exactCenterY()
 
     val str = "MOVEMENT"
     val textBounds = Rect()
@@ -92,10 +78,10 @@ fun renderMovementView(
         defaultStyle
     )
 
-    val target_direction = 234f
+    val targetDirection = 234f
     val target = PointF(centerX, centerY)
     val current = lerp(target, target, 0.5f)
 
-    drawArrow(canvas, current, target_direction)
+    drawArrow(canvas, current, targetDirection)
 
 }

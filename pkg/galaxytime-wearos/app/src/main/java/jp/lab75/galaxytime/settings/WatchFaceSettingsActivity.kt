@@ -64,13 +64,13 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		setContentView(binding.root)
 
 		// Disable widgets until data loads and values are set.
-		binding.colorStylePickerButton.isEnabled = false
+		// binding.colorStylePickerButton.isEnabled = false
 		// binding.radioGroup = false
 		// binding.randomPlanetPickerButton.isEnabled = false
 
 		val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
 
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
 			when (checkedId) {
                 R.id.id_sun -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SUN.id )
 				R.id.id_mercury -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MERCURY.id )
@@ -126,26 +126,26 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 	}
 
 	private fun enableWidgets() {
-		binding.colorStylePickerButton.isEnabled = true
+		// binding.colorStylePickerButton.isEnabled = true
 		// binding.randomPlanetPickerButton.isEnabled = true
 		// binding.radioGroup = true
 	}
 
-	fun onClickRandomPlanetPickerButton(view: View) {
-		Log.d(TAG, "random() $view")
-		val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
-		val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
-		stateHolder.setColorStyle(newColorStyle.id)
-	}
+	// fun onClickRandomPlanetPickerButton(view: View) {
+	// 	Log.d(TAG, "random() $view")
+	// 	val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
+	// 	val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
+	// 	stateHolder.setColorStyle(newColorStyle.id)
+	// }
 
 	// TODO: this needs a propoer dropdown or scroll selector
-	fun onClickColorStylePickerButton(view: View) {
-		Log.d(TAG, "onClickColorStylePickerButton() $view")
-		// Selects a random color style from list.
-		val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
-		val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
-		stateHolder.setColorStyle(newColorStyle.id)
-	}
+	// fun onClickColorStylePickerButton(view: View) {
+	// 	Log.d(TAG, "onClickColorStylePickerButton() $view")
+	// 	// Selects a random color style from list.
+	// 	val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
+	// 	val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
+	// 	stateHolder.setColorStyle(newColorStyle.id)
+	// }
 
 	// fun onClickTopLeftComplicationButton(view: View) {
 	//     Log.d(TAG, "onClickTopLeftComplicationButton() $view")
