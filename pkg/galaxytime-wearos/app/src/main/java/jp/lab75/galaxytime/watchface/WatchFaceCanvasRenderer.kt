@@ -50,9 +50,13 @@ import jp.lab75.galaxytime.service.Data
 import jp.lab75.galaxytime.service.MeetingService
 import jp.lab75.galaxytime.service.getReferenceDataFromThemeName
 
+import jp.lab75.galaxytime.tiles.directions.renderDirectionsView
+
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
 import jp.lab75.galaxytime.utils.DRAW_HOUR_PIPS_STYLE_SETTING
 import jp.lab75.galaxytime.utils.drawGradientArc
+
+import jp.lab75.galaxytime.views.CompassActivity
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +64,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
+import android.content.Intent
+import android.content.pm.PackageManager
 
 //	shaders
 
@@ -88,6 +94,8 @@ class WatchFaceCanvasRenderer (
 		override fun onDestroy() {}
 	}
 
+	private var currentWatchFaceSize = screenBounds // Rect(0, 0, 450, 450)
+
 	//
 	// scene transitions
 	//
@@ -96,11 +104,22 @@ class WatchFaceCanvasRenderer (
 	var nextWatchMode: WatchMode = WatchMode.WATCH
 
 	private enum class TransitionMode { IN, OUT, IDLE }
-	private enum class TapZone { TL, TR, BL, BR }
+
+	val TL = Rect(0,0,currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.exactCenterY().toInt())
+	val TR = Rect(currentWatchFaceSize.exactCenterX().toInt(),0,currentWatchFaceSize.width(),currentWatchFaceSize.exactCenterY().toInt())
+	val BL = Rect(0,currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.height())
+	val BR = Rect(currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.width(),currentWatchFaceSize.height())
 
 	private var transitionMode: TransitionMode = TransitionMode.IDLE
 	private var prevMode: TransitionMode = TransitionMode.IDLE
 	private var transitionAlpha = 0f
+
+	fun openCompassActivity() {
+		Log.d(TAG, "openCompassActivity()")
+		val intent = Intent(context, CompassActivity::class.java)
+			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			context.applicationContext.startActivity(intent)
+	}
 
 	override fun onTapEvent(tapType: Int, tapEvent: TapEvent, complicationSlot: ComplicationSlot?) {
 
@@ -110,7 +129,14 @@ class WatchFaceCanvasRenderer (
 		// FIFTH VIEW.
 		if (tapType == TapType.UP) {
 
-			// identify compklication tap — potentially not needed
+			val x = tapEvent.xPos
+			val y = tapEvent.yPos
+			if (TL.contains(x, y)) Log.d("TAP", "TL")
+			if (TR.contains(x, y)) openCompassActivity() // Log.d("TAP", "TR")
+			if (BL.contains(x, y)) Log.d("TAP", "BL")
+			if (BR.contains(x, y)) Log.d("TAP", "BR")
+
+			// identify complication tap — potentially not needed
 //        	var tappedComplicationId = complicationSlotsManager.getComplicationSlotAt( tapEvent.xPos, tapEvent.yPos );
 //        	if ( tappedComplicationId != -1 ) {
 //            	// Handle tap action
@@ -127,8 +153,8 @@ class WatchFaceCanvasRenderer (
 			// TRANSITION TO VIEW
 			else {
 
-				if (tapEvent.yPos < currentWatchFaceSize.height() / 2)
-					nextWatchMode = WatchMode.ASTRONOMICS
+				// if (tapEvent.yPos < currentWatchFaceSize.height() / 2)
+					// nextWatchMode = WatchMode.DIRECTIONS // ASTRONOMICS
 				if (tapEvent.yPos > currentWatchFaceSize.height() / 2)
 					nextWatchMode = WatchMode.BIOMETRICS
 
@@ -221,7 +247,7 @@ class WatchFaceCanvasRenderer (
 		watchFaceData.activeColorStyle,
 		watchFaceData.ambientColorStyle
 	)
-	public var themeName = watchFaceData.activeColorStyle.toString()
+	private var themeName = watchFaceData.activeColorStyle.toString()
 
 	private val outerElementPaint = Paint().apply {
 		isAntiAlias = true
@@ -293,8 +319,8 @@ class WatchFaceCanvasRenderer (
 		blendMode = BlendMode.OVERLAY
 	}
 
-	private var armLengthChangedRecalculateClockHands: Boolean = false
-	private var currentWatchFaceSize = Rect(0, 0, 450, 450)
+//	private var armLengthChangedRecalculateClockHands: Boolean = false
+//	private var currentWatchFaceSize = Rect(0, 0, 450, 450)
 
 	// grain overlay
 	private var grainBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_grain)
@@ -378,7 +404,7 @@ class WatchFaceCanvasRenderer (
 		// Only updates if something changed.
 		if (watchFaceData != newWatchFaceData) {
 			watchFaceData = newWatchFaceData
-			println(watchFaceData.activeColorStyle.toString())
+			Log.d(TAG,"${watchFaceData.activeColorStyle.toString()}")
 			// Recreates Color and ComplicationDrawable from resource ids.
 			watchFaceColors = convertToColorPalette(
 				context,
@@ -406,7 +432,7 @@ class WatchFaceCanvasRenderer (
 	//
 
 	override fun onDestroy() {
-		//Log.d(TAG, "onDestroy()")
+		Log.d(TAG, "onDestroy()")
 		scope.cancel("GalaxyWatchCanvasRenderer scope clear() request")
 		super.onDestroy()
 	}
@@ -436,7 +462,6 @@ class WatchFaceCanvasRenderer (
 	//	main render loop
 	//
 
-
 	override fun render(
 		canvas: Canvas,
 		bounds: Rect,
@@ -451,7 +476,7 @@ class WatchFaceCanvasRenderer (
 				WatchMode.WATCH -> renderWatchView(canvas, bounds, zonedDateTime)
 				WatchMode.BIOMETRICS -> renderBiometricsView(context, canvas, bounds, textPaint)
 				WatchMode.ASTRONOMICS -> renderAstronomicsView( context, canvas, bounds, textPaint, calculations, watchFaceData )
-				WatchMode.DIRECTIONS -> renderDirectionsView(context, canvas, bounds, textPaint)
+				WatchMode.DIRECTIONS -> return // renderDirectionsView(context, canvas, bounds, textPaint)
 				WatchMode.CALENDAR -> renderCalendarView(context, canvas, bounds, textPaint)
 				WatchMode.MOVEMENT -> renderMovementView(context, canvas, bounds, textPaint)
 			}
@@ -470,7 +495,7 @@ class WatchFaceCanvasRenderer (
 
 		if (renderParameters.drawMode != DrawMode.AMBIENT && watchMode == WatchMode.WATCH) {
 			val name = watchFaceData.activeColorStyle.toString()
-			drawLunette(canvas, bounds, name, watchFaceColors.activePrimaryColor )
+			drawLunette(canvas, bounds, name, watchFaceColors.activePrimaryColor)
 			drawTextZones(canvas, bounds, name, zonedDateTime)
 		}
 
@@ -482,9 +507,9 @@ class WatchFaceCanvasRenderer (
 	private fun drawGradient(canvas: Canvas, bounds: Rect) {
 
 		val colors = intArrayOf(
-			0x00000000.toInt(),
-			0x00000000.toInt(),
-			0x00000000.toInt(),
+			0x00000000,
+			0x00000000,
+			0x00000000,
 			0xFF000000.toInt(),
 		)
 		val stops = listOf(0f, 0.35f, 0.7f, 1f).toFloatArray()
@@ -559,7 +584,7 @@ class WatchFaceCanvasRenderer (
 
 		val xc = bounds.exactCenterX()
 		val yc = bounds.exactCenterY()
-		val off1 = 10f
+		val off1 = 25f
 		val off2 = 30f
 
 		val zero = "" // special character for zero
@@ -570,13 +595,14 @@ class WatchFaceCanvasRenderer (
 		var bodyData: Data? = null
 		if ( body != null ) { bodyData = calculations.getBodyData( body ) }
 
-		if ( name == "Earth" ) {
-			localtime = DateTimeFormatter.ofPattern("HH:mm:ss").format(zonedDateTime).replace("0", zero)
+
+		if ( name == "EARTH" ) {
+			localtime = DateTimeFormatter.ofPattern("DDD:HH:mm").format(zonedDateTime).replace("0", zero)
 		} else if ( bodyData != null ) {
 			localtime = timeFormat.format(
-				bodyData.rightAscension.degrees,
-				bodyData.rightAscension.minutes,
-				bodyData.rightAscension.seconds.toInt()
+				bodyData.time.d,
+				bodyData.time.h,
+				zonedDateTime.minute
 			).replace( "0", zero )
 		}
 
@@ -584,24 +610,19 @@ class WatchFaceCanvasRenderer (
 				.ofPattern("HH:mm").format(OffsetDateTime.now(ZoneOffset.UTC))
 				.replace("0", zero)
 
+		// draw location name
 		canvas.drawText(name, xc, yc / 2f + 30f, p1)
 
+		// draw timezones
 		canvas.save()
-
-		// draw centered timezones
-		canvas.translate(83f,80f)
+		canvas.translate(85f,80f)
+		p3.textAlign = Paint.Align.LEFT
 		canvas.drawText("LT", xc - off1, yc - 6f, p3)
 		canvas.drawText("UT", xc - off1, yc + 20f, p3)
 		canvas.drawText(localtime, xc - off2, yc - 6f, p2)
 		canvas.drawText(universaltime, xc - off2, yc + 20f, p2)
-
-
 		canvas.restore()
 	}
-
-	//
-	//	draw lunette
-	//
 
 	private fun drawLunette(
 		canvas: Canvas,
@@ -618,29 +639,6 @@ class WatchFaceCanvasRenderer (
 			bounds.width().toFloat() - offset,
 			bounds.height().toFloat() - offset
 		)
-
-		// val p = Paint().apply {
-		// 	color = Color.RED
-		// 	strokeWidth = 0.5f
-		// 	style = Paint.Style.STROKE
-		// 	typeface = typeface
-		// 	// bold arcs at bezel:
-		// 	// strokeWidth = 20f
-		// 	// strokeJoin = Paint.Join.ROUND
-		// 	// strokeCap = Paint.Cap.ROUND
-		// }
-		// p.setPathEffect(DashPathEffect(floatArrayOf(4f, 8f), 0f))
-		// only for debugging
-		// canvas.drawLine( bounds.exactCenterX(), 0f, bounds.exactCenterX(), bounds.height().toFloat(), p )
-		// canvas.drawLine( 0f, bounds.exactCenterY(), bounds.width().toFloat(), bounds.exactCenterY(), p )
-
-		// val arcSweep = 90f - arcOffset - arcOffset
-		// val r01 = RectF( space, space, bounds.width().toFloat() - space, bounds.height().toFloat() - space )
-		// canvas.drawArc(r01, -90f + arcOffset ,arcSweep, false, p)
-		// canvas.drawArc(r01,   0f + arcOffset, arcSweep, false, p)
-		// canvas.drawArc(r01, 180f + arcOffset, arcSweep, false, p)
-		// canvas.drawArc(r01,  90f + arcOffset, arcSweep, false, p)
-
 
 		textPaint.textSize = 16f
 		textPaint.color = themeColor
@@ -676,19 +674,15 @@ class WatchFaceCanvasRenderer (
 
 		val data = getReferenceDataFromThemeName(themeName)
 		val r = if (data!= null) { data.radiusKm } else { 6371 }
-		val solDay = if (data!= null) { data.rotationTime / 3600 } else { 24 }
+		val solDay = if (data!= null) { data.totalRotationTimeHours } else { 24 }
 		val dist = if (data!= null) { data.distanceAU } else { 0 }
 
-		val t3 = "SOL ${solDay}h · DST ${dist}AU · R ${r.toInt()}km"
+		val t3 = "SOL ${solDay}h · DST ${dist}AU · R ${r.toInt()}km".replace("0", "")
 		val p3 = Path()
 		p3.addArc(rect, 180f + arcOffset, 90f - arcOffset)
 		canvas.drawTextOnPath(t3, p3, 0f, 0f, textPaint)
 
 	}
-
-	//
-	//	draw complications
-	//
 
 	private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
 
@@ -700,59 +694,60 @@ class WatchFaceCanvasRenderer (
 
 	}
 
-	//
-	//	draw clock hands
-	//
-
 	private fun drawClockHands(
 		c: Canvas,
 		b: Rect,
 		zonedDateTime: ZonedDateTime
 	) {
 
-		val body = calculations.getBodyFromThemeName(themeName)
+		val name = watchFaceData.activeColorStyle.toString()
+		val body = calculations.getBodyFromThemeName(name)
 		var bodyData: Data? = null
 		if (body != null) bodyData = calculations.getBodyData(body)
 
-		val s = if (bodyData?.rightAscension!= null) { bodyData.rightAscension.seconds.toFloat() } else { 0f }
-		val m = if (bodyData?.rightAscension!= null) { bodyData.rightAscension.minutes.toFloat() } else { 0f }
-		val h = if (bodyData?.rightAscension!= null) { bodyData.rightAscension.degrees.toFloat() } else { 0f }
-		val d = 0 // if (bodyData?.convertedRA!= null) { bodyData.convertedRA.d.toFloat() } else { 0f }
+//		val s = if (bodyData?.time!= null) { bodyData.time.s.toFloat() } else { 0f }
+//		val m = if (bodyData?.time!= null) { bodyData.time.m.toFloat() } else { 0f }
+		val h = if (bodyData?.time!= null) { bodyData.horizontal.ra.toFloat() / 24 * 360 } else { 0f }
+//		val d = if (bodyData?.time!= null) { bodyData.time.d.toFloat() } else { 0f }
 
-		val sr = -90f +  6f * s
-		val mr = -90f +  6f * m
-		val hr = -90f + 15f * h
-
+		// remote
+		// val sr = -90f +  6f * s
+		// val mr = -90f +  6f * m
 		// local
-		// val sr = -90f + 6f * zonedDateTime.second
-		// val mr = -90f + 6f * zonedDateTime.minute
-		// val hr = -90f + 15f * zonedDateTime.hour // 24h dial = 15f, 12h dial= 30f
+		val sr = -90f + 6f * zonedDateTime.second
+		val mr = -90f + 6f * zonedDateTime.minute
 
+		val hr = if( name == "EARTH" ) {
+			-90f + 15f * zonedDateTime.hour // 24h dial = 15f, 12h dial= 30f
+		} else {
+			-90f + h
+		}
 		// TODO: needs planet time in days for a full year!
 		val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
 
 		// Log.d(TAG, "drawClockHands(): $bodyData?.time | $h, $m, $s, $d | $sr, $mr, $hr, $dr")
 		// Log.d(TAG, "drawClockHands(): $bodyData?.time")
+		// Log.d(TAG, "drawClockHands: $dr $hr $mr $sr")
 
 		if (
 			renderParameters.drawMode != DrawMode.AMBIENT // INTERACTIVE
-		// && renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
-		) {
+			// && renderParameters.watchFaceLayers.contains(WatchFaceLayer.BASE)
+			) {
 
 			val lunetteWidth = 30f
 			val dialWidth = 15f
 			val dialGap = 0f
 
-			var ri = (b.width().toFloat() / 2f) - lunetteWidth - dialWidth
 			var ro = (b.width().toFloat() / 2f) - lunetteWidth
+			var ri = (b.width().toFloat() / 2f) - lunetteWidth - dialWidth
 			drawGradientArc( c, b, ri, ro, sr, 60f, watchFaceColors.activePrimaryColor, 255 )
 
 			ro = ri
-			ri = ri - dialWidth
+			ri -=  dialWidth
 			drawGradientArc( c, b, ri, ro - dialGap, mr, 60f, watchFaceColors.activePrimaryColor, 255 )
 
 			ro = ri
-			ri = ri - dialWidth
+			ri -= dialWidth
 			drawGradientArc( c, b, ri, ro - dialGap, hr, 24f, watchFaceColors.activePrimaryColor, 255 )
 
 			ro = ri
@@ -761,9 +756,37 @@ class WatchFaceCanvasRenderer (
 
 			// TODO: interactive tap zones...
 			// drawTapZones(canvas, bounds)
+			// drawPlanetTextures( c, b, name, ro.toInt() )
 
 		}
 	}
+
+	// overlay gradients and add ons
+
+	// private var ringPaint: Paint = Paint( Paint.ANTI_ALIAS_FLAG )
+	// private var saturnRingBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_saturn_ring)
+	// private var saturnRingImage: Bitmap = Bitmap.createScaledBitmap(saturnRingBitmap, currentWatchFaceSize.width(), 4, false)
+	// private var saturnGradientBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_saturn_gradient)
+	// private var saturnGradientImage: Bitmap = Bitmap.createScaledBitmap(saturnGradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+	// private var jupiterGradientBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_jupiter_gradient)
+	// private var jupiterGradientImage: Bitmap = Bitmap.createScaledBitmap(saturnGradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
+
+	// private fun drawPlanetTextures( c: Canvas, b: Rect, n: String, r: Int ) {
+	// 	if( n == "SATURN") {
+	// 		val ex = b.exactCenterX().toInt()
+	// 		val ey = b.exactCenterY().toInt()
+	// 		val r1: Rect = Rect( ex - r, ey - r, ex + r, ey + r )
+	// 		c.drawBitmap(saturnGradientImage, b, r1, blendPaint)
+	// 		val r2: Rect = Rect( ex - r, ey - 2, ex + r, ey + 2 )
+	// 		c.drawBitmap(saturnRingImage, b, r2, ringPaint)
+	// 		return
+	// 	}
+	// 	if( n == "JUPITER") {
+	// 		val r1: Rect = Rect( b.centerX() - r, b.centerY() - r, b.centerX() + r, b.centerY() + r )
+	// 		c.drawBitmap(jupiterGradientImage, b, r1, blendPaint)
+	// 		return
+	// 	}
+	// }
 
 	companion object {
 		private const val TAG = "CanvasRenderer"

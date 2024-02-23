@@ -24,33 +24,34 @@ import android.os.Looper
 import android.util.Log
 import android.view.SurfaceHolder
 import androidx.core.content.ContextCompat
+
 import androidx.wear.watchface.CanvasType
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.WatchFace
-
 import androidx.wear.watchface.WatchFaceService
 import androidx.wear.watchface.WatchFaceType
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.UserStyleSchema
+
 import jp.lab75.galaxytime.service.Calculations
 import jp.lab75.galaxytime.service.MeetingService
-
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
 import jp.lab75.galaxytime.views.PermissionRequestActivity
+import jp.lab75.galaxytime.views.CompassActivity
 
 class WatchFaceService : WatchFaceService() {
 
-	private val handler = Handler(Looper.getMainLooper())
+	private val handler = Handler( Looper.getMainLooper() )
 	private lateinit var calculations: Calculations
 	private lateinit var meetingService: MeetingService
 
-	val hasPermissions = false
+	private var hasPermissions = false
 
-	val refreshLocationInterval: Long = 1000 * 60               // maybe every minute
-	val refreshCalculationsInterval: Long = 1000 * 1            // maybe every minute
-	val refreshMeetingServiceInterval: Long = 1000 * 60 * 15    // maybe every 15 minutes
+	val refreshLocationInterval: Long = 1000 * 60
+	val refreshCalculationsInterval: Long = 1000 * 1
+	val refreshMeetingServiceInterval: Long = 1000 * 60 * 5
 
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)
@@ -87,42 +88,42 @@ class WatchFaceService : WatchFaceService() {
 		}
 	}
 
-
 	override fun onCreate() {
-
 		super.onCreate()
+		calculations = Calculations(context = applicationContext)
+		meetingService = MeetingService(context = applicationContext)
 
-		calculations = Calculations(this)
-		meetingService = MeetingService(this)
 
-		// Check permission status location or calendar
-
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-			!= PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-				this,
-				Manifest.permission.READ_CALENDAR
+		if ( ContextCompat.checkSelfPermission(
+				this, Manifest.permission.ACCESS_FINE_LOCATION
+			) != PackageManager.PERMISSION_GRANTED ||
+			ContextCompat.checkSelfPermission(
+				this, Manifest.permission.READ_CALENDAR
 			) != PackageManager.PERMISSION_GRANTED
 		) {
 
-			Log.d(
-				TAG,
-				"Location permission or calendar permission not granted. Starting permission request activity."
-			)
+			// hasPermissions = false
+
+			Log.d( TAG, "Insufficient permissions. Starting permission request activity." )
 			val intent = Intent(this, PermissionRequestActivity::class.java)
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 			startActivity(intent)
 
 		} else {
 
+			// hasPermissions = true
+
 			Log.d(TAG, "Permissions granted")
 
 			calculations.updateLocation()
-			meetingService.update()
 			calculations.update()
+
+			meetingService.update()
 
 			handler.post(updateLocationLoop)
 			handler.post(updateCalculationsLoop)
 			handler.post(updateMeetingServiceLoop)
+
 		}
 	}
 
@@ -130,6 +131,7 @@ class WatchFaceService : WatchFaceService() {
 		super.onDestroy()
 		handler.removeCallbacks(updateLocationLoop)
 		handler.removeCallbacks(updateCalculationsLoop)
+		handler.removeCallbacks(updateMeetingServiceLoop)
 	}
 
 	override suspend fun createWatchFace(
@@ -138,7 +140,6 @@ class WatchFaceService : WatchFaceService() {
 		complicationSlotsManager: ComplicationSlotsManager,
 		currentUserStyleRepository: CurrentUserStyleRepository
 	): WatchFace {
-
 		Log.d(TAG, "createWatchFace()")
 
 		val renderer = WatchFaceCanvasRenderer(
