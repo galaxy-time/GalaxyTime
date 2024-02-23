@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="GalaxyTime Watchface" type="AndroidWatchFaceConfigurationType" factoryName="AndroidWatchFaceConfigurationFactory" show_console_on_std_err="false" show_console_on_std_out="false">
-    <module name="GalaxyTimeAlpha.app" />
+    <module name="GalaxyTime.app" />
     <option name="allowRunningInParallel" value="false" />
     <option name="projectPathOnTarget" />
     <option name="selectedOptions">
