@@ -6,4 +6,5 @@ data class PT(
 	val h: Int,
 	val m: Int,
 	val s: Int,
+	val raw: Int,
 )

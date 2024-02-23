@@ -235,7 +235,7 @@ class WatchFaceCanvasRenderer (
 	//
 
 	private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-	public var watchFaceData: WatchFaceData = WatchFaceData()
+	private var watchFaceData: WatchFaceData = WatchFaceData()
 	private val resources: Resources = context.resources
 
 	//
@@ -467,7 +467,6 @@ class WatchFaceCanvasRenderer (
 		bounds: Rect,
 		zonedDateTime: ZonedDateTime,
 		sharedAssets: AnalogSharedAssets
-
 	) {
 		if (currentWatchFaceSize != bounds) currentWatchFaceSize = bounds
 		if (renderParameters.drawMode != DrawMode.AMBIENT) {

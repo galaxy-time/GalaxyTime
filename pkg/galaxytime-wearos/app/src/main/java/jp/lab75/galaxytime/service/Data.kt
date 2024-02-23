@@ -11,5 +11,7 @@ data class Data(
 	// for getting time in degrees, minutes, seconds of arc
 	var declination: DMS,
 	// get planetary time in days, hours, minutes, seconds
-	var time: PT
+	var time: PT,
+	var elapsedSeconds: Int,
+	var rot: Int
 )

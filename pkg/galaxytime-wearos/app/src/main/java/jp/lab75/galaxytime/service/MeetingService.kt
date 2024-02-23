@@ -1,5 +1,5 @@
 package jp.lab75.galaxytime.service
-
+import android.util.Log
 import android.content.Context
 import android.database.Cursor
 import android.provider.CalendarContract
@@ -81,5 +81,9 @@ class MeetingService(private val context: Context) {
 		val currentTime = System.currentTimeMillis()
 		// Filter meetings to find the next one that starts after the current time
 		return todayMeetings.firstOrNull { it.startTime >= currentTime }
+	}
+
+	companion object {
+		private const val TAG = "MeetingService"
 	}
 }
