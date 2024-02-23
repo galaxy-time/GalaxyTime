@@ -7,115 +7,91 @@
 package jp.lab75.galaxytime.views
 
 import android.hardware.SensorEventListener as SensorEventListener1
-import android.Manifest
+import android.app.WallpaperManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.SensorManager
-import android.util.Log
-
 import android.os.Bundle
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.unit.dp
-
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.OutlinedButton
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
 import androidx.wear.tooling.preview.devices.WearDevices
-
 import jp.lab75.galaxytime.R
-import jp.lab75.galaxytime.WatchFaceService
+import jp.lab75.galaxytime.WatchFaceCanvasRenderer
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 
-class MainActivity : ComponentActivity(), SensorEventListener1 {
 
-//    private lateinit var sensorManager: SensorManager
-//    private var heartRateSensor: Sensor? = null
+class MainActivity : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 //		installSplashScreen()
-
 		super.onCreate(savedInstanceState)
 		setTheme(android.R.style.Theme_DeviceDefault)
 
-//        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-//        heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
-
 		setContent {
-			WearApp("GalaxyTime")
+			WearApp("GalaxyTime") { navigateToWatchFace() }
 		}
 	}
 
-	override fun onResume() {
-        super.onResume()
-        // Register the listener
-//        heartRateSensor?.also { heartRate ->
-//            sensorManager.registerListener(this, heartRate, SensorManager.SENSOR_DELAY_NORMAL)
-//        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // Don't receive any more updates
-//        sensorManager.unregisterListener(this)
-    }
-
-    override fun onSensorChanged(event: SensorEvent) {
-//        if (event.sensor.type == Sensor.TYPE_HEART_RATE) {
-//            val heartRate = event.values[0]
-//            // Update your UI here with the new heart rate value
-//        }
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-        // Handle sensor accuracy changes if needed
-    }
-
+	fun navigateToWatchFace() {
+		val wf = ComponentName(this, WatchFaceCanvasRenderer::class.java)
+		val intent: Intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+			.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, wf)
+			.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+		this.startActivity(intent)
+		finish()
+	}
 
 	companion object {
         const val TAG = "MainActivity"
 	}
 
 }
-
 @Composable
-fun WearApp(greetingName: String) {
+fun WearApp(greetingName: String, action: () -> Unit) {
 	GalaxyTimeTheme {
 		Box(
 			modifier = Modifier
 				.padding(32.dp)
 				.wrapContentSize()
-				.background(MaterialTheme.colors.background),
+				.background( Color.Black ),
 			contentAlignment = Alignment.Center
 
 		) {
-			// TimeText()
-			Greeting(greetingName = greetingName)
+			Column(
+				Modifier.fillMaxWidth()
+				.absolutePadding(10.dp)
+				.verticalScroll(rememberScrollState())
+//				.weight(weight = 1f, fill = false)
+			) {
+				Greeting(greetingName = greetingName)
+				SimpleButton(action)
+			}
 		}
 	}
 }
@@ -123,15 +99,31 @@ fun WearApp(greetingName: String) {
 @Composable
 fun Greeting(greetingName: String) {
 	Text(
-		modifier = Modifier.fillMaxWidth(),
 		textAlign = TextAlign.Center,
-		color = MaterialTheme.colors.primary,
-		text = stringResource(R.string.hello_world, greetingName)
+		color = Color(0xffffffff),
+		fontSize = 10.sp,
+		text = stringResource(R.string.hello_world, greetingName),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(10.dp)
 	)
+}
+
+@Composable
+fun SimpleButton(action: () -> Unit) {
+	OutlinedButton(
+		modifier = Modifier.fillMaxWidth(),
+		onClick = { action() }
+	) {
+		Text(
+			fontSize = 10.sp,
+			text = "Activate Smart WatchFace"
+		)
+	}
 }
 
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
-	WearApp("GalaxyTime Preview")
+	WearApp("GalaxyTime Preview", action = { })
 }

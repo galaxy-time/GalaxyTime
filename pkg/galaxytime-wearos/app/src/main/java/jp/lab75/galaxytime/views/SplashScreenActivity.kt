@@ -1,5 +1,6 @@
 package jp.lab75.galaxytime.views
 
+import android.util.Log
 import android.content.Intent
 import android.net.Uri
 import android.widget.MediaController
@@ -17,6 +18,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
 		val videoView = findViewById<VideoView>(R.id.videoView)
 		val videoUri = Uri.parse("android.resource://${packageName}/${R.raw.intro}")
+		Log.d("video","videoUri: $videoUri")
 		videoView.setVideoURI(videoUri)
 
 		val mediaController = MediaController(this)

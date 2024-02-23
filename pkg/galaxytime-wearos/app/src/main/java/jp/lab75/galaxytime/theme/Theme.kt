@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontFamily
 import jp.lab75.galaxytime.R
 
 private val appFont = FontFamily(
-	Font(R.font.stellar),
+	Font(R.font.b612),
 )
 
 val Typography = Typography(
