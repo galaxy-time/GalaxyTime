@@ -90,9 +90,9 @@ class WatchFaceService : WatchFaceService() {
 
 	override fun onCreate() {
 		super.onCreate()
-		calculations = Calculations(context = applicationContext)
-		meetingService = MeetingService(context = applicationContext)
 
+		calculations = Calculations.getInstance(applicationContext)
+		meetingService = MeetingService.getInstance(applicationContext)
 
 		if ( ContextCompat.checkSelfPermission(
 				this, Manifest.permission.ACCESS_FINE_LOCATION
