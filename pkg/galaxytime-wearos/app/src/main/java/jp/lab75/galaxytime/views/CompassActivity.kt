@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.layout.fillMaxWidth
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 
 import androidx.wear.compose.material.MaterialTheme
@@ -26,10 +27,13 @@ import kotlin.math.roundToInt
 
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 import jp.lab75.galaxytime.components.MinimalCompass
+import jp.lab75.galaxytime.service.Calculations
 
 class CompassActivity : ComponentActivity(), SensorEventListener {
 
-	private lateinit var context: Context
+	lateinit var context: Context
+	lateinit var calculations: Calculations
+
 	private lateinit var sensorManager: SensorManager
     private val accelerometerReading = FloatArray(3)
     private val magnetometerReading = FloatArray(3)
@@ -45,18 +49,44 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		context = getApplicationContext()
+		calculations = Calculations.getInstance( context )
 
-		Log.d(TAG, "onCreate()")
+		val bun = intent.extras
+		val name = (bun?.getString("name") ?: "unknown")
+		val c = bun?.getInt("color") ?: "0xffff00ff"
+		val color = Color( c as Int )
+		val body = calculations.getBodyFromThemeName(name)
+		val data = calculations.getBodyData(body)
+
+		Log.d(TAG, "${data?.horizontal?.azimuth} / ${data?.horizontal?.altitude}")
+
+/*
+	TODO: check hourAngle in astronomy-engine
+	Finds the hour angle of a body for a given observer and time.
+	The hour angle of a celestial body indicates its position in the sky
+	with respect to the Earth's rotation. The hour angle depends on the
+	location of the observer on the Earth. The hour angle is 0 when the
+	body's center reaches its highest angle above the horizon in a given day.
+	The hour angle increases by 1 unit for every sidereal hour that passes
+	after that point, up to 24 sidereal hours when it reaches the highest
+	point again. So the hour angle indicates the number of hours that have
+	passed since the most recent time that the body has culminated,
+	or reached its highest point.
+*/
+
 
 		sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 		val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
 
 		setTheme(android.R.style.Theme_DeviceDefault)
 		setContent {
-			CompassApp(
-				degrees = degrees.value,
-				callback = { finishActivity() }
-			)
+			GalaxyTimeTheme {
+				CompassApp(
+					degrees = degrees.value,
+					callback = { finishActivity() }
+				)
+			}
 		}
 	}
 
@@ -101,9 +131,7 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
             System.arraycopy(event.values, 0, magnetometerReading, 0, magnetometerReading.size)
         }
         val azimuthInRadians = this.mOrientationAngles[0]
-
         val azimuthInDegrees = Math.toDegrees(azimuthInRadians.toDouble()).roundToInt()
-
 		degrees.value = if(azimuthInDegrees < 0 ) azimuthInDegrees + 360
         else azimuthInDegrees
 
@@ -134,12 +162,10 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 
 @Composable
 fun CompassApp(degrees: Int, callback: () -> Unit) {
-	GalaxyTimeTheme {
-		MinimalCompass(
-			degrees = degrees,
-			callback = callback
-		)
-	}
+	MinimalCompass(
+		degrees = degrees,
+		callback = callback
+	)
 }
 
 @Composable

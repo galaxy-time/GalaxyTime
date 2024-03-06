@@ -6,20 +6,16 @@
 
 package jp.lab75.galaxytime.views
 
-import android.hardware.SensorEventListener as SensorEventListener1
 import android.app.WallpaperManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEvent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,9 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.OutlinedButton
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -79,14 +72,15 @@ fun WearApp(greetingName: String, action: () -> Unit) {
 			modifier = Modifier
 				.padding(32.dp)
 				.wrapContentSize()
-				.background( Color.Black ),
+				.background(Color.Black),
 			contentAlignment = Alignment.Center
 
 		) {
 			Column(
-				Modifier.fillMaxWidth()
-				.absolutePadding(10.dp)
-				.verticalScroll(rememberScrollState())
+				Modifier
+					.fillMaxWidth()
+					.absolutePadding(10.dp)
+					.verticalScroll(rememberScrollState())
 //				.weight(weight = 1f, fill = false)
 			) {
 				Greeting(greetingName = greetingName)
@@ -117,7 +111,7 @@ fun SimpleButton(action: () -> Unit) {
 	) {
 		Text(
 			fontSize = 10.sp,
-			text = "Activate Smart WatchFace"
+			text = "Activate"
 		)
 	}
 }
