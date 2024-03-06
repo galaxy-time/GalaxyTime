@@ -11,51 +11,14 @@ import android.content.res.Resources
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.Color
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 
-import android.util.Log
-import android.view.SurfaceHolder
-import androidx.core.graphics.withRotation
-import androidx.core.graphics.withScale
-
-import androidx.wear.watchface.ComplicationSlotsManager
-import androidx.wear.watchface.DrawMode
-import androidx.wear.watchface.Renderer
-import androidx.wear.watchface.WatchState
-
-import androidx.wear.watchface.WatchFace.TapListener
-import androidx.wear.watchface.TapType
-import androidx.wear.watchface.TapEvent
-import androidx.wear.watchface.ComplicationSlot
-
-import androidx.wear.watchface.complications.rendering.CanvasComplicationDrawable
-import androidx.wear.watchface.complications.rendering.ComplicationDrawable
-import androidx.wear.watchface.style.CurrentUserStyleRepository
-import androidx.wear.watchface.style.UserStyle
-import androidx.wear.watchface.style.UserStyleSetting
-import androidx.wear.watchface.style.WatchFaceLayer
-
-import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
-import jp.lab75.galaxytime.data.watchface.WatchMode
-
-import java.time.Duration
-import java.time.ZonedDateTime
-import kotlin.math.cos
-import kotlin.math.sin
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
 private lateinit var backgroundImage: Bitmap
 private val padding = 25f
@@ -111,7 +74,7 @@ fun renderBiometricsView(
 
 	val backgroundBitmap = BitmapFactory.decodeResource( resources, R.drawable.sgt_hydration )
 	backgroundImage = Bitmap.createScaledBitmap( backgroundBitmap, bounds.width(), bounds.height(), false )
-	
+
 	canvas.drawBitmap( backgroundImage, bounds, bounds, null )
 
 	// view
@@ -166,25 +129,25 @@ fun renderBiometricsView(
 	// val strHi = "HIGH"
 	// val textBoundsHi = Rect()
 	// textStyle.getTextBounds( strHi, 0, strHi.length, textBoundsHi)
-	
+
 	// canvas.drawText(
 	// 	strHi,
 	// 	centerX,
 	// 	padding - textBoundsHi.exactCenterY(),
 	// 	textStyle
 	// )
-	
+
 	// val strLo = "LOW"
 	// val textBoundsLo = Rect()
 	// textStyle.getTextBounds( strLo, 0, strLo.length, textBoundsLo)
-	
+
 	// canvas.drawText(
 	// 	strLo,
 	// 	centerX,
 	// 	bounds.height() - padding - textBoundsLo.exactCenterY(),
 	// 	textStyle
 	// )
-	
+
 	// val items: String[] = [ "0", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8" ]
 	// textStyle.textAlign = Paint.Align.RIGHT
 

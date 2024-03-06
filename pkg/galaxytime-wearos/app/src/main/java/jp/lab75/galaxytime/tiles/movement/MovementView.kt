@@ -1,7 +1,6 @@
 package jp.lab75.galaxytime
 
 import android.content.Context
-import android.content.res.Resources
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,15 +9,9 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.Rect
-import android.graphics.RectF
 
-import kotlin.math.cos
-import kotlin.math.sin
-
-import jp.lab75.galaxytime.data.watchface.ColorStyleIdAndResourceIds
 import jp.lab75.galaxytime.data.watchface.WatchFaceColorPalette.Companion.convertToColorPalette
 import jp.lab75.galaxytime.data.watchface.WatchFaceData
-import jp.lab75.galaxytime.data.watchface.WatchMode
 
 fun lerp(start: PointF, end: PointF, t: Float): PointF {
     val x = start.x + (end.x - start.x) * t
