@@ -56,16 +56,6 @@ fun degreeToDirection(degrees: Int): String {
     }
 }
 
-//fun handleTap(context: Context) {
-//
-//	val wf = ComponentName(context, WatchFaceCanvasRenderer::class.java)
-//	val intent: Intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
-//		.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, wf)
-//		.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//	context.startActivity(intent)
-////	finish()
-//}
-
 @Composable
 fun MinimalCompass(
 	modifier: Modifier = Modifier.fillMaxSize(),
