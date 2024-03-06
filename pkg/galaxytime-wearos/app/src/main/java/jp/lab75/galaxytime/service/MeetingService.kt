@@ -5,7 +5,17 @@ import android.database.Cursor
 import android.provider.CalendarContract
 import java.util.Calendar
 
-class MeetingService(private val context: Context) {
+class MeetingService private constructor(private val context: Context) {
+
+	companion object {
+		@Volatile private var instance: MeetingService? = null // Volatile modifier is necessary
+		fun getInstance(context: Context) =
+			instance ?: synchronized(this) { // synchronized to avoid concurrency problem
+				instance ?: MeetingService(context).also { instance = it }
+			}
+		private const val TAG = "MeetingService"
+	}
+
 	private var todayMeetings = mutableListOf<Meeting>()
 
 	data class Meeting(
@@ -83,7 +93,5 @@ class MeetingService(private val context: Context) {
 		return todayMeetings.firstOrNull { it.startTime >= currentTime }
 	}
 
-	companion object {
-		private const val TAG = "MeetingService"
-	}
+
 }

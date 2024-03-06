@@ -21,31 +21,61 @@ import androidx.wear.watchface.style.UserStyleSetting
 import io.github.cosinekitty.astronomy.*
 import jp.lab75.galaxytime.WatchFaceCanvasRenderer
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
+import kotlin.reflect.typeOf
 
-class Calculations(private val context: Context) {
+class Calculations private constructor(private val context: Context) {
+
+	// Singleton
+	companion object {
+		@Volatile private var instance: Calculations? = null // Volatile modifier is necessary
+		fun getInstance(context: Context) =
+			instance ?: synchronized(this) { // synchronized to avoid concurrency problem
+				instance ?: Calculations(context).also { instance = it }
+			}
+		private const val TAG = "Calculations"
+	}
 
 	private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-	private val bodyDataMap = mutableMapOf<Body, Data>()
+
 	private var latLonElevNull = Triple(0.0, 0.0, 0.0)
 	private var latLonElev = latLonElevNull
 
+	private val bodyDataMap = mutableMapOf<Body, Data>()
 	val bodyList = arrayOf(
-		Body.Sun, Body.Mercury, Body.Venus,
+//		Body.Sun,
+		Body.Mercury, Body.Venus,
 		Body.Earth, Body.Moon, Body.Mars,
 		Body.Jupiter, Body.Saturn,
 		Body.Uranus, Body.Neptune,
 		Body.Pluto
 	)
 
-	fun getBodyFromThemeName(name: String): Body? {
-		return bodyList.find { it.name.lowercase() == name.lowercase() }
+	private var name = "Earth"
+	fun setName( nextName: String ) {
+		name = nextName
+		setCurrentBody(nextName)
+	}
+	fun getName(): String {
+		return name
 	}
 
+	private var currentBody: Body = Body.Earth
+	private fun setCurrentBody(name: String) {
+		currentBody = bodyList.find { it.name.lowercase() == name.lowercase() } ?: Body.Earth
+	}
+	fun getCurrentBody(): Body { return currentBody }
+	fun getCurrentBodyData(): Data? { return bodyDataMap[currentBody] }
+
+
+
+	fun getBodyFromThemeName(name: String): Body {
+		return bodyList.find { it.name.lowercase() == name.lowercase() } ?: Body.Earth
+	}
 	fun getBodyData(body: Body): Data? {
-		if (!bodyDataMap.containsKey(body)) {
-			return bodyDataMap[getBodyFromThemeName("Earth")]
-		}
 		return bodyDataMap[body]
+	}
+	fun getDataFromName( name: String ): Data? {
+		return getBodyData( getBodyFromThemeName(name) )
 	}
 
 	fun updateLocation() {
@@ -57,9 +87,8 @@ class Calculations(private val context: Context) {
 				Manifest.permission.ACCESS_COARSE_LOCATION
 			) != PackageManager.PERMISSION_GRANTED
 		) {
-			// Open permission dialog
 			// TODO: Extract permission check and...
-			Log.d("Calculations", "No permissions")
+			Log.d(TAG, "No permissions")
 			return
 		}
 
@@ -69,7 +98,7 @@ class Calculations(private val context: Context) {
 				.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
 				.build(), null
 		).addOnSuccessListener { location: Location? ->
-			Log.d("Calculations","Update location $location");
+//			Log.d(TAG,"Update location $location");
 			if (location != null) {
 				this.latLonElev = Triple(location.latitude, location.longitude, location.altitude);
 			}
@@ -112,8 +141,8 @@ class Calculations(private val context: Context) {
 		val minutes = ((timeInSeconds % 3600f) / 60f)
 		val seconds = (timeInSeconds % 60f)
 
-		// Log.d("Calculations", "dmsToTime():   $d, $m, $s, $totalDegrees, $rotationFraction, $timeInSeconds")
-		// Log.d("Calculations", "dmsToTime():   $days, $hours, $minutes, $seconds")
+		// Log.d(TAG, "dmsToTime():   $d, $m, $s, $totalDegrees, $rotationFraction, $timeInSeconds")
+		// Log.d(TAG, "dmsToTime():   $days, $hours, $minutes, $seconds")
 
 		return PT( days.toInt(), hours.toInt(), minutes.toInt(), seconds.toInt(), timeInSeconds.toInt() )
 	}
@@ -137,141 +166,89 @@ class Calculations(private val context: Context) {
 	}
 
 	fun getCompassDirection( observer: Observer, time: ZonedDateTime, body: Body): Int {
-		Log.d("Calculations", "getCompassDirection()")
+//		Log.d(TAG, "getCompassDirection()")
 		return 0
 	}
 
 	fun update() {
 
-		// val filterUpdate = false
 		val timeA = Time.fromMillisecondsSince1970(Calendar.getInstance().timeInMillis)
+		val it = getBodyFromThemeName( name )
 
-		// if (filterUpdate) {
-		// 	// update one planet only
-		// 	// Log.d("Calculations", "update() $WatchFaceSettingsState")
-		// 	val name = "URANUS"
+//		bodyList.forEach {
 
-		// 	// got local coordinates?
-		// 	if (this.latLonElev.first == 0.0 && this.latLonElev.second == 0.0 && this.latLonElev.third == 0.0) return
-		// 	// a current body exists?
-		// 	val currentBody = getBodyFromThemeName( name )
-		// 	Log.d("Calculations","---- $currentBody")
-		// 	if ( currentBody == null ) return
+		val observer = Observer( latLonElevNull.first , latLonElevNull.second, latLonElevNull.third )
+		val equatorial = equator(it, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected)
+		val horizontal = horizon(timeA, observer, equatorial.ra, equatorial.dec, Refraction.Normal)
+		val convertedRa: DMS = if (it != Body.Earth) {
+			convertToDMS(equatorial.ra)
+		} else {
+			val localTime = Calendar.getInstance()
+			DMS(
+				localTime.get(Calendar.HOUR_OF_DAY),
+				localTime.get(Calendar.MINUTE),
+				localTime.get(Calendar.SECOND).toDouble(),
+				false
+			)
+		}
+		val convertedDec = convertToDMS(equatorial.dec);
 
-		// 	val equatorial = equator( currentBody, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected);
-		// 	val horizontal = horizon(timeA, observer, equatorial.ra, equatorial.dec, Refraction.Normal);
+		val totalRotationTimeHours = getReferenceDataFromThemeName( it.name ).totalRotationTimeHours
+		val elapsedAngle = equatorial.ra
+		val elapsedFraction = elapsedAngle / 360
 
-		// 	var convertedRa: DMS;
-		// 	convertedRa = if (currentBody != Body.Earth) {
-		// 		convertToDMS(equatorial.ra)
-		// 	} else {
-		// 		val localTime = Calendar.getInstance()
-		// 		DMS(
-		// 			localTime.get(Calendar.HOUR_OF_DAY),
-		// 			localTime.get(Calendar.MINUTE),
-		// 			localTime.get(Calendar.SECOND).toDouble(),
-		// 			false
-		// 		)
-		// 	}
-		// 	val convertedDec = convertToDMS(equatorial.dec);
-		// 	val totalRotationTimeHours = getReferenceDataFromThemeName(currentBody.name)?.totalRotationTimeHours?: 0
-		// 	val time = dmsToTime( convertedRa.degrees, convertedRa.minutes, convertedRa.seconds.toInt(), totalRotationTimeHours.toInt() )
-		// 	bodyDataMap[currentBody] = Data(
-		// 		equatorial,
-		// 		horizontal,
-		// 		convertedRa,
-		// 		convertedDec,
-		// 		time,
-		// 		elapsedSeconds = 0
-		// 	)
+		val rotation = rotationAxis( it, timeA )
+		val distance =  helioDistance( it, timeA ).round(2)
+		// val apsis = searchPlanetApsis( it, timeA )
+		val spin ="%.4f".format(rotation.spin,).padStart(13)
+		val totalSolarDays = planetOrbitalPeriod(it).round(0)
 
-		// } else {
+		// Log.d("Calculations","---- update ------------------------")
+		// Log.d("Calculations","Body\t${it.name}")
+		// Log.d("Calculations","RA           ${equatorial.ra}")
+		// Log.d("Calculations","Body\t${it.name}\t\t\tRA ${equatorial.ra/24*360} \t\t${convertedRa}")
+		// Log.d("Calculations","DEC          ${equatorial.dec}")
+		// Log.d("Calculations","horizontal   ${horizontal.ra}")
+		// Log.d("Calculations","Azimuth      ${horizontal.azimuth}")
+		// Log.d("Calculations","Altitude     ${horizontal.altitude}")
+		// Log.d("Calculations","ConvertedRA  ${convertedRa.degrees}h ${convertedRa.minutes}m ${convertedRa.seconds}s ${convertedRa.negative}")
+		// Log.d("Calculations","ConvertedDec ${if (convertedDec.negative) "-" else ""}${convertedDec.degrees}° ${convertedDec.minutes}' ${convertedDec.seconds}\" ${convertedDec.negative}")
+		// Log.d("Calc","${it.name}\t\t ${rotationAngle.ra} ${horizontal.azimuth} / ${horizontal.altitude} ${distance}")
+		// Log.d("Calc","${apsis.time}, ${apsis.kind}")
+		// Log.d("Calc","${it.name.padEnd(12)} ${spin} ${totalSolarDays.toString().padStart(12)}")
+		// Log.d("Calc","${it.name}\t\t\t\t total ${totalRotationTimeHours}\t elapsed ${elapsedHours}")
 
-			// update all bodies
-
-			bodyList.forEach {
-
-				val observer = if (it.name=== "Earth") Observer( latLonElev.first , latLonElev.second, latLonElev.third )
-					else Observer( latLonElevNull.first , latLonElevNull.second, latLonElevNull.third )
-				val equatorial = equator(it, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected)
-				val horizontal = horizon(timeA, observer, equatorial.ra, equatorial.dec, Refraction.Normal)
-
-				var convertedRa: DMS = if (it != Body.Earth) {
-					convertToDMS(equatorial.ra)
-				} else {
-					// Get hours, minutes, seconds from local time
-					val localTime = Calendar.getInstance()
-					DMS(
-						localTime.get(Calendar.HOUR_OF_DAY),
-						localTime.get(Calendar.MINUTE),
-						localTime.get(Calendar.SECOND).toDouble(),
-						false
-					)
-				}
-				val convertedDec = convertToDMS(equatorial.dec);
-
-				//
-
-				val totalRotationTimeHours = getReferenceDataFromThemeName( it.name )!!.totalRotationTimeHours
-				val totalRotationTimeSeconds = totalRotationTimeHours.toFloat() * 3600
-				val elapsedAngle = equatorial.ra
-				val elapsedFraction = elapsedAngle / 360
-				val elapsedHours = elapsedFraction * totalRotationTimeHours
-				val (hh,mm,ss) = convertToPlanetTime( equatorial.ra, elapsedHours.toFloat() )
-				val time = PT( 0, hh, mm, ss, elapsedHours.toInt() )
-
-				val rotationDirection = getCompassDirection(
-					Observer( latLonElev.first , latLonElev.second, latLonElev.third ),
-					ZonedDateTime.now(),
-					it
-				)
-
-				//
-				//
-				//
-
-				// Log.d("Calculations","---- update ------------------------")
-				// Log.d("Calculations","Body\t${it.name}")
-				// Log.d("Calculations","RA           ${equatorial.ra}")
-				// Log.d("Calculations","Body\t${it.name}\t\t\tRA ${equatorial.ra/24*360} \t\t${convertedRa}")
-				// Log.d("Calculations","DEC          ${equatorial.dec}")
-				// Log.d("Calculations","horizontal   ${horizontal.ra}")
-				// Log.d("Calculations","Azimuth      ${horizontal.azimuth}")
-				// Log.d("Calculations","Altitude     ${horizontal.altitude}")
-				// Log.d("Calculations","ConvertedRA  ${convertedRa.degrees}h ${convertedRa.minutes}m ${convertedRa.seconds}s ${convertedRa.negative}")
-				// Log.d("Calculations","ConvertedDec ${if (convertedDec.negative) "-" else ""}${convertedDec.degrees}° ${convertedDec.minutes}' ${convertedDec.seconds}\" ${convertedDec.negative}")
-				// Log.d("Calc","${it.name}\t\t\tRA ${equatorial.ra} \t\t ${horizontal.ra} \n\t\t\t\ttotal ${totalRotationTimeHours} \t\t elapsed ${elapsedHours}")
-				// Log.d("Calc","${it.name}\t\t\t\t total ${totalRotationTimeHours}\t elapsed ${elapsedHours}")
-				bodyDataMap[it] = Data(
-					equatorial,
-					horizontal,
-					convertedRa,
-					convertedDec,
-					time,
-					totalRotationTimeHours.toInt(),
-                    rotationDirection
-				)
-			}
-
-		// }
+		bodyDataMap[it] = Data(
+			equatorial = equatorial,
+			horizontal = horizontal,
+			rightAscension = convertedRa,
+			declination = convertedDec,
+			// time,
+			// totalRotationTimeHours.toInt(),
+			rotation = rotation,
+			totalSolarDays = totalSolarDays,
+			distance = distance
+		)
 	}
 
-	fun calculateRASeconds(raDegrees: Float, totalRotationTimeSeconds: Int): Float {
-		return (raDegrees / 360f) * totalRotationTimeSeconds
-	}
+	fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
 
-	fun convertToPlanetTime( ra: Double, totalRotationTimeHours: Float): Triple<Int, Int, Int> {
+//	fun calculateRASeconds(raDegrees: Float, totalRotationTimeSeconds: Int): Float {
+//		return (raDegrees / 360f) * totalRotationTimeSeconds
+//	}
 
-		val elapsedSeconds = calculateRASeconds( ra.toFloat(), (totalRotationTimeHours * 3600).toInt() )
-    	val elapsedRotationTimeHours = elapsedSeconds / 3600
-		// Log.d("Calc","RA ${ra} \t\t—— ${totalRotationTimeHours} \t\t—— ${elapsedRotationTimeHours}")
-
-		val hours = (elapsedRotationTimeHours % totalRotationTimeHours).toInt()
-		val minutes = ((elapsedSeconds % 3600) / 60)
-		val seconds = (elapsedSeconds % 60)
-
-		// Log.d("Calc", "\t\t\t\tTime ${hours}:${minutes}:${seconds} —— ${totalRotationTimeHours}")
-    	return Triple(hours.toInt(), minutes.toInt(), seconds.toInt())
-	}
+//	fun convertToPlanetTime( ra: Double, totalRotationTimeHours: Float): Triple<Int, Int, Int> {
+//
+//		val elapsedSeconds = calculateRASeconds( ra.toFloat(), (totalRotationTimeHours * 3600).toInt() )
+//    	val elapsedRotationTimeHours = elapsedSeconds / 3600
+//		// Log.d("Calc","RA ${ra} \t\t—— ${totalRotationTimeHours} \t\t—— ${elapsedRotationTimeHours}")
+//
+//		val hours = (elapsedRotationTimeHours % totalRotationTimeHours).toInt()
+//		val minutes = ((elapsedSeconds % 3600) / 60)
+//		val seconds = (elapsedSeconds % 60)
+//
+//		// Log.d("Calc", "\t\t\t\tTime ${hours}:${minutes}:${seconds} —— ${totalRotationTimeHours}")
+//    	return Triple(hours.toInt(), minutes.toInt(), seconds.toInt())
+//	}
 
 }

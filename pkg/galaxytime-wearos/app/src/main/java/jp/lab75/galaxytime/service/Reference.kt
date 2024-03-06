@@ -23,6 +23,6 @@ val celestialBodies = arrayOf(
 	CelestialBody("Pluto",    1188.3,      17744430.0, 39.50,  153.3f,  3f),
 )
 
-fun getReferenceDataFromThemeName(themeName: String): CelestialBody? {
-	return celestialBodies.find { it.name.lowercase() == themeName.lowercase() }
+fun getReferenceDataFromThemeName(themeName: String): CelestialBody {
+	return celestialBodies.find { it.name.lowercase() == themeName.lowercase() } ?: celestialBodies[0]
 }

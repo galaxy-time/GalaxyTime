@@ -1,5 +1,6 @@
 package jp.lab75.galaxytime.service
 
+import io.github.cosinekitty.astronomy.AxisInfo
 import io.github.cosinekitty.astronomy.Equatorial
 import io.github.cosinekitty.astronomy.Topocentric
 
@@ -11,7 +12,10 @@ data class Data(
 	// for getting time in degrees, minutes, seconds of arc
 	var declination: DMS,
 	// get planetary time in days, hours, minutes, seconds
-	var time: PT,
-	var elapsedSeconds: Int,
-	var rot: Int
+	// var time: PT,
+	// var elapsedSeconds: Int,
+	var rotation: AxisInfo,
+	var totalSolarDays: Double,
+	var solarDay: Int = 0,
+	var distance: Double,
 )
