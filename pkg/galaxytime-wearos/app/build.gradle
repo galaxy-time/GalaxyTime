@@ -132,6 +132,7 @@ dependencies {
 	implementation 'com.github.cosinekitty:astronomy:2.1.19'
 	implementation libs.androidx.wear.tooling.preview
 	implementation libs.constraintlayout
+	debugImplementation libs.androidx.ui.tooling
 	// implementation libs.androidx.wear.tooling.preview
     // implementation libs.compose.ui.tooling.preview
     // debugImplementation libs.androidx.ui.tooling

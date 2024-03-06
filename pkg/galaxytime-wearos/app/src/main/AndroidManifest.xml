@@ -93,6 +93,28 @@
 			</intent-filter>
 		</activity>
 
+		<!-- ASTRONOMICS ACTIVITY -->
+		<activity
+			android:name=".views.AstronomicsActivity"
+			android:exported="true"
+			android:taskAffinity=".main">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<!-- BIOMETRICS ACTIVITY -->
+		<activity
+			android:name=".views.BiometricsActivity"
+			android:exported="true"
+			android:taskAffinity=".main">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
 		<!-- PERMISSIONS ACTIVITY -->
 		<!-- Task affinity should be the same as .main? -->
 		<!-- https://stackoverflow.com/questions/9772927/flag-activity-new-task-clarification-needed -->
