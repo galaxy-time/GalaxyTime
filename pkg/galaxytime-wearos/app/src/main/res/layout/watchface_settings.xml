@@ -104,102 +104,114 @@
 			app:layout_constraintTop_toBottomOf="@+id/text_view"
 			tools:layout_editor_absoluteX="6dp">
 
-				<RadioButton
-					android:id="@+id/id_sun"
-					android:text="@string/sun_style_name"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
+<!--				<RadioButton-->
+<!--					android:id="@+id/id_sun"-->
+<!--					android:text="@string/sun_style_name"-->
+<!--					android:layout_width="match_parent"-->
+<!--					android:layout_height="wrap_content"-->
+<!--					android:paddingVertical="5sp"-->
+<!--					android:textColor="#FFFFFF"-->
+<!--					android:textSize="12sp" />-->
 
-				<RadioButton
-					android:id="@+id/id_mercury"
-					android:text="@string/mercury_style_name"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
-
-				<RadioButton
-					android:id="@+id/id_venus"
-					android:text="@string/venus_style_name"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
-
-					<RadioButton
-					android:id="@+id/id_earth"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:text="@string/earth_style_name"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
-
-					<RadioButton
-					android:id="@+id/id_moon"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:text="@string/moon_style_name"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
-
-					<RadioButton
-					android:id="@+id/id_mars"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:text="@string/mars_style_name"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
-
-					<RadioButton
-					android:id="@+id/id_saturn"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:text="@string/saturn_style_name"
-					android:textColor="#FFFFFF"
-					android:textSize="12sp" />
-
-					<RadioButton
-					android:id="@+id/id_jupiter"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:paddingVertical="5sp"
-					android:text="@string/jupiter_style_name"
+			<RadioButton
+				android:id="@+id/id_mercury"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:button="@drawable/mercury_style"
+				android:paddingVertical="5sp"
+				android:paddingStart="10sp"
+				android:text="@string/mercury_style_name"
 				android:textColor="#FFFFFF"
 				android:textSize="12sp" />
-
-				<RadioButton
+			<RadioButton
+				android:id="@+id/id_venus"
+				android:button="@drawable/venus_style"
+				android:text="@string/venus_style_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
+				android:textSize="12sp" />
+			<RadioButton
+				android:id="@+id/id_earth"
+				android:button="@drawable/earth_style"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/earth_style_name"
+				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
+				android:textSize="12sp" />
+			<RadioButton
+				android:id="@+id/id_moon"
+				android:button="@drawable/moon_style"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/moon_style_name"
+				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
+				android:textSize="12sp" />
+			<RadioButton
+				android:id="@+id/id_mars"
+				android:button="@drawable/mars_style"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/mars_style_name"
+				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
+				android:textSize="12sp" />
+			<RadioButton
+				android:id="@+id/id_saturn"
+				android:button="@drawable/saturn_style"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/saturn_style_name"
+				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
+				android:textSize="12sp" />
+			<RadioButton
+				android:id="@+id/id_jupiter"
+				android:button="@drawable/jupiter_style"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:paddingVertical="5sp"
+				android:text="@string/jupiter_style_name"
+				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
+				android:textSize="12sp" />
+			<RadioButton
 				android:id="@+id/id_uranus"
+				android:button="@drawable/uranus_style"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:paddingVertical="5sp"
 				android:text="@string/uranus_style_name"
 				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
 				android:textSize="12sp" />
-
-				<RadioButton
+			<RadioButton
 				android:id="@+id/id_neptune"
+				android:button="@drawable/neptune_style"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:paddingVertical="5sp"
 				android:text="@string/neptune_style_name"
 				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
 				android:textSize="12sp" />
-				<RadioButton
+			<RadioButton
 				android:id="@+id/id_pluto"
+				android:button="@drawable/pluto_style"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:paddingVertical="5sp"
 				android:text="@string/pluto_style_name"
 				android:textColor="#FFFFFF"
+				android:paddingStart="10sp"
 				android:textSize="12sp" />
 
 			</RadioGroup>

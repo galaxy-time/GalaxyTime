@@ -68,11 +68,11 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		// binding.radioGroup = false
 		// binding.randomPlanetPickerButton.isEnabled = false
 
-		val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
+		val radioGroup = findViewById<RadioGroup>(R.id.radio_group);
 
-        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+		radioGroup.setOnCheckedChangeListener { _, checkedId ->
 			when (checkedId) {
-                R.id.id_sun -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SUN.id )
+//                R.id.id_sun -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SUN.id )
 				R.id.id_mercury -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MERCURY.id )
 				R.id.id_venus -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.VENUS.id )
 				R.id.id_earth -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.EARTH.id )
