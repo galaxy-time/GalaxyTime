@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
@@ -192,8 +194,8 @@ fun AstronomicsView(
 	val configuration = LocalConfiguration.current
 	val height = configuration.screenHeightDp.dp
 	val yp = height / 2
-	val off = -40.dp
-	val off2 = -30.dp
+	val off = -15.dp
+	val off2 = 5.dp
 
 	Image(
 		painter = painterResource(R.drawable.sgt_planet_neutral),
@@ -248,9 +250,9 @@ fun DescriptionText(
 	val data = calculations.getCurrentBodyData()
 	Log.d("Astronomics Composable", "${data}")
 
-	val l1 = "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(272)}° ELE ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
+	val l1 = "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(272)}° ALT ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
 
-	val l2 = "RAS %02dH:%02dM:%02dS".format(
+	val l2 = "RAS %02dD:%02dM:%02dS".format(
 		data?.rightAscension?.degrees?.or(12),
 		data?.rightAscension?.minutes?.or(14),
 		data?.rightAscension?.seconds?.roundToInt()?.or(16)
@@ -263,29 +265,34 @@ fun DescriptionText(
 
 	val leftColumn = arrayOf(l1,l2,l3).joinToString("\n")
 
+	fun Float.round(decimals: Int = 2): Float = "%.${decimals}f".format(this).toFloat()
+
+	val r1 = "\n\n\n\n\nSOL ${ref.totalRotationTimeHours}h"
+	val r2 = "${(ref.totalRotationTimeHours / 24).round(2)} TERRAN DAYS"
+	val r3 = "SURFACE ${ref.surfaceAreaKm2}km²"
+	val r4 = if (ref.satellites>0) "SATELLITES ${ref.satellites}" else ""
+
+	val rightColumn = arrayOf(r1,r2,r3,r4).joinToString("\n")
+
 	Log.d("Astronomics Composable", leftColumn)
+	Log.d("Astronomics Composable", rightColumn)
 
-	Text(
-		modifier = Modifier.fillMaxWidth(),
-		textAlign = TextAlign.Left,
-		color = Color.White,
-		text = leftColumn,
-		fontSize = 8.sp,
-		lineHeight = 10.sp
-
-	)
-
-	// leftColumn.forEachIndexed { _, item ->
-	// 	Text(
-	// 		modifier = Modifier.fillMaxWidth(),
-	// 		textAlign = TextAlign.Left,
-	// 		color = Color.White,
-	// 		text = item,
-	// 		fontSize = 10.sp
-	// 	)
-	// }
+	Box(
+		modifier = Modifier.fillMaxSize(),
+		contentAlignment = Alignment.Center
+	) {
+		Text(
+			modifier = Modifier.align(Alignment.Center),
+			textAlign = TextAlign.Left,
+			color = Color(0xaaffffff),
+			text = "$leftColumn\n$rightColumn",
+			fontSize = 8.sp,
+			lineHeight = 10.sp,
+		)
+	}
 
 }
+
 
 @Composable
 fun DistanceGraph(
@@ -303,8 +310,8 @@ fun DistanceGraph(
 
 				val cx = size.width / 2f
 				val cy = size.height / 2f
-				val y = cy - 30f
-				val off = size.width / 4f
+				val y = cy - 10f
+				val off = size.width / 3f
 
 				drawLine(
 					start = Offset(cx - off + locationRadius, y),

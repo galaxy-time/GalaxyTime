@@ -8,12 +8,16 @@ import java.util.Calendar
 class MeetingService private constructor(private val context: Context) {
 
 	companion object {
-		@Volatile private var instance: MeetingService? = null // Volatile modifier is necessary
+		@Volatile private var INSTANCE: MeetingService? = null // Volatile modifier is necessary
 		fun getInstance(context: Context) =
-			instance ?: synchronized(this) { // synchronized to avoid concurrency problem
-				instance ?: MeetingService(context).also { instance = it }
+			INSTANCE ?: synchronized(this) { // synchronized to avoid concurrency problem
+				INSTANCE ?: MeetingService(context).also { INSTANCE = it }
 			}
 		private const val TAG = "MeetingService"
+	}
+
+	init {
+		Log.d(TAG,"init()")
 	}
 
 	private var todayMeetings = mutableListOf<Meeting>()

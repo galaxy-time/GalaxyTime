@@ -27,12 +27,15 @@ class Calculations private constructor(private val context: Context) {
 
 	// Singleton
 	companion object {
-		@Volatile private var instance: Calculations? = null // Volatile modifier is necessary
+		@Volatile private var INSTANCE: Calculations? = null // Volatile modifier is necessary
 		fun getInstance(context: Context) =
-			instance ?: synchronized(this) { // synchronized to avoid concurrency problem
-				instance ?: Calculations(context).also { instance = it }
+			INSTANCE ?: synchronized(this) { // synchronized to avoid concurrency problem
+				INSTANCE ?: Calculations(context).also { INSTANCE = it }
 			}
 		private const val TAG = "Calculations"
+	}
+	init {
+	    Log.d(TAG,"init()")
 	}
 
 	private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -131,51 +134,49 @@ class Calculations private constructor(private val context: Context) {
 		return DMS(degrees, minutes, seconds, negative)
 	}
 
-	private fun dmsToTime( d: Int, m: Int, s: Int, tRotation: Int ): PT {
+//	private fun dmsToTime( d: Int, m: Int, s: Int, tRotation: Int ): PT {
+//
+//		val totalDegrees = d + m / 60f + s / 3600f
+//		val rotationFraction = totalDegrees / 360f
+//		val timeInSeconds = ( rotationFraction * tRotation )
+//		val days = 0f
+//		val hours = (timeInSeconds / 3600f)
+//		val minutes = ((timeInSeconds % 3600f) / 60f)
+//		val seconds = (timeInSeconds % 60f)
+//
+//		// Log.d(TAG, "dmsToTime():   $d, $m, $s, $totalDegrees, $rotationFraction, $timeInSeconds")
+//		// Log.d(TAG, "dmsToTime():   $days, $hours, $minutes, $seconds")
+//
+//		return PT( days.toInt(), hours.toInt(), minutes.toInt(), seconds.toInt(), timeInSeconds.toInt() )
+//	}
 
-		val totalDegrees = d + m / 60f + s / 3600f
-		val rotationFraction = totalDegrees / 360f
-		val timeInSeconds = ( rotationFraction * tRotation )
-		val days = 0f
-		val hours = (timeInSeconds / 3600f)
-		val minutes = ((timeInSeconds % 3600f) / 60f)
-		val seconds = (timeInSeconds % 60f)
+//	private fun calculateDayValue(): Double {
+//		val now = Calendar.getInstance().timeInMillis
+//
+//		// Create a calendar instance for January 1, 2000
+//		val year2000 = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
+//			set(Calendar.YEAR, 2000)
+//			set(Calendar.MONTH, 0) // Months are 0-based in Calendar
+//			set(Calendar.DAY_OF_MONTH, 1)
+//			set(Calendar.HOUR_OF_DAY, 0)
+//			set(Calendar.MINUTE, 0)
+//			set(Calendar.SECOND, 0)
+//			set(Calendar.MILLISECOND, 0)
+//		}
+//
+//		// Calculate the difference in days
+//		return 1.0 + (now - year2000.timeInMillis) / (3600.0 * 24.0 * 1000.0)
+//	}
 
-		// Log.d(TAG, "dmsToTime():   $d, $m, $s, $totalDegrees, $rotationFraction, $timeInSeconds")
-		// Log.d(TAG, "dmsToTime():   $days, $hours, $minutes, $seconds")
-
-		return PT( days.toInt(), hours.toInt(), minutes.toInt(), seconds.toInt(), timeInSeconds.toInt() )
-	}
-
-	private fun calculateDayValue(): Double {
-		val now = Calendar.getInstance().timeInMillis
-
-		// Create a calendar instance for January 1, 2000
-		val year2000 = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
-			set(Calendar.YEAR, 2000)
-			set(Calendar.MONTH, 0) // Months are 0-based in Calendar
-			set(Calendar.DAY_OF_MONTH, 1)
-			set(Calendar.HOUR_OF_DAY, 0)
-			set(Calendar.MINUTE, 0)
-			set(Calendar.SECOND, 0)
-			set(Calendar.MILLISECOND, 0)
-		}
-
-		// Calculate the difference in days
-		return 1.0 + (now - year2000.timeInMillis) / (3600.0 * 24.0 * 1000.0)
-	}
-
-	fun getCompassDirection( observer: Observer, time: ZonedDateTime, body: Body): Int {
-//		Log.d(TAG, "getCompassDirection()")
-		return 0
-	}
+//	fun getCompassDirection( observer: Observer, time: ZonedDateTime, body: Body): Int {
+////		Log.d(TAG, "getCompassDirection()")
+//		return 0
+//	}
 
 	fun update() {
 
-		val timeA = Time.fromMillisecondsSince1970(Calendar.getInstance().timeInMillis)
+		val timeA = Time.fromMillisecondsSince1970( Calendar.getInstance().timeInMillis )
 		val it = getBodyFromThemeName( name )
-
-//		bodyList.forEach {
 
 		val observer = Observer( latLonElevNull.first , latLonElevNull.second, latLonElevNull.third )
 		val equatorial = equator(it, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected)
@@ -200,8 +201,11 @@ class Calculations private constructor(private val context: Context) {
 		val rotation = rotationAxis( it, timeA )
 		val distance =  helioDistance( it, timeA ).round(2)
 		// val apsis = searchPlanetApsis( it, timeA )
-		val spin ="%.4f".format(rotation.spin,).padStart(13)
 		val totalSolarDays = planetOrbitalPeriod(it).round(0)
+
+		val spin ="%.4f".format(rotation.spin).padStart(13)
+//		Log.d("Calc","${it.name.padEnd(12)} ${spin} ${totalSolarDays.toString().padStart(12)}")
+
 
 		// Log.d("Calculations","---- update ------------------------")
 		// Log.d("Calculations","Body\t${it.name}")
@@ -215,7 +219,6 @@ class Calculations private constructor(private val context: Context) {
 		// Log.d("Calculations","ConvertedDec ${if (convertedDec.negative) "-" else ""}${convertedDec.degrees}° ${convertedDec.minutes}' ${convertedDec.seconds}\" ${convertedDec.negative}")
 		// Log.d("Calc","${it.name}\t\t ${rotationAngle.ra} ${horizontal.azimuth} / ${horizontal.altitude} ${distance}")
 		// Log.d("Calc","${apsis.time}, ${apsis.kind}")
-		// Log.d("Calc","${it.name.padEnd(12)} ${spin} ${totalSolarDays.toString().padStart(12)}")
 		// Log.d("Calc","${it.name}\t\t\t\t total ${totalRotationTimeHours}\t elapsed ${elapsedHours}")
 
 		bodyDataMap[it] = Data(
