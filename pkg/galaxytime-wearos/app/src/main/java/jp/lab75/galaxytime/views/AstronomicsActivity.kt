@@ -224,7 +224,7 @@ fun AstronomicsView(
 				.offset(y = off),
 			textAlign = TextAlign.Center,
 			color = Color.White,
-			text = "$name -> SUN",
+			text = "$name — SUN",
 			fontSize = 10.sp
 		)
 		Text(
@@ -342,7 +342,7 @@ fun DistanceGraph(
 
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
-fun Preview() {
+fun AstronomicsPreview() {
 
 	val context = LocalContext.current
 	val calculations = Calculations.getInstance( context )

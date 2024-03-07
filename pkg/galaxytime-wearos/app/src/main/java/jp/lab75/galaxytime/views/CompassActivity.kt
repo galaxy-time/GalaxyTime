@@ -3,31 +3,43 @@ package jp.lab75.galaxytime.views
 import android.util.Log
 import android.os.Bundle
 import android.content.Context
+import android.graphics.Paint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import androidx.wear.tooling.preview.devices.WearDevices
 
 import kotlin.math.roundToInt
 
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 import jp.lab75.galaxytime.components.MinimalCompass
 import jp.lab75.galaxytime.service.Calculations
+import jp.lab75.galaxytime.service.getReferenceDataFromThemeName
 
 class CompassActivity : ComponentActivity(), SensorEventListener {
 
@@ -49,7 +61,7 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		context = getApplicationContext()
+		context = applicationContext
 		calculations = Calculations.getInstance( context )
 
 		val bun = intent.extras
@@ -75,7 +87,6 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 	or reached its highest point.
 */
 
-
 		sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 		val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
 
@@ -84,6 +95,8 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 			GalaxyTimeTheme {
 				CompassApp(
 					degrees = degrees.value,
+					color = color,
+					name = name,
 					callback = { finishActivity() }
 				)
 			}
@@ -161,10 +174,34 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 }
 
 @Composable
-fun CompassApp(degrees: Int, callback: () -> Unit) {
+fun CompassApp(degrees: Int, callback: () -> Unit, color: Color, name: String) {
 	MinimalCompass(
 		degrees = degrees,
 		callback = callback
+	)
+	Box(
+		modifier = Modifier.fillMaxSize(),
+		contentAlignment = Alignment.Center
+	) {
+		Text(
+			modifier = Modifier.align(Alignment.Center),
+			textAlign = TextAlign.Left,
+			color = Color(0xaaffffff),
+			text = "\n$name",
+			fontSize = 10.sp,
+			lineHeight = 20.sp,
+		)
+	}
+	Box(
+		modifier = Modifier
+			.fillMaxSize()
+			.drawBehind {
+				drawRect(
+					color = color,
+					size = size,
+					blendMode = BlendMode.Multiply
+				)
+			}
 	)
 }
 
@@ -204,4 +241,28 @@ fun CompassHello( content: String ) {
 //		// on tap left button finish this activity
 //		// finish()
 //	}
+
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Composable
+fun CompassPreview() {
+
+//	val context = LocalContext.current
+//	val calculations = Calculations.getInstance( context )
+//	val name = "SATURN"
+//	val ref = getReferenceDataFromThemeName( name )
+
+	val color = Color.Cyan
+	val name = "PLANET"
+
+	GalaxyTimeTheme {
+		CompassApp(
+			degrees = 1337,
+			color = color,
+			name = name,
+			callback = { }
+		)
+	}
+
+}
+
 
