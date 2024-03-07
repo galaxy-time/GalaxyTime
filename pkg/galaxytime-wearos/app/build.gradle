@@ -28,8 +28,8 @@ android {
         applicationId "jp.lab75.galaxytime"
         minSdk 33
         targetSdk 33
-        versionCode 13
-        versionName '0.13'
+        versionCode 15
+        versionName '0.15'
 	}
 
     buildFeatures {
