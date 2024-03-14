@@ -52,7 +52,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 
 	override fun finish(){
 		super.finish()
-		overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +68,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		// binding.radioGroup = false
 		// binding.randomPlanetPickerButton.isEnabled = false
 
-		val radioGroup = findViewById<RadioGroup>(R.id.radio_group);
+		val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
 
 		radioGroup.setOnCheckedChangeListener { _, checkedId ->
 			when (checkedId) {
@@ -138,7 +138,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 	// 	stateHolder.setColorStyle(newColorStyle.id)
 	// }
 
-	// TODO: this needs a propoer dropdown or scroll selector
+	// TODO: this needs a proper dropdown or scroll selector
 	// fun onClickColorStylePickerButton(view: View) {
 	// 	Log.d(TAG, "onClickColorStylePickerButton() $view")
 	// 	// Selects a random color style from list.

@@ -45,6 +45,7 @@ fun BaseCompass(
 	degrees: Int = 360,
 	variantWidget: @Composable (rotationAngle: Float) -> Unit
 ) {
+
     val (lastRotation, setLastRotation) = remember { mutableStateOf(0) }
     val newRotation = getRotation(degrees, lastRotation)
     setLastRotation(newRotation)
@@ -59,4 +60,5 @@ fun BaseCompass(
 	)
 
     variantWidget( rot )
+
 }

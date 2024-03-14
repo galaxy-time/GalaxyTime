@@ -2,17 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="jp.lab75.galaxytime">
 
-	<uses-feature android:name="android.hardware.type.watch" /> <!-- <uses-feature android:glEsVersion="0x00020000" android:required="true" /> -->
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-feature android:name="android.hardware.type.watch" />
+	<!-- <uses-feature android:name="android.hardware.sensor.compass" android:required="true" />-->
+	<!-- <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />-->
+	<!-- <uses-feature android:glEsVersion="0x00020000" android:required="true" /> -->
+
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
-	<uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA" /> -->
-	<!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA_PRIVILEGED" /> -->
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
 	<!-- <uses-permission android:name="android.permission.INTERNET" /> -->
 	<!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
-
+	<!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA_PRIVILEGED" /> -->
+	<!-- <uses-permission android:name="com.google.android.wearable.permission.RECEIVE_COMPLICATION_DATA" /> -->
 
 	<application
 		android:allowBackup="true"
@@ -57,6 +61,7 @@
 		<!-- SPLASH SCREEN -->
 		<activity
 			android:name=".views.SplashScreenActivity"
+			android:label="Galaxy Time"
 			android:exported="true"
 			android:taskAffinity=".main"
             android:theme="@style/Theme.AppCompat.NoActionBar">
@@ -69,6 +74,7 @@
 		<!-- MAIN ACTIVITY -->
 		<activity
 			android:name=".views.MainActivity"
+			android:label="Galaxy Time App"
 			android:exported="true"
 			android:taskAffinity=".main"
 			android:theme="@style/MainActivityTheme.Starting">
@@ -85,6 +91,7 @@
 		<!-- COMPASS ACTIVITY -->
 		<activity
 			android:name=".views.CompassActivity"
+			android:label="Galaxy Time Compass"
 			android:exported="true"
 			android:taskAffinity=".main">
 			<intent-filter>
@@ -96,6 +103,7 @@
 		<!-- ASTRONOMICS ACTIVITY -->
 		<activity
 			android:name=".views.AstronomicsActivity"
+			android:label="Galaxy Time Astronomics"
 			android:exported="true"
 			android:taskAffinity=".main">
 			<intent-filter>
@@ -107,6 +115,7 @@
 		<!-- BIOMETRICS ACTIVITY -->
 		<activity
 			android:name=".views.BiometricsActivity"
+			android:label="Galaxy Time Biometrics"
 			android:exported="true"
 			android:taskAffinity=".main">
 			<intent-filter>
@@ -121,7 +130,7 @@
 		<activity
 			android:name=".views.PermissionRequestActivity"
 			android:exported="true"
-			android:label="Permission Request"
+			android:label="Galaxy Time Permissions"
 			android:launchMode="singleTask"
 			android:taskAffinity=".main">
 			<intent-filter>
@@ -134,8 +143,8 @@
 		<!-- SETTINGS -->
 		<activity
 			android:name=".settings.WatchFaceSettingsActivity"
+			android:label="Galaxy Time Settings"
 			android:exported="true"
-			android:label="@string/settings_title"
 			android:taskAffinity=".main">
 			<intent-filter>
 				<action android:name="androidx.wear.watchface.editor.action.WATCH_FACE_EDITOR" />

@@ -58,10 +58,12 @@ import kotlinx.coroutines.launch
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toLowerCase
 import jp.lab75.galaxytime.views.CompassActivity
 import jp.lab75.galaxytime.views.AstronomicsActivity
 import jp.lab75.galaxytime.views.BiometricsActivity
+import kotlin.math.roundToInt
 
 //	shaders
 
@@ -137,23 +139,14 @@ class WatchFaceCanvasRenderer (
 //			if (BR.contains(x, y)) Log.d("TAP", "BR")
 		}
 		invalidate()
+
 	}
 
-//	private val outerElementPaint = Paint().apply {
-//		isAntiAlias = true
-//	}
-//
-//	private val clockHandPaint = Paint().apply {
-//		isAntiAlias = true
-//		strokeWidth =
-//			context.resources.getDimensionPixelSize(R.dimen.clock_hand_stroke_width).toFloat()
-//	}
-
-	val default_fontsize = 20f
-	val small_fontsize = 12f
+	private val default_fontsize = 20f
+	private val small_fontsize = 12f
 
 	// general text
-	val textPaint = Paint().apply {
+	private val textPaint = Paint().apply {
 		isAntiAlias = true
 		color = Color.YELLOW
 		textSize = default_fontsize
@@ -175,7 +168,7 @@ class WatchFaceCanvasRenderer (
 	}
 
 	// time zones left
-	var p2 = Paint().apply {
+	private var p2 = Paint().apply {
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
@@ -187,7 +180,7 @@ class WatchFaceCanvasRenderer (
 		typeface = resources.getFont(R.font.b612)
 	}
 
-	var p3 = Paint().apply {
+	private var p3 = Paint().apply {
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
@@ -199,7 +192,7 @@ class WatchFaceCanvasRenderer (
 		typeface = resources.getFont(R.font.b612_bold)
 	}
 
-	var blendPaint = Paint().apply {
+	private var blendPaint = Paint().apply {
 		blendMode = BlendMode.OVERLAY
 	}
 
@@ -264,14 +257,14 @@ class WatchFaceCanvasRenderer (
 					)
 				}
 
-				DRAW_HOUR_PIPS_STYLE_SETTING -> {
-					val booleanValue = options.value as
-						UserStyleSetting.BooleanUserStyleSetting.BooleanOption
+//				DRAW_HOUR_PIPS_STYLE_SETTING -> {
+//					val booleanValue = options.value as
+//						UserStyleSetting.BooleanUserStyleSetting.BooleanOption
 
-					newWatchFaceData = newWatchFaceData.copy(
-						drawHourPips = booleanValue.value
-					)
-				}
+//					newWatchFaceData = newWatchFaceData.copy(
+//						drawHourPips = booleanValue.value
+//					)
+//				}
 
 				// WATCH_HAND_LENGTH_STYLE_SETTING -> {
 				// }
@@ -304,6 +297,8 @@ class WatchFaceCanvasRenderer (
 			}
 
 		}
+		Log.d(TAG,"trigger data update")
+		calculations.update()
 	}
 
 	//	destroy
@@ -432,7 +427,7 @@ class WatchFaceCanvasRenderer (
 
 		val zero = "" // special character for zero
 		var localTime = "000:00:00".replace("0", zero)
-		val timeFormat = "%03d:%02d:%02d"
+		val timeFormat = "%03dT%02d:%02d"
 
 		val body = calculations.getBodyFromThemeName(name)
 		var data: Data? = null
@@ -476,6 +471,23 @@ class WatchFaceCanvasRenderer (
 		themeColor: Int
 	) {
 
+		val data = calculations.getDataFromName(themeName)
+		val ref = getReferenceDataFromThemeName(themeName)
+
+		val r = if (ref != null) { ref.radiusKm } else { 6371 }
+		val solDay = if (ref != null) { ref.totalRotationTimeHours } else { 24 }
+		val tl = "SOL ${solDay}h · R ${r.toInt()}km".replace("0", "")
+
+		val dist = if (data != null) { data.distance } else { 0 }
+		val tr = if ( themeName != "EARTH" ) "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(0)}° · ALT ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}° · DST ${dist}AU".replace("0", "")
+		else "DST ${dist}AU".replace("0", "")
+
+		val counter = 5
+		val bl = if ( counter < 5 ) "HYDRATION LOW ⚠" else ""
+
+		val nextMeeting = meetingService.getNextMeeting()
+		val br =  if (nextMeeting != null) nextMeeting.title else ""
+
 		val offset = 21f // offset from border of lunette
 		val arcOffset = 2f // leap between zone arcs
 		val rect = RectF(
@@ -487,43 +499,34 @@ class WatchFaceCanvasRenderer (
 
 		textPaint.textSize = 16f
 		textPaint.color = themeColor
+		textPaint.textAlign = Paint.Align.CENTER
 
 		// top right -------------------------------------------------------------------
 
-		val t0 = ""
+		val t0 = tr
 		val p0 = Path()
 		p0.addArc(rect, -90f + arcOffset, 90f - arcOffset)
 		canvas.drawTextOnPath(t0, p0, 0f, 0f, textPaint)
 
 		// bottom right ----------------------------------------------------------------
 
-		val nextMeeting = meetingService.getNextMeeting()
-		var t1 = if (nextMeeting != null) {
-			nextMeeting.title
-		} else {
-			""
-		}
-
+		var t1 = br
 		val p1 = Path()
 		p1.addArc(rect, 90f - arcOffset, -90f + arcOffset)
 		canvas.drawTextOnPath(t1, p1, 0f, 12f, textPaint)
 
 		// bottom left ----------------------------------------------------------------
 
-		val t2 = ""
+		val t2 = bl
 		val p2 = Path()
 		p2.addArc(rect, 180f - arcOffset, -90f + arcOffset)
 		canvas.drawTextOnPath(t2, p2, 0f, 12f, textPaint)
 
 		// top left --------------------------------------------------------------------
 
-		val data = calculations.getDataFromName(themeName)
-		val ref = getReferenceDataFromThemeName(themeName)
-		val r = if (ref != null) { ref.radiusKm } else { 6371 }
-		val solDay = if (ref != null) { ref.totalRotationTimeHours } else { 24 }
-		val dist = if (data != null) { data.distance } else { 0 }
 
-		val t3 = "SOL ${solDay}h · DST ${dist}AU · R ${r.toInt()}km".replace("0", "")
+
+		val t3 = tl
 		val p3 = Path()
 		p3.addArc(rect, 180f + arcOffset, 90f - arcOffset)
 		canvas.drawTextOnPath(t3, p3, 0f, 0f, textPaint)
@@ -631,6 +634,6 @@ class WatchFaceCanvasRenderer (
 	 }
 
 	companion object {
-		private const val TAG = "CanvasRenderer"
+		private const val TAG = "Watchface"
 	}
 }

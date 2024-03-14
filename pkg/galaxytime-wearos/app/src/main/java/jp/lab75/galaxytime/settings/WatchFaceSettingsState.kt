@@ -111,20 +111,15 @@ class WatchFaceSettingsState(
         // Loops through user styles and retrieves user editable styles.
         for (setting in userStyleSchema.userStyleSettings) {
             when (setting.id.toString()) {
+
                 COLOR_STYLE_SETTING -> {
                     colorStyleKey = setting as UserStyleSetting.ListUserStyleSetting
                 }
 
-                DRAW_HOUR_PIPS_STYLE_SETTING -> {
-                    drawPipsKey = setting as UserStyleSetting.BooleanUserStyleSetting
-                }
+//                DRAW_HOUR_PIPS_STYLE_SETTING -> {
+//                    drawPipsKey = setting as UserStyleSetting.BooleanUserStyleSetting
+//                }
 
-                // WATCH_HAND_LENGTH_STYLE_SETTING -> {
-                //     minuteHandLengthKey = setting as UserStyleSetting.DoubleRangeUserStyleSetting
-                // }
-
-				// TODO: Add complication change support if settings activity
-                // PR doesn't cover it. Otherwise, remove comment.
             }
         }
     }
@@ -153,15 +148,15 @@ class WatchFaceSettingsState(
         )
 
         val colorStyle = userStyle[colorStyleKey] as UserStyleSetting.ListUserStyleSetting.ListOption
-        val ticksEnabledStyle = userStyle[drawPipsKey] as UserStyleSetting.BooleanUserStyleSetting.BooleanOption
+//        val ticksEnabledStyle = userStyle[drawPipsKey] as UserStyleSetting.BooleanUserStyleSetting.BooleanOption
         // val minuteHandStyle = userStyle[minuteHandLengthKey] as UserStyleSetting.DoubleRangeUserStyleSetting.DoubleRangeOption
 
-		Log.d(TAG, "/new values: $colorStyle, $ticksEnabledStyle")
+		Log.d(TAG, "/new values: $colorStyle")
 
         return UserStylesAndPreview(
             colorStyleId = colorStyle.id.toString(),
-            ticksEnabled = ticksEnabledStyle.value,
-            minuteHandLength = 0f, // multiplyByMultipleForSlider(minuteHandStyle.value).toFloat(),
+//            ticksEnabled = ticksEnabledStyle.value,
+//            minuteHandLength = 0f, // multiplyByMultipleForSlider(minuteHandStyle.value).toFloat(),
             previewImage = bitmap
         )
     }
@@ -245,13 +240,13 @@ class WatchFaceSettingsState(
 
     data class UserStylesAndPreview(
         val colorStyleId: String,
-        val ticksEnabled: Boolean,
-        val minuteHandLength: Float,
+//        val ticksEnabled: Boolean,
+//        val minuteHandLength: Float,
         val previewImage: Bitmap
     )
 
     companion object {
-        private const val TAG = "WatchFaceSettingsState"
+        private const val TAG = "Settings"
         private const val MULTIPLE_FOR_SLIDER: Float = 1000f
     }
 }

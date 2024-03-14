@@ -12,6 +12,7 @@ import jp.lab75.galaxytime.R
 
 private val appFont = FontFamily(
 	Font(R.font.b612),
+	Font(R.font.b612_mono),
 )
 
 val Typography = Typography(

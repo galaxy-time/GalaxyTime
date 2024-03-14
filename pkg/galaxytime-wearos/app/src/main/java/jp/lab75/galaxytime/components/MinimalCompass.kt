@@ -28,12 +28,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.wear.tooling.preview.devices.WearDevices
 import jp.lab75.galaxytime.WatchFaceCanvasRenderer
 
 import jp.lab75.galaxytime.R
@@ -44,13 +46,13 @@ import kotlin.math.sin
 fun degreeToDirection(degrees: Int): String {
 	return when (degrees) {
         in (0..22) -> "N"
-		in (23..67) -> "NE"
-		in (68..112) -> "E"
-		in (113..157) -> "SE"
+		in (23..67) -> "NW"
+		in (68..112) -> "W"
+		in (113..157) -> "SW"
 		in (158..202) -> "S"
-		in (203..247) -> "SW"
-		in (248..292) -> "W"
-		in (293..337) -> "NW"
+		in (203..247) -> "SE"
+		in (248..292) -> "E"
+		in (293..337) -> "NE"
 		in (338..360) -> "N"
 		else -> ""
     }
@@ -62,35 +64,66 @@ fun MinimalCompass(
 	canvasSize: Dp = 450.dp,
 	color: Color = Color(0xffffffff), // MaterialTheme.colors.surface,
 	degrees: Int = 360,
+	azi: Double? = 0.0,
 	callback:  () -> Unit = {}
 ) {
 
-	val margin = 20f
-	val density = LocalDensity.current;
-	val configuration = LocalConfiguration.current;
+	val margin = 40f
+	val density = LocalDensity.current
+	val configuration = LocalConfiguration.current
 	val screenWidthPx = with(density) { configuration.screenWidthDp.dp.roundToPx() }
 	val screenHeightPx = with(density) { configuration.screenHeightDp.dp.roundToPx() }
 
 	BaseCompass(
         degrees = degrees
     ) { rot ->
+
+		val aziRot = if ( azi != null ) rot + azi.toInt() else rot
+
 		Box {
 			Image(
 				painter = painterResource(R.drawable.sgt_planet_compass),
 				"image",
 				Modifier
 				.fillMaxSize()
-//				.rotate(rot)
 				.graphicsLayer {
-					rotationZ = rot
+					rotationZ = aziRot + 180
 				},
 				contentScale = ContentScale.Fit
 			)
 			Box(
 				modifier = Modifier
-				.rotate(rot)
+					.graphicsLayer {
+						rotationZ = rot
+					}
+					.fillMaxSize()
+					.drawBehind {
+						// north
+						val w = screenWidthPx.toFloat()
+						val h = screenHeightPx.toFloat()
+						drawLine(
+							strokeWidth = 1f,
+							cap = StrokeCap.Round,
+							color = Color.White,
+							start = Offset( w * 0.5f, h * 0.1f ),
+							end = Offset( w * 0.5f, h * 0.2f ),
+							alpha = 0.5f
+						)
+					}
+			) {
+				Text(
+					modifier = Modifier.fillMaxWidth().offset(y = 5.dp),
+					textAlign = TextAlign.Center,
+					fontFamily = FontFamily.Monospace,
+					color = color,
+					fontSize = 10.sp,
+					text = "N",
+				)
+			}
+			Box(
+				modifier = Modifier
 				.graphicsLayer {
-					rotationZ = rot
+					rotationZ = aziRot
 				}
 				.fillMaxSize()
 				.drawBehind {
@@ -98,7 +131,7 @@ fun MinimalCompass(
 						w = screenWidthPx.toFloat(),
 						h = screenHeightPx.toFloat(),
 						m = margin,
-						d = rot,
+						d = 0f, //rot?
 						c = color
 						)
 					}
@@ -108,25 +141,19 @@ fun MinimalCompass(
 				modifier = Modifier
 				.fillMaxSize()
 				.clickable(true) { callback() },
-				contentAlignment = Alignment.Center
-			){
-				Text(
-					modifier = Modifier.fillMaxWidth(),
-					textAlign = TextAlign.Center,
-					color = color,
-					fontSize = 10.sp,
-					text = "${degrees}˚ ${degreeToDirection(degrees)}",
-				)
-			}
-			// grain layer
-//			Image(
-//				painter = painterResource(R.drawable.sgt_grain),
-//				"image",
-//				Modifier
-//					.fillMaxSize()
-//					.rotate(rot),
-//				contentScale = ContentScale.Fit
-//			)
+//				contentAlignment = Alignment.Center
+			)
+//			{
+//				Text(
+//					modifier = Modifier.fillMaxWidth(),
+//					textAlign = TextAlign.Center,
+//					fontFamily = FontFamily.Monospace,
+//					color = color,
+//					fontSize = 10.sp,
+//					text = "${degrees}˚ ${degreeToDirection(degrees)}",
+//				)
+//			}
+
 		}
     }
 }
@@ -176,7 +203,7 @@ fun DrawScope.compassArrow( w: Float, h: Float, m: Float, d: Float, c: Color ){
 // }
 
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true,device = WearDevices.SMALL_ROUND, showSystemUi = true)
 fun MinimalCompassPreview() {
     GalaxyTimeTheme {
         Column(

@@ -43,17 +43,16 @@ data class WatchFaceData(
 	val activeColorStyle: ColorStyleIdAndResourceIds = ColorStyleIdAndResourceIds.EARTH,
 	val ambientColorStyle: ColorStyleIdAndResourceIds = ColorStyleIdAndResourceIds.AMBIENT,
 
-	val drawHourPips: Boolean = DRAW_HOUR_PIPS_DEFAULT,
 	val drawComplications: Boolean = DRAW_COMPLICATIONS_DEFAULT,
 	val drawBackgroundImage: Boolean = DRAW_BACKGROUND_IMAGE_DEFAULT,
+//	val drawHourPips: Boolean = DRAW_HOUR_PIPS_DEFAULT,
 
-	val secondDialWidth: Float = SECOND_DIAL_WIDTH,
-	val minuteDialWidth: Float = MINUTE_DIAL_WIDTH,
-	val hourDialWidth: Float = HOUR_DIAL_WIDTH,
-	val dayDialWidth: Float = DAY_DIAL_WIDTH,
-
-	val gapBetweenDials: Float = GAP_BETWEEN_DIALS,
-	val bezelWidth: Float = BEZEL_WIDTH
+//	val secondDialWidth: Float = SECOND_DIAL_WIDTH,
+//	val minuteDialWidth: Float = MINUTE_DIAL_WIDTH,
+//	val hourDialWidth: Float = HOUR_DIAL_WIDTH,
+//	val dayDialWidth: Float = DAY_DIAL_WIDTH,
+//	val gapBetweenDials: Float = GAP_BETWEEN_DIALS,
+//	val bezelWidth: Float = BEZEL_WIDTH
 
 	// val backgroundImage: ImageResource,
     // val hourHandDimensions: ArmDimensions = ArmDimensions(

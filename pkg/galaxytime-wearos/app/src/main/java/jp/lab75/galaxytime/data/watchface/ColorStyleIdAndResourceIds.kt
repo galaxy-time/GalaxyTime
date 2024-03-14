@@ -28,16 +28,15 @@ import jp.lab75.galaxytime.R
 // X_COLOR_STYLE_ID - id in watch face database for each style id.
 // X_COLOR_STYLE_NAME_RESOURCE_ID - String name to display in the user settings UI for the style.
 // X_COLOR_STYLE_ICON_ID - Icon to display in the user settings UI for the style.
-// X_COLOR_STYLE_BG - Background image for the style.
+// X_COLOR_STYLE_BG - Background image for the style. <- UNUSED
 
 const val AMBIENT_COLOR_STYLE_ID = "ambient_style_id"
 private val AMBIENT_COLOR_STYLE_NAME_RESOURCE_ID = R.string.ambient_style_name
 private val AMBIENT_COLOR_STYLE_ICON_ID = R.drawable.white_style
-// private val AMBIENT_COLOR_STYLE_BG = R.drawable.white_backdrop
 
-const val SUN_COLOR_STYLE_ID = "sun_style_id"
-private val SUN_COLOR_STYLE_NAME_RESOURCE_ID = R.string.sun_style_name
-private val SUN_COLOR_STYLE_ICON_ID = R.drawable.sun_style
+//const val SUN_COLOR_STYLE_ID = "sun_style_id"
+//private val SUN_COLOR_STYLE_NAME_RESOURCE_ID = R.string.sun_style_name
+//private val SUN_COLOR_STYLE_ICON_ID = R.drawable.sun_style
 
 const val MERCURY_COLOR_STYLE_ID = "mercury_style_id"
 private val MERCURY_COLOR_STYLE_NAME_RESOURCE_ID = R.string.mercury_style_name
@@ -112,16 +111,16 @@ enum class ColorStyleIdAndResourceIds(
         backgroundColorId = R.color.ambient_background_color,
         outerElementColorId = R.color.ambient_outer_element_color
     ),
-	SUN(
-		id = SUN_COLOR_STYLE_ID,
-        nameResourceId = SUN_COLOR_STYLE_NAME_RESOURCE_ID,
-        iconResourceId = SUN_COLOR_STYLE_ICON_ID,
-        complicationStyleDrawableId = R.drawable.complication_white_style,
-        primaryColorId = R.color.sun_primary_color,
-        secondaryColorId = R.color.sun_secondary_color,
-        backgroundColorId = R.color.sun_background_color,
-        outerElementColorId = R.color.sun_outer_element_color
-	),
+//	SUN(
+//		id = SUN_COLOR_STYLE_ID,
+//        nameResourceId = SUN_COLOR_STYLE_NAME_RESOURCE_ID,
+//        iconResourceId = SUN_COLOR_STYLE_ICON_ID,
+//        complicationStyleDrawableId = R.drawable.complication_white_style,
+//        primaryColorId = R.color.sun_primary_color,
+//        secondaryColorId = R.color.sun_secondary_color,
+//        backgroundColorId = R.color.sun_background_color,
+//        outerElementColorId = R.color.sun_outer_element_color
+//	),
 	MERCURY(
 		id = MERCURY_COLOR_STYLE_ID,
         nameResourceId = MERCURY_COLOR_STYLE_NAME_RESOURCE_ID,
@@ -241,7 +240,7 @@ enum class ColorStyleIdAndResourceIds(
             return when (id) {
                 // AMBIENT.id -> AMBIENT
                 // WHITE.id -> WHITE
-                SUN.id -> SUN
+				// SUN.id -> SUN
 				MERCURY.id -> MERCURY
 				VENUS.id -> VENUS
 				EARTH.id -> EARTH

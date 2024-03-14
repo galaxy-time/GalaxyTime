@@ -28,8 +28,9 @@ android {
         applicationId "jp.lab75.galaxytime"
         minSdk 33
         targetSdk 33
-        versionCode 15
-        versionName '0.15'
+        versionCode 21
+        versionName '0.21'
+		versionNameSuffix 'RC1'
 	}
 
     buildFeatures {
@@ -39,7 +40,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }

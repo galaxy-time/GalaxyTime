@@ -65,25 +65,21 @@ class WatchFaceService : WatchFaceService() {
 
 	private val updateLocationLoop = object : Runnable {
 		override fun run() {
-			// Update location every 600 seconds
-			calculations.updateLocation();
+			calculations.updateLocation()
 			handler.postDelayed(this, refreshLocationInterval)
 		}
 	}
 
 	private val updateCalculationsLoop = object : Runnable {
 		override fun run() {
-			// Maybe we should not update every second? its a little crazy but ok for testing
-			calculations.update();
+			calculations.update()
 			handler.postDelayed(this, refreshCalculationsInterval)
 		}
 	}
 
 	private val updateMeetingServiceLoop = object : Runnable {
 		override fun run() {
-			// Update location every 15 minutes
-			// Check meeting
-			meetingService.update();
+			meetingService.update()
 			handler.postDelayed(this, refreshMeetingServiceInterval)
 		}
 	}
@@ -117,7 +113,6 @@ class WatchFaceService : WatchFaceService() {
 
 			calculations.updateLocation()
 			calculations.update()
-
 			meetingService.update()
 
 			handler.post(updateLocationLoop)

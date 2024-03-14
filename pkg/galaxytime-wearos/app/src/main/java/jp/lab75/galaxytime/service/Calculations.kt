@@ -103,7 +103,7 @@ class Calculations private constructor(private val context: Context) {
 		).addOnSuccessListener { location: Location? ->
 //			Log.d(TAG,"Update location $location");
 			if (location != null) {
-				this.latLonElev = Triple(location.latitude, location.longitude, location.altitude);
+				this.latLonElev = Triple(location.latitude, location.longitude, location.altitude)
 			}
 		}
 	}
@@ -173,14 +173,30 @@ class Calculations private constructor(private val context: Context) {
 //		return 0
 //	}
 
+
+	fun getPlanetPosition(name:String) :Triple<Double,Double,Double> {
+		val planet = getBodyFromThemeName(name)
+		val time = Time.fromMillisecondsSince1970( Calendar.getInstance().timeInMillis )
+		val observer = Observer( latLonElevNull.first , latLonElevNull.second, latLonElevNull.third )
+		val equatorial = equator(planet, time, observer, EquatorEpoch.OfDate, Aberration.Corrected)
+		return Triple( equatorial.dist, equatorial.ra, equatorial.dec )
+	}
+
 	fun update() {
 
-		val timeA = Time.fromMillisecondsSince1970( Calendar.getInstance().timeInMillis )
 		val it = getBodyFromThemeName( name )
-
+		val time = Time.fromMillisecondsSince1970( Calendar.getInstance().timeInMillis )
 		val observer = Observer( latLonElevNull.first , latLonElevNull.second, latLonElevNull.third )
-		val equatorial = equator(it, timeA, observer, EquatorEpoch.OfDate, Aberration.Corrected)
-		val horizontal = horizon(timeA, observer, equatorial.ra, equatorial.dec, Refraction.Normal)
+
+		// right ascension == longitude
+		// declination == latitude
+		val equatorial = equator(it, time, observer, EquatorEpoch.OfDate, Aberration.Corrected)
+//		Log.d(TAG, "equatorial ${it.name}: ${equatorial.dist.round(2)}AU  ${equatorial.ra.round(2)}˚ ${equatorial.dec.round(2)}˚")
+
+		val horizontal = horizon(time, observer, equatorial.ra, equatorial.dec, Refraction.Normal)
+
+		//
+
 		val convertedRa: DMS = if (it != Body.Earth) {
 			convertToDMS(equatorial.ra)
 		} else {
@@ -192,21 +208,24 @@ class Calculations private constructor(private val context: Context) {
 				false
 			)
 		}
-		val convertedDec = convertToDMS(equatorial.dec);
+		val convertedDec = convertToDMS(equatorial.dec)
+
+		//
 
 		val totalRotationTimeHours = getReferenceDataFromThemeName( it.name ).totalRotationTimeHours
 		val elapsedAngle = equatorial.ra
 		val elapsedFraction = elapsedAngle / 360
 
-		val rotation = rotationAxis( it, timeA )
-		val distance =  helioDistance( it, timeA ).round(2)
+		val rotation = rotationAxis( it, time )
+		val distance =  helioDistance( it, time ).round(2)
 		// val apsis = searchPlanetApsis( it, timeA )
 		val totalSolarDays = planetOrbitalPeriod(it).round(0)
 
 		val spin ="%.4f".format(rotation.spin).padStart(13)
-//		Log.d("Calc","${it.name.padEnd(12)} ${spin} ${totalSolarDays.toString().padStart(12)}")
 
+		//
 
+		// Log.d("Calc","${it.name.padEnd(12)} ${spin} ${totalSolarDays.toString().padStart(12)}")
 		// Log.d("Calculations","---- update ------------------------")
 		// Log.d("Calculations","Body\t${it.name}")
 		// Log.d("Calculations","RA           ${equatorial.ra}")
@@ -220,6 +239,8 @@ class Calculations private constructor(private val context: Context) {
 		// Log.d("Calc","${it.name}\t\t ${rotationAngle.ra} ${horizontal.azimuth} / ${horizontal.altitude} ${distance}")
 		// Log.d("Calc","${apsis.time}, ${apsis.kind}")
 		// Log.d("Calc","${it.name}\t\t\t\t total ${totalRotationTimeHours}\t elapsed ${elapsedHours}")
+
+		//
 
 		bodyDataMap[it] = Data(
 			equatorial = equatorial,

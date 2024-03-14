@@ -1,45 +1,48 @@
 package jp.lab75.galaxytime.views
 
-import android.util.Log
-import android.os.Bundle
 import android.content.Context
-import android.graphics.Paint
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Alignment
-
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-
-import kotlin.math.roundToInt
-
-import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 import jp.lab75.galaxytime.components.MinimalCompass
 import jp.lab75.galaxytime.service.Calculations
-import jp.lab75.galaxytime.service.getReferenceDataFromThemeName
+import jp.lab75.galaxytime.theme.GalaxyTimeTheme
+import kotlin.math.roundToInt
+
 
 class CompassActivity : ComponentActivity(), SensorEventListener {
 
@@ -61,6 +64,7 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+
 		context = applicationContext
 		calculations = Calculations.getInstance( context )
 
@@ -72,6 +76,7 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 		val data = calculations.getBodyData(body)
 
 		Log.d(TAG, "${data?.horizontal?.azimuth} / ${data?.horizontal?.altitude}")
+		Log.d(TAG, "${data?.equatorial?.ra} / ${data?.equatorial?.dec}")
 
 /*
 	TODO: check hourAngle in astronomy-engine
@@ -91,12 +96,14 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 		val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
 
 		setTheme(android.R.style.Theme_DeviceDefault)
+
 		setContent {
 			GalaxyTimeTheme {
 				CompassApp(
 					degrees = degrees.value,
 					color = color,
 					name = name,
+					calculations = calculations,
 					callback = { finishActivity() }
 				)
 			}
@@ -174,27 +181,78 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 }
 
 @Composable
-fun CompassApp(degrees: Int, callback: () -> Unit, color: Color, name: String) {
-	MinimalCompass(
-		degrees = degrees,
-		callback = callback
-	)
+fun AttributedData(
+	txt: String = "Data",
+	att: String = "Attribute",
+	color: Color = Color(0xffff00ff)
+) {
+	val txtSize = 8
+	val attSize = 6
+
 	Box(
-		modifier = Modifier.fillMaxSize(),
-		contentAlignment = Alignment.Center
+		modifier = Modifier.wrapContentWidth(),
 	) {
 		Text(
-			modifier = Modifier.align(Alignment.Center),
-			textAlign = TextAlign.Left,
-			color = Color(0xaaffffff),
-			text = "\n$name",
-			fontSize = 10.sp,
-			lineHeight = 20.sp,
+			color = color,
+			fontFamily = FontFamily.Monospace,
+			text = txt,
+			fontSize = txtSize.sp
+		)
+		Text(
+			modifier = Modifier.offset( y = txtSize.dp),
+			color = color,
+			fontFamily = FontFamily.Monospace,
+			text = att,
+			fontSize = attSize.sp,
 		)
 	}
+}
+
+fun degreeToDirection(degrees: Int): String {
+	return when (degrees) {
+		in (0..22) -> "N"
+		in (23..67) -> "NW"
+		in (68..112) -> "W"
+		in (113..157) -> "SW"
+		in (158..202) -> "S"
+		in (203..247) -> "SE"
+		in (248..292) -> "E"
+		in (293..337) -> "NE"
+		in (338..360) -> "N"
+		else -> ""
+	}
+}
+
+@Composable
+fun CompassApp(
+	degrees: Int,
+	calculations: Calculations,
+	color: Color,
+	name: String,
+	callback: () -> Unit,
+) {
+
+	fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+
+	val data = calculations.getDataFromName(name)
+	val azi = data?.horizontal?.azimuth?.round(2)
+	val alt = data?.horizontal?.altitude?.round(2)
+	val ra =  data?.equatorial?.ra?.round(2)
+	val dec = data?.equatorial?.dec?.round(2)
+	val dst = data?.equatorial?.dist?.round(2)
+
+	Log.d("compass","$name azi $azi alt $alt ra $ra dec $dec")
+
+	val off = 16.dp
+
+	MinimalCompass(
+		degrees = degrees,
+		azi = azi,
+		callback = callback
+	)
+
 	Box(
 		modifier = Modifier
-			.fillMaxSize()
 			.drawBehind {
 				drawRect(
 					color = color,
@@ -202,7 +260,49 @@ fun CompassApp(degrees: Int, callback: () -> Unit, color: Color, name: String) {
 					blendMode = BlendMode.Multiply
 				)
 			}
-	)
+			.fillMaxSize(),
+		contentAlignment = Alignment.Center
+	) {
+		Text(
+			modifier = Modifier
+				.offset(y=-10.dp)
+				.fillMaxWidth(),
+			textAlign = TextAlign.Center,
+			fontFamily = FontFamily.Monospace,
+			color = Color(0xffffffff),
+			fontSize = 10.sp,
+			text = "${degrees}˚ ${degreeToDirection(degrees)}",
+		)
+		Text(
+			modifier = Modifier
+				.offset(y = off)
+				.fillMaxWidth(),
+			color = color, //Color(0xffffffff),
+			text = name,
+			textAlign = TextAlign.Center,
+			fontSize = 8.sp,
+		)
+		Row(
+			Modifier.offset( y = off + 16.dp ),
+		){
+			AttributedData("${azi}˚","AZIMUTH", color)
+			Spacer( modifier = Modifier.width(10.dp) )
+			AttributedData("${alt}˚","ALTITUDE", color)
+			Spacer( modifier = Modifier.width(10.dp) )
+			AttributedData("${dst}AU","DISTANCE", color)
+		}
+	}
+//	Box(
+//		modifier = Modifier
+//			.fillMaxSize()
+//			.drawBehind {
+//				drawRect(
+//					color = color,
+//					size = size,
+//					blendMode = BlendMode.Multiply
+//				)
+//			}
+//	)
 }
 
 @Composable
@@ -215,40 +315,12 @@ fun CompassHello( content: String ) {
 	)
 }
 
-
-	// private fun showSettingsDialog() {
-	// 	Log.d(TAG, "showSettingsDialog")
-	// 	AlertDialog.Builder(this)
-	// 		.setMessage("Some permissions are missing. The app needs location and calendar read permissions to function properly. Please allow them in app settings.")
-	// 		.setPositiveButton("App Settings") { _, _ ->
-	// 			val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-	// 				data = Uri.fromParts("package", packageName, null)
-	// 			}
-	// 			startActivity(intent)
-	// 			finish()
-	// 		}
-	// 		.setNegativeButton("Cancel") { dialog, _ ->
-	// 			dialog.dismiss()
-	// 			finish()
-	// 		}
-	// 		.create()
-	// 		.show()
-	// }
-
-//	private fun showCompass() {
-//		Log.d(TAG, "showCompass()")
-//
-//		// on tap left button finish this activity
-//		// finish()
-//	}
-
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun CompassPreview() {
 
-//	val context = LocalContext.current
-//	val calculations = Calculations.getInstance( context )
-//	val name = "SATURN"
+	val context = LocalContext.current
+	val calculations = Calculations.getInstance( context )
 //	val ref = getReferenceDataFromThemeName( name )
 
 	val color = Color.Cyan
@@ -259,6 +331,7 @@ fun CompassPreview() {
 			degrees = 1337,
 			color = color,
 			name = name,
+			calculations = calculations,
 			callback = { }
 		)
 	}

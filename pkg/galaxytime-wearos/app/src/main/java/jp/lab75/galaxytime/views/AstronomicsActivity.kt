@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,10 +61,7 @@ import kotlin.math.roundToInt
 class AstronomicsActivity : ComponentActivity() {
 
 	lateinit var context: Context
-	lateinit var calculations: Calculations
-
-//	lateinit var body: Body
-//	lateinit var data: Data
+	private lateinit var calculations: Calculations
 
 	lateinit var ref: CelestialBody
 	lateinit var sunRef: CelestialBody
@@ -133,13 +132,13 @@ fun AstronomicsApp(
 ) {
 
 	val margin = 20f
-	val density = LocalDensity.current;
-	val configuration = LocalConfiguration.current;
+	val density = LocalDensity.current
+	val configuration = LocalConfiguration.current
 	val width = with(density) { configuration.screenWidthDp.dp.roundToPx() }
 	val height = with(density) { configuration.screenHeightDp.dp.roundToPx() }
 	val offset = height / 2 + 30
 
-	Log.d("Astronomics Composable", "${name} ${color} ${ref}")
+//	Log.d("Astronomics Composable", "${name} ${color} ${ref}")
 
 	Box( modifier = Modifier
 		.fillMaxSize()
@@ -165,18 +164,18 @@ fun AstronomicsApp(
 //					.align(alignment = Alignment.Center)
 //			)
 //		}
-		Box(
-			modifier = Modifier
-				.fillMaxSize()
-				.drawBehind {
-					drawRect(
-						color = color,
-						size = size,
-						blendMode = BlendMode.Overlay
-					)
-				}
-
-		)
+//		Box(
+//			modifier = Modifier
+//				.fillMaxSize()
+//				.drawBehind {
+//					drawRect(
+//						color = color,
+//						size = size,
+//						blendMode = BlendMode.Multiply
+//					)
+//				}
+//
+//		)
 	}
 
 }
@@ -205,25 +204,26 @@ fun AstronomicsView(
 	)
 	Box(
 		modifier = Modifier
-			.fillMaxSize()
 			.drawBehind {
 				drawRect(
 					color = color,
 					size = size,
 					blendMode = BlendMode.Multiply
 				)
-			},
+			}
+			.fillMaxSize(),
 		contentAlignment = Alignment.Center
 	) {
 
 		DistanceGraph(name, ref, sunRadius)
-		DescriptionText(name, ref, calculations)
+		DescriptionText(name, ref, color, calculations)
 		Text(
 			modifier = Modifier
 				.fillMaxWidth()
 				.offset(y = off),
 			textAlign = TextAlign.Center,
-			color = Color.White,
+			fontFamily = FontFamily.Monospace,
+			color = Color(0xffffffff),
 			text = "$name — SUN",
 			fontSize = 10.sp
 		)
@@ -232,27 +232,40 @@ fun AstronomicsView(
 				.fillMaxWidth()
 				.offset(y = off2),
 			textAlign = TextAlign.Center,
-			color = Color.White,
+			fontFamily = FontFamily.Monospace,
+			color = Color(0xffffffff),
 			text = "${ref.distanceAU}AU",
 			fontSize = 8.sp
 		)
 	}
-
+//	COLOR AS OVERLAY INCL UI
+//	Box(
+//		modifier = Modifier
+//			.fillMaxSize()
+//			.drawBehind {
+//				drawRect(
+//					color = color,
+//					size = size,
+//					blendMode = BlendMode.Multiply
+//				)
+//			}
+//	)
 }
 
 @Composable
 fun DescriptionText(
 	name: String,
 	ref: CelestialBody,
+	color: Color,
 	calculations: Calculations
 ) {
 
 	val data = calculations.getCurrentBodyData()
-	Log.d("Astronomics Composable", "${data}")
+//	Log.d("Astronomics Composable", "${data}")
 
-	val l1 = "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(272)}° ALT ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
+	val l1 = "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(0)}° ALT ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}°"
 
-	val l2 = "RAS %02dD:%02dM:%02dS".format(
+	val l2 = "RA  %02dH%02dM%02dS".format(
 		data?.rightAscension?.degrees?.or(12),
 		data?.rightAscension?.minutes?.or(14),
 		data?.rightAscension?.seconds?.roundToInt()?.or(16)
@@ -268,14 +281,14 @@ fun DescriptionText(
 	fun Float.round(decimals: Int = 2): Float = "%.${decimals}f".format(this).toFloat()
 
 	val r1 = "\n\n\n\n\nSOL ${ref.totalRotationTimeHours}h"
-	val r2 = "${(ref.totalRotationTimeHours / 24).round(2)} TERRAN DAYS"
-	val r3 = "SURFACE ${ref.surfaceAreaKm2}km²"
-	val r4 = if (ref.satellites>0) "SATELLITES ${ref.satellites}" else ""
+	val r2 = "    ${(ref.totalRotationTimeHours / 24).round(2)} TERRAN DAYS"
+	val r3 = "SRF ${ref.surfaceAreaKm2}km²"
+	val r4 = if (ref.satellites>0) "SAT ${ref.satellites}" else ""
 
 	val rightColumn = arrayOf(r1,r2,r3,r4).joinToString("\n")
 
-	Log.d("Astronomics Composable", leftColumn)
-	Log.d("Astronomics Composable", rightColumn)
+//	Log.d("Astronomics Composable", leftColumn)
+//	Log.d("Astronomics Composable", rightColumn)
 
 	Box(
 		modifier = Modifier.fillMaxSize(),
@@ -284,7 +297,8 @@ fun DescriptionText(
 		Text(
 			modifier = Modifier.align(Alignment.Center),
 			textAlign = TextAlign.Left,
-			color = Color(0xaaffffff),
+			fontFamily = FontFamily.Monospace,
+			color = color, //Color(0xffffffff),
 			text = "$leftColumn\n$rightColumn",
 			fontSize = 8.sp,
 			lineHeight = 10.sp,
@@ -316,17 +330,17 @@ fun DistanceGraph(
 				drawLine(
 					start = Offset(cx - off + locationRadius, y),
 					end = Offset(cx + off - sunRadius, y),
-					color = Color.White,
+					color = Color(0xffffffff),
 					strokeWidth = 1f
 				)
 				drawCircle(
-					color = Color.White,
+					color = Color(0xffffffff),
 					center = Offset(cx - off, y),
 					radius = locationRadius,
 					style = Stroke(width = 1f)
 				)
 				drawCircle(
-					color = Color.White,
+					color = Color(0xffffffff),
 					center = Offset(cx + off, y),
 					radius = sunRadius,
 					style = Stroke(width = 1f)
