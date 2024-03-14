@@ -46,18 +46,6 @@
 		android:scrollbars="vertical"
 		android:textAlignment="center">
 
-		<!-- <ImageView
-            android:id="@+id/more_options_image_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="@dimen/settings_more_options_padding"
-            android:src="@drawable/more_options_icon"
-            android:contentDescription="@string/settings_more_options_icon_content_description"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/preview" /> -->
-
 		<include
 			android:id="@+id/preview"
 			layout="@layout/watchface_preview"
@@ -83,35 +71,12 @@
 			app:layout_constraintTop_toBottomOf="@+id/preview"
 			tools:layout_editor_absoluteX="6dp" />
 
-		<!-- <com.google.android.material.button.MaterialButton
-			android:id="@+id/random_planet_picker_button"
-			style="@style/Widget.WatchFace.Button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:contentDescription="@string/settings_change_color_style_button_content_description"
-			android:gravity="center_horizontal|center_vertical"
-			android:onClick="onClickColorStylePickerButton"
-			android:padding="@dimen/no_padding"
-			android:text="RANDOM"
-			android:textAppearance="?attr/textAppearanceButton"
-			app:layout_constraintTop_toBottomOf="@+id/text_view"
-			tools:layout_editor_absoluteX="21dp" /> -->
-
-			<RadioGroup
+		<RadioGroup
 			android:id="@+id/radio_group"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			app:layout_constraintTop_toBottomOf="@+id/text_view"
 			tools:layout_editor_absoluteX="6dp">
-
-<!--				<RadioButton-->
-<!--					android:id="@+id/id_sun"-->
-<!--					android:text="@string/sun_style_name"-->
-<!--					android:layout_width="match_parent"-->
-<!--					android:layout_height="wrap_content"-->
-<!--					android:paddingVertical="5sp"-->
-<!--					android:textColor="#FFFFFF"-->
-<!--					android:textSize="12sp" />-->
 
 			<RadioButton
 				android:id="@+id/id_mercury"
@@ -215,79 +180,6 @@
 				android:textSize="12sp" />
 
 			</RadioGroup>
-
-
-			<!--
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/color_style_picker_button"
-			style="@style/Widget.WatchFace.Button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:contentDescription="@string/settings_change_color_style_button_content_description"
-			android:gravity="center_horizontal|center_vertical"
-			android:onClick="onClickColorStylePickerButton"
-			android:padding="@dimen/no_padding"
-			android:text="@string/settings_color_style_picker_label"
-			android:textAppearance="?attr/textAppearanceButton"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/radio_group" />
-
-		<Space
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/color_style_picker_button" />
-
-				<com.google.android.material.switchMaterial.SwitchMaterial
-					android:id="@+id/ticks_enabled_switch"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:drawableStart="@drawable/watch_ticks"
-					android:drawablePadding="@dimen/settings_ticks_enabled_switch_icon_padding"
-					android:gravity="start|center_vertical"
-					android:onClick="onClickTicksEnabledSwitch"
-					android:text="@string/settings_ticks_enabled_label"
-					android:textColor="@color/white"
-					android:textAppearance="?attr/textAppearanceButton"
-					android:contentDescription="@string/settings_ticks_enabled_switch_content_description"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/color_style_picker_button" />
-
-				<Space
-					android:id="@+id/pre_slider_spacer"
-					android:layout_width="0dp"
-					android:layout_height="@dimen/settings_spacer_height_pre_slider"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/ticks_enabled_switch" />
-
-				<TextView
-					android:id="@+id/slider_label"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:gravity="center"
-					android:text="@string/settings_slider_text_label"
-					android:textColor="@color/white"
-					android:textAppearance="?attr/textAppearanceButton"
-					android:contentDescription="@string/settings_minute_hand_slider_text_label_content_description"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/pre_slider_spacer" />
-
-				<com.google.android.material.slider.Slider
-					android:id="@+id/minute_hand_length_slider"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					app:labelBehavior="gone"
-					android:contentDescription="@string/settings_minute_hand_length_slider_content_description"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/slider_label" />
-		-->
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
