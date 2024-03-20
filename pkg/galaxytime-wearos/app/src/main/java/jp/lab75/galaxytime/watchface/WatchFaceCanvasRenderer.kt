@@ -134,8 +134,8 @@ class WatchFaceCanvasRenderer (
 			val x = tapEvent.xPos
 			val y = tapEvent.yPos
 			if (TL.contains(x, y)) openActivity("ASTRONOMICS")	// details for current planet
-			if (TR.contains(x, y)) openActivity("COMPASS")		//  find selected planet
-//			if (BL.contains(x, y)) openActivity("BIOMETRICS")		// show hydration activity
+			if (TR.contains(x, y)) openActivity("COMPASS")		// find selected planet
+			if (BL.contains(x, y)) openActivity("BIOMETRICS")		// show hydration activity
 //			if (BR.contains(x, y)) Log.d("TAP", "BR")
 		}
 		invalidate()
