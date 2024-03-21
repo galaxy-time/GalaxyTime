@@ -58,8 +58,11 @@ import kotlinx.coroutines.launch
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toLowerCase
+import jp.lab75.galaxytime.service.BiometricsService
 import jp.lab75.galaxytime.views.CompassActivity
 import jp.lab75.galaxytime.views.AstronomicsActivity
 import jp.lab75.galaxytime.views.BiometricsActivity
@@ -78,7 +81,8 @@ class WatchFaceCanvasRenderer (
 	currentUserStyleRepository: CurrentUserStyleRepository,
 	canvasType: Int,
 	private val calculations: Calculations,
-	private val meetingService: MeetingService
+	private val meetingService: MeetingService,
+	private val biometricsService: BiometricsService,
 ) : Renderer.CanvasRenderer2<WatchFaceCanvasRenderer.AnalogSharedAssets>(
 	surfaceHolder,
 	currentUserStyleRepository,
@@ -482,8 +486,7 @@ class WatchFaceCanvasRenderer (
 		val tr = if ( themeName != "EARTH" ) "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(0)}° · ALT ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}° · DST ${dist}AU".replace("0", "")
 		else "DST ${dist}AU".replace("0", "")
 
-		val counter = 5
-		val bl = if ( counter < 5 ) "HYDRATION LOW ⚠" else ""
+		val bl = "HYDRATION ${biometricsService.state.value}"
 
 		val nextMeeting = meetingService.getNextMeeting()
 		val br =  if (nextMeeting != null) nextMeeting.title else ""

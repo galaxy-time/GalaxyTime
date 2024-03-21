@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2024 The Galaxy Space Time Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import androidx.wear.watchface.style.UserStyleSchema
 
 import jp.lab75.galaxytime.service.Calculations
 import jp.lab75.galaxytime.service.MeetingService
+import jp.lab75.galaxytime.service.BiometricsService
+
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
 import jp.lab75.galaxytime.views.PermissionRequestActivity
@@ -46,12 +48,12 @@ class WatchFaceService : WatchFaceService() {
 	private val handler = Handler( Looper.getMainLooper() )
 	private lateinit var calculations: Calculations
 	private lateinit var meetingService: MeetingService
-
-	private var hasPermissions = false
+	private lateinit var biometricsService: BiometricsService
 
 	val refreshLocationInterval: Long = 1000 * 60
 	val refreshCalculationsInterval: Long = 1000 * 1
 	val refreshMeetingServiceInterval: Long = 1000 * 60 * 5
+	val refreshBiometricsServiceInterval: Long = 1000 // * 60 * 5
 
 	override fun createUserStyleSchema(): UserStyleSchema =
 		createUserStyleSchema(context = applicationContext)
@@ -84,11 +86,18 @@ class WatchFaceService : WatchFaceService() {
 		}
 	}
 
+	private val updateBiometricsServiceLoop = object : Runnable {
+		override fun run() {
+			biometricsService.update()
+			handler.postDelayed(this, refreshBiometricsServiceInterval)
+		}
+	}
 	override fun onCreate() {
 		super.onCreate()
 
 		calculations = Calculations.getInstance(applicationContext)
 		meetingService = MeetingService.getInstance(applicationContext)
+		biometricsService = BiometricsService.getInstance(applicationContext)
 
 		if ( ContextCompat.checkSelfPermission(
 				this, Manifest.permission.ACCESS_FINE_LOCATION
@@ -114,10 +123,12 @@ class WatchFaceService : WatchFaceService() {
 			calculations.updateLocation()
 			calculations.update()
 			meetingService.update()
+			biometricsService.update()
 
 			handler.post(updateLocationLoop)
 			handler.post(updateCalculationsLoop)
 			handler.post(updateMeetingServiceLoop)
+			handler.post(updateBiometricsServiceLoop)
 
 		}
 	}
@@ -145,7 +156,8 @@ class WatchFaceService : WatchFaceService() {
 			currentUserStyleRepository = currentUserStyleRepository,
 			canvasType = CanvasType.HARDWARE,
 			calculations = calculations,
-			meetingService = meetingService
+			meetingService = meetingService,
+			biometricsService = biometricsService
 		)
 
 		return WatchFace(
