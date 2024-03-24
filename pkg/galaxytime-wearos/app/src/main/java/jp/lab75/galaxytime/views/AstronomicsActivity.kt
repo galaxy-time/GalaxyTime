@@ -132,12 +132,12 @@ fun AstronomicsApp(
 	sunRadius: Float
 ) {
 
-	val margin = 20f
-	val density = LocalDensity.current
-	val configuration = LocalConfiguration.current
-	val width = with(density) { configuration.screenWidthDp.dp.roundToPx() }
-	val height = with(density) { configuration.screenHeightDp.dp.roundToPx() }
-	val offset = height / 2 + 30
+	// val margin = 20f
+	// val density = LocalDensity.current
+	// val configuration = LocalConfiguration.current
+	// val width = with(density) { configuration.screenWidthDp.dp.roundToPx() }
+	// val height = with(density) { configuration.screenHeightDp.dp.roundToPx() }
+	// val offset = height / 2 + 30
 
 //	Log.d("Astronomics Composable", "${name} ${color} ${ref}")
 
@@ -190,10 +190,10 @@ fun AstronomicsView(
 	sunRadius: Float
 ) {
 
-	val density = LocalDensity.current
-	val configuration = LocalConfiguration.current
-	val height = configuration.screenHeightDp.dp
-	val yp = height / 2
+	// val density = LocalDensity.current
+	// val configuration = LocalConfiguration.current
+	// val height = configuration.screenHeightDp.dp
+	// val yp = height / 2
 	val off = -15.dp
 	val off2 = 5.dp
 

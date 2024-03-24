@@ -16,6 +16,7 @@
 package jp.lab75.galaxytime
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 
@@ -145,6 +146,7 @@ class WatchFaceService : WatchFaceService() {
 		handler.removeCallbacks(updateMeetingServiceLoop)
 	}
 
+	@SuppressLint("RestrictedApi")
 	override suspend fun createWatchFace(
 		surfaceHolder: SurfaceHolder,
 		watchState: WatchState,

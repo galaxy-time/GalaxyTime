@@ -219,7 +219,7 @@ fun DrawScale() {
 	Box(
 		modifier = Modifier.drawBehind {
 			val cx = size.width / 2f
-			val cy = size.height / 2f
+			// val cy = size.height / 2f
 			drawLine(
 				start = Offset(cx, 0f),
 				end = Offset(cx, size.height),
@@ -255,7 +255,7 @@ fun DrawGraph() {
 		modifier = Modifier
 			.fillMaxSize()
 			.drawBehind {
-				val cx = size.width / 2f
+				// val cx = size.width / 2f
 				val cy = size.height / 2f
 				drawLine(
 					start = Offset(0f, cy),

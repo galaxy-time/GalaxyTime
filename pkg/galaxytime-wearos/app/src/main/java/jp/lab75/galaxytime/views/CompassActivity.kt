@@ -95,7 +95,7 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 */
 
 		sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-		val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
+		// val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
 
 		setTheme(android.R.style.Theme_DeviceDefault)
 

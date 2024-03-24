@@ -1,5 +1,6 @@
 package jp.lab75.galaxytime
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -132,6 +133,7 @@ class WatchFaceCanvasRenderer (
 		context.applicationContext.startActivity( intent )
 	}
 
+	@SuppressLint("RestrictedApi")
 	override fun onTapEvent(tapType: Int, tapEvent: TapEvent, complicationSlot: ComplicationSlot?) {
 
 		if (tapType == TapType.UP) {
@@ -430,7 +432,6 @@ class WatchFaceCanvasRenderer (
 		val off2 = 30f
 
 		val zero = "" // special character for zero
-		var localTime = "000:00:00".replace("0", zero)
 		val timeFormat = "%03dT%02d:%02d"
 
 		val body = calculations.getBodyFromThemeName(name)
@@ -439,10 +440,10 @@ class WatchFaceCanvasRenderer (
 		if ( data == null ) return
 
 
-		if ( name == "EARTH" ) {
-			localTime = DateTimeFormatter.ofPattern("DDD:HH:mm").format(zonedDateTime).replace("0", zero)
-		} else if ( data != null ) {
-			localTime = timeFormat.format(
+		val localTime = if ( name == "EARTH" ) {
+			DateTimeFormatter.ofPattern("DDD:HH:mm").format(zonedDateTime).replace("0", zero)
+		} else {
+			timeFormat.format(
 				data.solarDay,
 				data.rightAscension.degrees,
 				data.rightAscension.minutes
@@ -482,11 +483,11 @@ class WatchFaceCanvasRenderer (
 		val data = calculations.getDataFromName(themeName)
 		val ref = getReferenceDataFromThemeName(themeName)
 
-		val r = if (ref != null) { ref.radiusKm } else { 6371 }
-		val solDay = if (ref != null) { ref.totalRotationTimeHours } else { 24 }
+		val r = ref.radiusKm
+		val solDay = ref.totalRotationTimeHours
 		val tl = "SOL ${solDay}h · R ${r.toInt()}km".replace("0", "")
 
-		val dist = if (data != null) { data.distance } else { 0 }
+		val dist = data?.distance ?: 0
 		val tr = if ( themeName != "EARTH" ) "AZI ${data?.horizontal?.azimuth?.roundToInt()?.or(0)}° · ALT ${data?.horizontal?.altitude?.roundToInt()?.or(-2)}° · DST ${dist}AU".replace("0", "")
 		else "DST ${dist}AU".replace("0", "")
 
@@ -585,11 +586,10 @@ class WatchFaceCanvasRenderer (
 			val bezelWidth = 30f
 			val dialWidth = 15f
 			val dialGap = 0f
-			var ro = 0f
-			var ri = 0f
 
-			ro = (b.width().toFloat() / 2f) - bezelWidth
-			ri = (b.width().toFloat() / 2f) - bezelWidth - dialWidth
+			var ro = (b.width().toFloat() / 2f) - bezelWidth
+			var ri = (b.width().toFloat() / 2f) - bezelWidth - dialWidth
+
 			drawGradientArc( c, b, ri, ro, sr, 60f, watchFaceColors.activePrimaryColor, 255 )
 
 			ro = ri

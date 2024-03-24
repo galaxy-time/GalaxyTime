@@ -127,7 +127,6 @@ class Calculations private constructor(private val context: Context) {
 			seconds = 0.0
 			tempX = minutes + 1.0
 			if (tempX == 60.0) {
-				tempX = 0.0
 				++degrees
 			}
 		}
@@ -213,16 +212,16 @@ class Calculations private constructor(private val context: Context) {
 
 		//
 
-		val totalRotationTimeHours = getReferenceDataFromThemeName( it.name ).totalRotationTimeHours
-		val elapsedAngle = equatorial.ra
-		val elapsedFraction = elapsedAngle / 360
+		// val totalRotationTimeHours = getReferenceDataFromThemeName( it.name ).totalRotationTimeHours
+		// val elapsedAngle = equatorial.ra
+		// val elapsedFraction = elapsedAngle / 360
 
 		val rotation = rotationAxis( it, time )
 		val distance =  helioDistance( it, time ).roundTo(2)
 		// val apsis = searchPlanetApsis( it, timeA )
 		val totalSolarDays = planetOrbitalPeriod(it).roundTo(0)
 
-		val spin ="%.4f".format(rotation.spin).padStart(13)
+		// val spin ="%.4f".format(rotation.spin).padStart(13)
 
 		//
 
