@@ -115,6 +115,11 @@ class WatchFaceCanvasRenderer (
 	private val BL = Rect(0,currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.height())
 	private val BR = Rect(currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.width(),currentWatchFaceSize.height())
 
+	private lateinit var grainImage: Bitmap
+	private lateinit var saturnRingImage: Bitmap
+	private lateinit var saturnGradientImage: Bitmap
+	private lateinit var jupiterGradientImage: Bitmap
+
 //	private var transitionAlpha = 0f
 
 	private fun openActivity(view: String ) {
@@ -202,16 +207,6 @@ class WatchFaceCanvasRenderer (
 		blendMode = BlendMode.OVERLAY
 	}
 
-	// grain overlay
-
-	private var grainBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_grain)
-	private var grainImage: Bitmap = Bitmap.createScaledBitmap(
-		grainBitmap,
-		currentWatchFaceSize.width(),
-		currentWatchFaceSize.height(),
-		false
-	)
-
 	// init
 
 	init {
@@ -227,18 +222,48 @@ class WatchFaceCanvasRenderer (
 	}
 
 	//	update theme
+	private fun loadImages(themeName: String) {
+		when (themeName) {
+			"SATURN" -> if (!::saturnRingImage.isInitialized || !::saturnGradientImage.isInitialized) {
+				saturnRingImage = Bitmap.createScaledBitmap(
+					BitmapFactory.decodeResource(resources, R.drawable.sgt_saturn_ring),
+					currentWatchFaceSize.width(),
+					4,
+					true
+				)
+				saturnGradientImage = Bitmap.createScaledBitmap(
+					BitmapFactory.decodeResource(resources, R.drawable.sgt_saturn_gradient),
+					currentWatchFaceSize.width(),
+					currentWatchFaceSize.height(),
+					true
+				)
+			}
+			"JUPITER" -> if (!::jupiterGradientImage.isInitialized) {
+				jupiterGradientImage = Bitmap.createScaledBitmap(
+					BitmapFactory.decodeResource(resources, R.drawable.sgt_jupiter_gradient),
+					currentWatchFaceSize.width(),
+					currentWatchFaceSize.height(),
+					true
+				)
+			}
+		}
+
+		if (!::grainImage.isInitialized) {
+			grainImage = Bitmap.createScaledBitmap(
+				BitmapFactory.decodeResource(resources, R.drawable.sgt_grain),
+				currentWatchFaceSize.width(),
+				currentWatchFaceSize.height(),
+				true
+			)
+		}
+	}
 
 	private fun updateWatchFaceData(userStyle: UserStyle) {
 		Log.d(TAG, "updateWatchFace(): $userStyle")
 		themeName = watchFaceData.activeColorStyle.toString()
 
 		if (currentWatchFaceSize.width() != 0) {
-			grainImage = Bitmap.createScaledBitmap(
-				grainBitmap,
-				currentWatchFaceSize.width(),
-				currentWatchFaceSize.height(),
-				false
-			)
+			loadImages(themeName)
 		}
 
 		p1.setShadowLayer(10f, 0f, 0f, Color.BLACK)
@@ -612,32 +637,24 @@ class WatchFaceCanvasRenderer (
 
 	 private var ringPaint: Paint = Paint( Paint.ANTI_ALIAS_FLAG )
 
-	 private var saturnRingBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_saturn_ring)
-	 private var saturnRingImage: Bitmap = Bitmap.createScaledBitmap(saturnRingBitmap, currentWatchFaceSize.width(), 4, false)
-	 private var saturnGradientBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_saturn_gradient)
-	 private var saturnGradientImage: Bitmap = Bitmap.createScaledBitmap(saturnGradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
-
-	 private var jupiterGradientBitmap: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.sgt_jupiter_gradient)
-	 private var jupiterGradientImage: Bitmap = Bitmap.createScaledBitmap(jupiterGradientBitmap, currentWatchFaceSize.width(), currentWatchFaceSize.height(), false)
-
 	 private fun drawExtras( c: Canvas, b: Rect, n: String, r: Int ) {
+		 when (n) {
+			 "SATURN" -> {
+				 if (!::saturnGradientImage.isInitialized || !::saturnRingImage.isInitialized) loadImages(n);
+				 val ex = b.exactCenterX().toInt()
+				 val ey = b.exactCenterY().toInt()
+				 val r1: Rect = Rect( ex - r, ey - r, ex + r, ey + r )
+				 c.drawBitmap(saturnGradientImage, b, r1, blendPaint)
+				 val r2: Rect = Rect( ex - r, ey - 2, ex + r, ey + 2 )
+				 c.drawBitmap(saturnRingImage, b, r2, ringPaint)
 
-	 	if( n == "SATURN") {
-	 		val ex = b.exactCenterX().toInt()
-	 		val ey = b.exactCenterY().toInt()
-	 		val r1: Rect = Rect( ex - r, ey - r, ex + r, ey + r )
-	 		c.drawBitmap(saturnGradientImage, b, r1, blendPaint)
-	 		val r2: Rect = Rect( ex - r, ey - 2, ex + r, ey + 2 )
-	 		c.drawBitmap(saturnRingImage, b, r2, ringPaint)
-	 		return
-	 	}
-
-	 	if( n == "JUPITER") {
-	 		val r1: Rect = Rect( b.centerX() - r, b.centerY() - r, b.centerX() + r, b.centerY() + r )
-	 		c.drawBitmap(jupiterGradientImage, b, r1, blendPaint)
-	 		return
-	 	}
-
+			 }
+			 "JUPITER" -> {
+				 if (!::jupiterGradientImage.isInitialized) loadImages(n);
+				 val r1: Rect = Rect( b.centerX() - r, b.centerY() - r, b.centerX() + r, b.centerY() + r )
+				 c.drawBitmap(jupiterGradientImage, b, r1, blendPaint)
+			 }
+		 }
 	 }
 
 	companion object {

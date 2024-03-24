@@ -21,8 +21,11 @@ import androidx.wear.watchface.style.UserStyleSetting
 import io.github.cosinekitty.astronomy.*
 import jp.lab75.galaxytime.WatchFaceCanvasRenderer
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
+import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.reflect.typeOf
+import kotlin.system.measureTimeMillis
 
 class Calculations private constructor(private val context: Context) {
 
@@ -45,7 +48,7 @@ class Calculations private constructor(private val context: Context) {
 	private var latLonElev = latLonElevNull
 
 	private val bodyDataMap = mutableMapOf<Body, Data>()
-	val bodyList = arrayOf(
+	private val bodyList = setOf(
 //		Body.Sun,
 		Body.Mercury, Body.Venus,
 		Body.Earth, Body.Moon, Body.Mars,
@@ -99,7 +102,7 @@ class Calculations private constructor(private val context: Context) {
 		fusedLocationClient.getCurrentLocation(
 			CurrentLocationRequest.Builder().setDurationMillis(10000)
 				.setMaxUpdateAgeMillis(10000)
-				.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+				.setPriority(Priority.PRIORITY_LOW_POWER)
 				.build(), null
 		).addOnSuccessListener { location: Location? ->
 //			Log.d(TAG,"Update location $location");
@@ -110,23 +113,16 @@ class Calculations private constructor(private val context: Context) {
 	}
 
 	private fun convertToDMS(x: Double): DMS {
-		var tempX = x
-		val negative = tempX < 0
-		if (negative) {
-			tempX = -tempX
-		}
+		val negative = x < 0
+		val absX = abs(x)
 
-		var degrees = tempX.toInt()
-		tempX = 60.0 * (tempX - degrees)
-		val minutes = tempX.toInt()
-		tempX = 60.0 * (tempX - minutes)
-		var seconds =
-			(10.0 * tempX).roundToInt() / 10.0   // Round to the nearest tenth of an arcsecond.
+		var degrees = absX.toInt()
+		var minutes = ((absX - degrees) * 60).toInt()
+		var seconds = (10 * ((absX - degrees - minutes / 60.0) * 3600)).roundToInt() / 10.0
 
 		if (seconds == 60.0) {
 			seconds = 0.0
-			tempX = minutes + 1.0
-			if (tempX == 60.0) {
+			if (++minutes == 60) {
 				++degrees
 			}
 		}
@@ -255,7 +251,7 @@ class Calculations private constructor(private val context: Context) {
 		)
 	}
 
-	private fun Double.roundTo(decimals: Int = 2): Double = kotlin.math.round(
+	private fun Double.roundTo(decimals: Int = 2): Double = round(
 		this * 10.0.pow(
 			decimals
 		)
