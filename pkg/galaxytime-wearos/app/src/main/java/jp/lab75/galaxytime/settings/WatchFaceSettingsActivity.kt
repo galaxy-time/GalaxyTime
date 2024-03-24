@@ -121,7 +121,7 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		Log.d(TAG, "updateWatchFacePreview: $userStylesAndPreview")
 		val colorStyleId: String = userStylesAndPreview.colorStyleId
 		Log.d(TAG, "\tselected color style: $colorStyleId")
-		binding.preview.watchFaceBackground.setImageBitmap(userStylesAndPreview.previewImage)
+		// binding.preview.watchFaceBackground.setImageBitmap(userStylesAndPreview.previewImage)
 		enableWidgets()
 	}
 
