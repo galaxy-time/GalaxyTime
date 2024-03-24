@@ -350,27 +350,22 @@ class WatchFaceCanvasRenderer (
 
 		if (currentWatchFaceSize != bounds) currentWatchFaceSize = bounds
 
-		val interactive = ( renderParameters.drawMode == DrawMode.INTERACTIVE )
-		val ambient = ( renderParameters.drawMode == DrawMode.AMBIENT )
+		when (renderParameters.drawMode) {
+			DrawMode.AMBIENT -> {
+				// TODO: implement day of year
+				val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
+				drawGradientArc( canvas, bounds, 0f, bounds.width() / 2 - 30f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
+			}
+			else -> {
+				renderWatchView(canvas, bounds, zonedDateTime)
+				drawGradient(canvas, currentWatchFaceSize)
+				if (currentWatchFaceSize.width() != 0) canvas.drawBitmap(grainImage, bounds, bounds, blendPaint)
 
-		if ( !interactive && ambient ) {
-
-			// TODO: implement day of year
-			val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
-			drawGradientArc( canvas, bounds, 0f, bounds.width() / 2 - 30f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
-
-		} else if ( interactive && !ambient ) {
-
-			renderWatchView(canvas, bounds, zonedDateTime)
-			drawGradient(canvas, currentWatchFaceSize)
-			if (currentWatchFaceSize.width() != 0) canvas.drawBitmap(grainImage, bounds, bounds, blendPaint)
-
-			val name = watchFaceData.activeColorStyle.toString()
-			drawBezel(canvas, bounds, name, watchFaceColors.activePrimaryColor)
-			drawTextZones(canvas, bounds, name, zonedDateTime)
-
+				val name = watchFaceData.activeColorStyle.toString()
+				drawBezel(canvas, bounds, name, watchFaceColors.activePrimaryColor)
+				drawTextZones(canvas, bounds, name, zonedDateTime)
+			}
 		}
-
 	}
 
 	private fun drawGradient(canvas: Canvas, bounds: Rect) {

@@ -168,8 +168,8 @@ class Calculations private constructor(private val context: Context) {
 		// ref: https://github.com/cosinekitty/astronomy/discussions/336
 
 		val rotation = rotationAxis( it, time )
-		val distance =  helioDistance( it, time ).round(2)
-		val totalSolarDays = planetOrbitalPeriod(it).round(0)
+		val distance =  helioDistance( it, time ).roundTo(2)
+		val totalSolarDays = planetOrbitalPeriod(it).roundTo(0)
 
 		//
 
@@ -212,7 +212,6 @@ class Calculations private constructor(private val context: Context) {
 
 	}
 
-	private fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
 	private fun Double.roundTo(decimals: Int = 2): Double = round(
 		this * 10.0.pow(
 			decimals
