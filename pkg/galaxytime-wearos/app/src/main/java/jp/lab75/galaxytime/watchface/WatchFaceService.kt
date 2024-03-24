@@ -92,9 +92,8 @@ class WatchFaceService : WatchFaceService() {
 			handler.postDelayed(this, refreshBiometricsServiceInterval)
 		}
 	}
-	override fun onCreate() {
-		super.onCreate()
 
+	fun initialize() {
 		calculations = Calculations.getInstance(applicationContext)
 		meetingService = MeetingService.getInstance(applicationContext)
 		biometricsService = BiometricsService.getInstance(applicationContext)
@@ -133,6 +132,12 @@ class WatchFaceService : WatchFaceService() {
 		}
 	}
 
+	override fun onCreate() {
+		super.onCreate()
+
+		initialize()
+	}
+
 	override fun onDestroy() {
 		super.onDestroy()
 		handler.removeCallbacks(updateLocationLoop)
@@ -147,6 +152,10 @@ class WatchFaceService : WatchFaceService() {
 		currentUserStyleRepository: CurrentUserStyleRepository
 	): WatchFace {
 		Log.d(TAG, "createWatchFace()")
+
+		if (!::calculations.isInitialized) {
+			initialize()
+		}
 
 		val renderer = WatchFaceCanvasRenderer(
 			context = applicationContext,
