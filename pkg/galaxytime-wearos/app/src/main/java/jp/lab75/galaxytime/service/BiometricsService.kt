@@ -2,16 +2,12 @@ package jp.lab75.galaxytime.service
 
 import android.util.Log
 import android.content.Context
-import android.database.Cursor
-import android.provider.CalendarContract
-import androidx.compose.runtime.mutableStateOf
 import java.util.Calendar
 import java.util.UUID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class BiometricsService private constructor(private val context: Context) {
-
 
 	private var hydrations = mutableListOf<Long>()
 	private var lastUpdate: Long = 0

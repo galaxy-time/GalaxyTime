@@ -56,6 +56,7 @@ import jp.lab75.galaxytime.service.getReferenceDataFromThemeName
 import jp.lab75.galaxytime.settings.WatchFaceSettingsActivity
 import jp.lab75.galaxytime.settings.WatchFaceSettingsState
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class AstronomicsActivity : ComponentActivity() {
@@ -131,12 +132,12 @@ fun AstronomicsApp(
 	sunRadius: Float
 ) {
 
-	val margin = 20f
-	val density = LocalDensity.current
-	val configuration = LocalConfiguration.current
-	val width = with(density) { configuration.screenWidthDp.dp.roundToPx() }
-	val height = with(density) { configuration.screenHeightDp.dp.roundToPx() }
-	val offset = height / 2 + 30
+	// val margin = 20f
+	// val density = LocalDensity.current
+	// val configuration = LocalConfiguration.current
+	// val width = with(density) { configuration.screenWidthDp.dp.roundToPx() }
+	// val height = with(density) { configuration.screenHeightDp.dp.roundToPx() }
+	// val offset = height / 2 + 30
 
 //	Log.d("Astronomics Composable", "${name} ${color} ${ref}")
 
@@ -189,10 +190,10 @@ fun AstronomicsView(
 	sunRadius: Float
 ) {
 
-	val density = LocalDensity.current
-	val configuration = LocalConfiguration.current
-	val height = configuration.screenHeightDp.dp
-	val yp = height / 2
+	// val density = LocalDensity.current
+	// val configuration = LocalConfiguration.current
+	// val height = configuration.screenHeightDp.dp
+	// val yp = height / 2
 	val off = -15.dp
 	val off2 = 5.dp
 
@@ -278,10 +279,10 @@ fun DescriptionText(
 
 	val leftColumn = arrayOf(l1,l2,l3).joinToString("\n")
 
-	fun Float.round(decimals: Int = 2): Float = "%.${decimals}f".format(this).toFloat()
+	fun Float.roundTo(decimals: Int = 2): Float = (kotlin.math.round(this * 10.0.pow(decimals)) / 10.0.pow(decimals)).toFloat()
 
 	val r1 = "\n\n\n\n\nSOL ${ref.totalRotationTimeHours}h"
-	val r2 = "    ${(ref.totalRotationTimeHours / 24).round(2)} TERRAN DAYS"
+	val r2 = "    ${(ref.totalRotationTimeHours / 24).roundTo(2)} TERRAN DAYS"
 	val r3 = "SRF ${ref.surfaceAreaKm2}km²"
 	val r4 = if (ref.satellites>0) "SAT ${ref.satellites}" else ""
 

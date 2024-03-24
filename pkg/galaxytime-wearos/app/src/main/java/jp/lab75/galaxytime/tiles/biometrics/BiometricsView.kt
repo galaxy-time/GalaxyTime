@@ -63,8 +63,8 @@ fun renderBiometricsView(
 
 	val resources: Resources = context.resources
 
-	var watchFaceData: WatchFaceData = WatchFaceData()
-	var watchFaceColors = convertToColorPalette(
+	val watchFaceData: WatchFaceData = WatchFaceData()
+	val watchFaceColors = convertToColorPalette(
 		context,
 		watchFaceData.activeColorStyle,
 		watchFaceData.ambientColorStyle

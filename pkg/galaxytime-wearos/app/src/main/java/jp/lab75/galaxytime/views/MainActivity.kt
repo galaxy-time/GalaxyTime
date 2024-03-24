@@ -49,6 +49,8 @@ class MainActivity : ComponentActivity() {
 		setContent {
 			WearApp("GalaxyTime") { navigateToWatchFace() }
 		}
+
+		finish()
 	}
 
 	fun navigateToWatchFace() {

@@ -41,6 +41,8 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import jp.lab75.galaxytime.components.MinimalCompass
 import jp.lab75.galaxytime.service.Calculations
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
+import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.roundToInt
 
 
@@ -93,7 +95,7 @@ class CompassActivity : ComponentActivity(), SensorEventListener {
 */
 
 		sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-		val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
+		// val isMagneticFieldSensorPresent = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null
 
 		setTheme(android.R.style.Theme_DeviceDefault)
 
@@ -232,14 +234,14 @@ fun CompassApp(
 	callback: () -> Unit,
 ) {
 
-	fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+	fun Double.roundTo(decimals: Int = 2): Double = round(this * 10.0.pow(decimals)) / 10.0.pow(decimals)
 
 	val data = calculations.getDataFromName(name)
-	val azi = data?.horizontal?.azimuth?.round(2)
-	val alt = data?.horizontal?.altitude?.round(2)
-	val ra =  data?.equatorial?.ra?.round(2)
-	val dec = data?.equatorial?.dec?.round(2)
-	val dst = data?.equatorial?.dist?.round(2)
+	val azi = data?.horizontal?.azimuth?.roundTo(2)
+	val alt = data?.horizontal?.altitude?.roundTo(2)
+	val ra =  data?.equatorial?.ra?.roundTo(2)
+	val dec = data?.equatorial?.dec?.roundTo(2)
+	val dst = data?.equatorial?.dist?.roundTo(2)
 
 	Log.d("compass","$name azi $azi alt $alt ra $ra dec $dec")
 

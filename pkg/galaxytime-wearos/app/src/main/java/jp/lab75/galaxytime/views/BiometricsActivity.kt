@@ -15,6 +15,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 
 import androidx.compose.runtime.Composable
 
@@ -142,8 +143,21 @@ fun BiometricsView(
 		contentAlignment = Alignment.Center
 	) {
 		DrawScale()
-//		DrawGraph()
 		LineChart(biometrics = biometrics)
+		Box(
+			modifier = Modifier
+				.width(80.dp)
+				.height(50.dp)
+				.offset(x = -45.dp, y = 35.dp)
+				.pointerInput(Unit) {
+					detectTapGestures(
+						onTap = {
+							haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+							onHydrate()
+						}
+					)
+				}
+		)
 		Text(
 			modifier = Modifier
 				.align(Alignment.Center)
@@ -162,14 +176,6 @@ fun BiometricsView(
 				modifier = Modifier
 					.offset(x = -50.dp, y = 40.dp)
 					.border(width = 0.5.dp, color = Color.White)
-					.pointerInput(Unit) {
-						detectTapGestures(
-							onTap = {
-								haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-								onHydrate()
-							}
-						)
-					}
 					.drawBehind {
 						drawRect(
 							color = Color(0xffff00ff),
@@ -200,9 +206,6 @@ fun BiometricsView(
 
 }
 
-// draw a vertical scale
-// to measure hydrations
-
 @Composable
 fun DrawScale() {
 
@@ -212,7 +215,7 @@ fun DrawScale() {
 	Box(
 		modifier = Modifier.drawBehind {
 			val cx = size.width / 2f
-			val cy = size.height / 2f
+			// val cy = size.height / 2f
 			drawLine(
 				start = Offset(cx, 0f),
 				end = Offset(cx, size.height),
@@ -248,7 +251,7 @@ fun DrawGraph() {
 		modifier = Modifier
 			.fillMaxSize()
 			.drawBehind {
-				val cx = size.width / 2f
+				// val cx = size.width / 2f
 				val cy = size.height / 2f
 				drawLine(
 					start = Offset(0f, cy),
@@ -306,7 +309,6 @@ fun LineChart(biometrics: BiometricsService) {
 	)
 
 }
-
 
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable

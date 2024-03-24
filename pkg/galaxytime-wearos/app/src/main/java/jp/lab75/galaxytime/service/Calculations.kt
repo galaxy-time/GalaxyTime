@@ -15,21 +15,23 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
 import io.github.cosinekitty.astronomy.*
-import jp.lab75.galaxytime.data.watchface.WatchFaceData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.round
 
 class Calculations private constructor(private val context: Context) {
 
-	// Singleton
 	companion object {
-		@Volatile private var INSTANCE: Calculations? = null // Volatile modifier is necessary
+		@Volatile private var INSTANCE: Calculations? = null
 		fun getInstance(context: Context) =
-			INSTANCE ?: synchronized(this) { // synchronized to avoid concurrency problem
+			INSTANCE ?: synchronized(this) {
 				INSTANCE ?: Calculations(context).also { INSTANCE = it }
 			}
 		private const val TAG = "Calculations"
 	}
+
 	init {
 	    Log.d(TAG,"init()")
 	}
@@ -65,7 +67,7 @@ class Calculations private constructor(private val context: Context) {
 	//
 
 	private val bodyDataMap = mutableMapOf<Body, Data>()
-	private val bodyList = arrayOf(
+	private val bodyList = setOf(
 		Body.Mercury, Body.Venus,
 		Body.Earth, Body.Moon, Body.Mars,
 		Body.Jupiter, Body.Saturn,
@@ -107,7 +109,7 @@ class Calculations private constructor(private val context: Context) {
 		fusedLocationClient.getCurrentLocation(
 			CurrentLocationRequest.Builder().setDurationMillis(10000)
 				.setMaxUpdateAgeMillis(10000)
-				.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+				.setPriority(Priority.PRIORITY_LOW_POWER)
 				.build(), null
 		).addOnSuccessListener { location: Location? ->
 			Log.d(TAG,"Update location $location");
@@ -119,20 +121,16 @@ class Calculations private constructor(private val context: Context) {
 
 	private fun convertToDMS(x: Double): DMS {
 
-		var tempX = x
-		val negative = tempX < 0
-		if (negative) { tempX = -tempX }
-		var degrees = tempX.toInt()
-		tempX = 60.0 * (tempX - degrees)
-		val minutes = tempX.toInt()
-		tempX = 60.0 * (tempX - minutes)
-		// Round to the nearest tenth of an arcsecond.
-		var seconds = (10.0 * tempX).roundToInt() / 10.0
+		val negative = x < 0
+
+		val absX = abs(x)
+		var degrees = absX.toInt()
+		var minutes = ((absX - degrees) * 60).toInt()
+		var seconds = (10 * ((absX - degrees - minutes / 60.0) * 3600)).roundToInt() / 10.0
+
 		if (seconds == 60.0) {
 			seconds = 0.0
-			tempX = minutes + 1.0
-			if (tempX == 60.0) {
-				tempX = 0.0
+			if (++minutes == 60) {
 				++degrees
 			}
 		}
@@ -187,6 +185,7 @@ class Calculations private constructor(private val context: Context) {
 			localTime.get(Calendar.MINUTE),
 			localTime.get(Calendar.SECOND)
 		)
+
 		val hours = equatorial.ra / 15f
 		val minutes = ( hours - hours.toInt() ) * 60f
 		val seconds = ( minutes - minutes.toInt() ) * 60f
@@ -214,5 +213,10 @@ class Calculations private constructor(private val context: Context) {
 	}
 
 	private fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+	private fun Double.roundTo(decimals: Int = 2): Double = round(
+		this * 10.0.pow(
+			decimals
+		)
+	) / 10.0.pow(decimals)
 
 }

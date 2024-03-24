@@ -16,6 +16,7 @@
 package jp.lab75.galaxytime
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.Intent.getIntent
 import android.content.pm.PackageManager
@@ -90,9 +91,8 @@ class WatchFaceService : WatchFaceService() {
 			handler.postDelayed(this, refreshBiometricsServiceInterval)
 		}
 	}
-	override fun onCreate() {
-		super.onCreate()
 
+	fun initialize() {
 		calculations = Calculations.getInstance(applicationContext)
 		meetingService = MeetingService.getInstance(applicationContext)
 		biometricsService = BiometricsService.getInstance(applicationContext)
@@ -131,6 +131,12 @@ class WatchFaceService : WatchFaceService() {
 		}
 	}
 
+	override fun onCreate() {
+		super.onCreate()
+
+		initialize()
+	}
+
 	override fun onDestroy() {
 		super.onDestroy()
 		handler.removeCallbacks(updateLocationLoop)
@@ -139,6 +145,7 @@ class WatchFaceService : WatchFaceService() {
 		handler.removeCallbacks(updateBiometricsServiceLoop)
 	}
 
+	@SuppressLint("RestrictedApi")
 	override suspend fun createWatchFace(
 		surfaceHolder: SurfaceHolder,
 		watchState: WatchState,
@@ -146,6 +153,10 @@ class WatchFaceService : WatchFaceService() {
 		currentUserStyleRepository: CurrentUserStyleRepository
 	): WatchFace {
 		Log.d(TAG, "createWatchFace()")
+
+		if (!::calculations.isInitialized) {
+			initialize()
+		}
 
 		val renderer = WatchFaceCanvasRenderer(
 			context = applicationContext,
