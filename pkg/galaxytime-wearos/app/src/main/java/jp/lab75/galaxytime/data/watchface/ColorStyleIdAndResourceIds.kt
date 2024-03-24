@@ -17,6 +17,7 @@ package jp.lab75.galaxytime.data.watchface
 
 import android.content.Context
 import android.graphics.drawable.Icon
+import android.util.Log
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -237,8 +238,9 @@ enum class ColorStyleIdAndResourceIds(
          * Translates the string id to the correct ColorStyleIdAndResourceIds object.
          */
         fun getColorStyleConfig(id: String): ColorStyleIdAndResourceIds {
+			Log.d("ColorStyle","getColorStyleConfig ———> $id")
             return when (id) {
-                // AMBIENT.id -> AMBIENT
+                 AMBIENT.id -> AMBIENT
                 // WHITE.id -> WHITE
 				// SUN.id -> SUN
 				MERCURY.id -> MERCURY

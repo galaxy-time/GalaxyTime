@@ -17,14 +17,13 @@ package jp.lab75.galaxytime
 
 import android.Manifest
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.content.pm.PackageManager
-
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.SurfaceHolder
 import androidx.core.content.ContextCompat
-
 import androidx.wear.watchface.CanvasType
 import androidx.wear.watchface.ComplicationSlotsManager
 import androidx.wear.watchface.WatchFace
@@ -33,19 +32,18 @@ import androidx.wear.watchface.WatchFaceType
 import androidx.wear.watchface.WatchState
 import androidx.wear.watchface.style.CurrentUserStyleRepository
 import androidx.wear.watchface.style.UserStyleSchema
-
+import jp.lab75.galaxytime.service.BiometricsService
 import jp.lab75.galaxytime.service.Calculations
 import jp.lab75.galaxytime.service.MeetingService
-import jp.lab75.galaxytime.service.BiometricsService
-
 import jp.lab75.galaxytime.utils.createComplicationSlotManager
 import jp.lab75.galaxytime.utils.createUserStyleSchema
 import jp.lab75.galaxytime.views.PermissionRequestActivity
-import jp.lab75.galaxytime.views.CompassActivity
+
 
 class WatchFaceService : WatchFaceService() {
 
 	private val handler = Handler( Looper.getMainLooper() )
+
 	private lateinit var calculations: Calculations
 	private lateinit var meetingService: MeetingService
 	private lateinit var biometricsService: BiometricsService
@@ -138,6 +136,7 @@ class WatchFaceService : WatchFaceService() {
 		handler.removeCallbacks(updateLocationLoop)
 		handler.removeCallbacks(updateCalculationsLoop)
 		handler.removeCallbacks(updateMeetingServiceLoop)
+		handler.removeCallbacks(updateBiometricsServiceLoop)
 	}
 
 	override suspend fun createWatchFace(

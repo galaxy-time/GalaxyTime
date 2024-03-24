@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import android.R.anim
 
 class WatchFaceSettingsActivity : ComponentActivity() {
+
 	private val stateHolder: WatchFaceSettingsState by lazy {
 		WatchFaceSettingsState(
 			lifecycleScope,
@@ -48,51 +49,40 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 		)
 	}
 
+	// xml layout binding
 	private lateinit var binding: WatchfaceSettingsBinding
 
 	override fun finish(){
 		super.finish()
-		overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		Log.d(TAG, "onCreate()")
 
-		// inflate xml layout
 		binding = WatchfaceSettingsBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 
-		// Disable widgets until data loads and values are set.
-		// binding.colorStylePickerButton.isEnabled = false
-		// binding.radioGroup = false
-		// binding.randomPlanetPickerButton.isEnabled = false
+//		binding.radioGroup.isEnabled = false
 
 		val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
 
 		radioGroup.setOnCheckedChangeListener { _, checkedId ->
+			Log.d(TAG,"update planet selection: $checkedId")
 			when (checkedId) {
-//                R.id.id_sun -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SUN.id )
 				R.id.id_mercury -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MERCURY.id )
 				R.id.id_venus -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.VENUS.id )
 				R.id.id_earth -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.EARTH.id )
+				R.id.id_moon -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MOON.id )
 				R.id.id_mars -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.MARS.id )
 				R.id.id_jupiter -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.JUPITER.id )
 				R.id.id_saturn -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.SATURN.id )
 				R.id.id_uranus -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.URANUS.id )
 				R.id.id_neptune -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.NEPTUNE.id )
 				R.id.id_pluto -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.PLUTO.id )
-				else -> stateHolder.setColorStyle( ColorStyleIdAndResourceIds.EARTH.id )
 			}
 			finish()
         }
-
-		// binding.minuteHandLengthSlider.addOnChangeListener { slider, value, fromUser ->
-		//     Log.d(TAG, "addOnChangeListener(): $slider, $value, $fromUser")
-		//     if (fromUser) {
-		//         stateHolder.setMinuteHandArmLength(value)
-		//     }
-		// }
 
 		lifecycleScope.launch(Dispatchers.Main.immediate) {
 			stateHolder.uiState
@@ -126,51 +116,8 @@ class WatchFaceSettingsActivity : ComponentActivity() {
 	}
 
 	private fun enableWidgets() {
-		// binding.colorStylePickerButton.isEnabled = true
-		// binding.randomPlanetPickerButton.isEnabled = true
-		// binding.radioGroup = true
+//		 binding.radioGroup.isEnabled = true
 	}
-
-	// fun onClickRandomPlanetPickerButton(view: View) {
-	// 	Log.d(TAG, "random() $view")
-	// 	val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
-	// 	val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
-	// 	stateHolder.setColorStyle(newColorStyle.id)
-	// }
-
-	// TODO: this needs a proper dropdown or scroll selector
-	// fun onClickColorStylePickerButton(view: View) {
-	// 	Log.d(TAG, "onClickColorStylePickerButton() $view")
-	// 	// Selects a random color style from list.
-	// 	val colorStyleIdAndResourceIdsList = enumValues<ColorStyleIdAndResourceIds>()
-	// 	val newColorStyle: ColorStyleIdAndResourceIds = colorStyleIdAndResourceIdsList.random()
-	// 	stateHolder.setColorStyle(newColorStyle.id)
-	// }
-
-	// fun onClickTopLeftComplicationButton(view: View) {
-	//     Log.d(TAG, "onClickTopLeftComplicationButton() $view")
-	//     stateHolder.setComplication(TOP_LEFT_COMPLICATION_ID)
-	// }
-
-	// fun onClickTopRightComplicationButton(view: View) {
-	//     Log.d(TAG, "onClickTopRightComplicationButton() $view")
-	//     stateHolder.setComplication(TOP_RIGHT_COMPLICATION_ID)
-	// }
-
-	// fun onClickBottomLeftComplicationButton(view: View) {
-	//     Log.d(TAG, "onClickBottomLeftComplicationButton() $view")
-	//     stateHolder.setComplication(BOTTOM_LEFT_COMPLICATION_ID)
-	// }
-
-	// fun onClickBottomRightComplicationButton(view: View) {
-	//     Log.d(TAG, "onClickBottomRightComplicationButton() $view")
-	//     stateHolder.setComplication(BOTTOM_RIGHT_COMPLICATION_ID)
-	// }
-
-	// fun onClickTicksEnabledSwitch(view: View) {
-	//     Log.d(TAG, "onClickTicksEnabledSwitch() $view")
-	//     stateHolder.setDrawPips(binding.ticksEnabledSwitch.isChecked)
-	// }
 
 	companion object {
 		const val TAG = "WatchFaceSettingsActivity"

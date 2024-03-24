@@ -26,10 +26,11 @@ android {
 
     defaultConfig {
         applicationId "jp.lab75.galaxytime"
+//		applicationId "me.galaxyti.galaxytime"
         minSdk 33
         targetSdk 33
-        versionCode 23
-        versionName '0.23'
+        versionCode 26
+        versionName '0.26'
 		versionNameSuffix 'RC'
 	}
 

@@ -30,7 +30,7 @@ class BiometricsService private constructor(private val context: Context) {
 	}
 
 	fun add() {
-		Log.d(TAG,"add()")
+//		Log.d(TAG,"add()")
 		val id = UUID.randomUUID().toString()
 		val time = Calendar.getInstance().timeInMillis
 		hydrations.add( time )

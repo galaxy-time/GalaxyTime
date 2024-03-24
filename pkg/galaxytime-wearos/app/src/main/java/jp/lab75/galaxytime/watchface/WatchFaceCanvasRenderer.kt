@@ -98,23 +98,20 @@ class WatchFaceCanvasRenderer (
 
 	private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 	private val resources: Resources = context.resources
+	private var currentWatchFaceSize = screenBounds
+
 	private var watchFaceData: WatchFaceData = WatchFaceData()
 	private var watchFaceColors = convertToColorPalette(
 		context,
 		watchFaceData.activeColorStyle,
 		watchFaceData.ambientColorStyle
 	)
-
-	private var themeName = watchFaceData.activeColorStyle.toString()
-	private var currentWatchFaceSize = screenBounds // Rect(0, 0, 450, 450)
-	private var watchMode: WatchMode = WatchMode.WATCH
+	private var themeName: String = watchFaceData.activeColorStyle.name
 
 	private val TL = Rect(0,0,currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.exactCenterY().toInt())
 	private val TR = Rect(currentWatchFaceSize.exactCenterX().toInt(),0,currentWatchFaceSize.width(),currentWatchFaceSize.exactCenterY().toInt())
 	private val BL = Rect(0,currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.height())
-	private val BR = Rect(currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.width(),currentWatchFaceSize.height())
-
-//	private var transitionAlpha = 0f
+//	private val BR = Rect(currentWatchFaceSize.exactCenterX().toInt(),currentWatchFaceSize.exactCenterY().toInt(),currentWatchFaceSize.width(),currentWatchFaceSize.height())
 
 	private fun openActivity(view: String ) {
 		Log.d(TAG, "openCompassActivity()")
@@ -146,14 +143,14 @@ class WatchFaceCanvasRenderer (
 
 	}
 
-	private val default_fontsize = 20f
-	private val small_fontsize = 12f
+	private val defaultFontsize = 20f
+	private val smallFontsize = 12f
 
 	// general text
 	private val textPaint = Paint().apply {
 		isAntiAlias = true
 		color = Color.YELLOW
-		textSize = default_fontsize
+		textSize = defaultFontsize
 		isSubpixelText = true
 		typeface = resources.getFont(R.font.b612)
 	}
@@ -163,7 +160,7 @@ class WatchFaceCanvasRenderer (
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-		textSize = default_fontsize
+		textSize = defaultFontsize
 		textAlign = Paint.Align.CENTER
 		isLinearText = true
 		isSubpixelText = true
@@ -176,7 +173,7 @@ class WatchFaceCanvasRenderer (
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-		textSize = default_fontsize
+		textSize = defaultFontsize
 		textAlign = Paint.Align.RIGHT
 		isLinearText = true
 		isSubpixelText = true
@@ -188,7 +185,7 @@ class WatchFaceCanvasRenderer (
 		isAntiAlias = true
 		color = Color.WHITE
 		typeface = typeface
-		textSize = small_fontsize
+		textSize = smallFontsize
 		textAlign = Paint.Align.RIGHT
 		isLinearText = true
 		isSubpixelText = true
@@ -214,6 +211,7 @@ class WatchFaceCanvasRenderer (
 
 	init {
 		scope.launch {
+			Log.d(TAG,"INIT ${currentUserStyleRepository.userStyle.value}")
 			currentUserStyleRepository.userStyle.collect {
 				userStyle -> updateWatchFaceData(userStyle)
 			}
@@ -227,8 +225,12 @@ class WatchFaceCanvasRenderer (
 	//	update theme
 
 	private fun updateWatchFaceData(userStyle: UserStyle) {
-		Log.d(TAG, "updateWatchFace(): $userStyle")
-		themeName = watchFaceData.activeColorStyle.toString()
+
+		Log.d(TAG, "========================================")
+		Log.d(TAG, "========================================")
+		Log.d(TAG, "updateWatchFace(): ${userStyle}")
+
+
 
 		if (currentWatchFaceSize.width() != 0) {
 			grainImage = Bitmap.createScaledBitmap(
@@ -249,8 +251,8 @@ class WatchFaceCanvasRenderer (
 		for (options in userStyle) {
 
 			when (options.key.id.toString()) {
-
 				COLOR_STYLE_SETTING -> {
+
 					val listOption = options.value as
 						UserStyleSetting.ListUserStyleSetting.ListOption
 
@@ -260,56 +262,36 @@ class WatchFaceCanvasRenderer (
 						)
 					)
 				}
-
-//				DRAW_HOUR_PIPS_STYLE_SETTING -> {
-//					val booleanValue = options.value as
-//						UserStyleSetting.BooleanUserStyleSetting.BooleanOption
-
-//					newWatchFaceData = newWatchFaceData.copy(
-//						drawHourPips = booleanValue.value
-//					)
-//				}
-
-				// WATCH_HAND_LENGTH_STYLE_SETTING -> {
-				// }
-
 			}
 		}
 
+		Log.d(TAG,"old: ${watchFaceData.activeColorStyle.name} new: ${newWatchFaceData.activeColorStyle.name}")
+
 		// Only updates if something changed.
-		if (watchFaceData != newWatchFaceData) {
+		if (watchFaceData != newWatchFaceData && newWatchFaceData.activeColorStyle.name != "AMBIENT") {
 			watchFaceData = newWatchFaceData
-			Log.d(TAG, watchFaceData.activeColorStyle.toString())
-			// Recreates Color and ComplicationDrawable from resource ids.
 			watchFaceColors = convertToColorPalette(
 				context,
 				watchFaceData.activeColorStyle,
 				watchFaceData.ambientColorStyle
 			)
-			calculations.setName(watchFaceData.activeColorStyle.toString())
+			themeName = watchFaceData.activeColorStyle.name
+			calculations.setName(newWatchFaceData.activeColorStyle.toString())
+			calculations.update()
 
-			// Applies the user chosen complication color scheme changes. ComplicationDrawables for
-			// each of the styles are defined in XML so we need to replace the complication's
-			// drawables.
-			for ((_, complication) in complicationSlotsManager.complicationSlots) {
-				ComplicationDrawable.getDrawable(
-					context,
-					watchFaceColors.complicationStyleDrawableId
-				)?.let {
-					(complication.renderer as CanvasComplicationDrawable).drawable = it
-				}
-			}
-
+		} else {
+			Log.d(TAG, "skipping...")
 		}
-		Log.d(TAG,"trigger data update")
-		calculations.update()
+		Log.d(TAG, "========================================")
+		Log.d(TAG, "========================================")
+
 	}
 
 	//	destroy
 
 	override fun onDestroy() {
 		Log.d(TAG, "onDestroy()")
-		scope.cancel("GalaxyWatchCanvasRenderer scope clear() request")
+		scope.cancel("$TAG scope clear() request")
 		super.onDestroy()
 	}
 
@@ -324,11 +306,11 @@ class WatchFaceCanvasRenderer (
 
 		canvas.drawColor(renderParameters.highlightLayer!!.backgroundTint)
 
-		for ((_, complication) in complicationSlotsManager.complicationSlots) {
-			if (complication.enabled) {
-				complication.renderHighlightLayer(canvas, zonedDateTime, renderParameters)
-			}
-		}
+//		for ((_, complication) in complicationSlotsManager.complicationSlots) {
+//			if (complication.enabled) {
+//				complication.renderHighlightLayer(canvas, zonedDateTime, renderParameters)
+//			}
+//		}
 
 	}
 
@@ -407,12 +389,12 @@ class WatchFaceCanvasRenderer (
 		zonedDateTime: ZonedDateTime
 	) {
 
-		if (
-			watchFaceData.drawComplications &&
-			renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY)
-		) {
-			drawComplications(canvas, zonedDateTime)
-		}
+//		if (
+//			watchFaceData.drawComplications &&
+//			renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY)
+//		) {
+//			drawComplications(canvas, zonedDateTime)
+//		}
 		drawClockHands(canvas, bounds, zonedDateTime)
 
 	}
@@ -438,14 +420,21 @@ class WatchFaceCanvasRenderer (
 		data = calculations.getBodyData( body )
 		if ( data == null ) return
 
+		val totalAngle = 360f
+		val totalDays = data.totalSolarDays
+		val currentAngle = calculations.dayOfYear.value.toFloat()
+		val currentDay = ( currentAngle * ( totalDays / totalAngle ) ).toInt()
+
+		// TODO: validate calculation. lgtm.
+//		 Log.d(TAG,"DOTY ———— totalDays: $totalDays currentAngle $currentAngle -> currentDay $currentDay")
 
 		if ( name == "EARTH" ) {
 			localTime = DateTimeFormatter.ofPattern("DDD:HH:mm").format(zonedDateTime).replace("0", zero)
 		} else if ( data != null ) {
 			localTime = timeFormat.format(
-				data.solarDay,
-				data.rightAscension.degrees,
-				data.rightAscension.minutes
+				currentDay,
+				calculations.localTime.value.hh, // data.rightAscension.degrees,
+				calculations.localTime.value.mm, // data.rightAscension.minutes
 			).replace( "0", zero )
 		}
 
@@ -488,8 +477,10 @@ class WatchFaceCanvasRenderer (
 
 		val bl = "HYDRATION ${biometricsService.state.value}"
 
+		// TODO: what happens on tap?
+		// TODO: calc remaining time in hh:mm
 		val nextMeeting = meetingService.getNextMeeting()
-		val br =  if (nextMeeting != null) nextMeeting.title else ""
+		val br =  if (nextMeeting != null) "$nextMeeting.title: $nextMeeting.timeRemain" else ""
 
 		val offset = 21f // offset from border of lunette
 		val arcOffset = 2f // leap between zone arcs
@@ -536,15 +527,15 @@ class WatchFaceCanvasRenderer (
 
 	}
 
-	private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
-
-		for ((_, complication) in complicationSlotsManager.complicationSlots) {
-			if (complication.enabled) {
-				complication.render(canvas, zonedDateTime, renderParameters)
-			}
-		}
-
-	}
+//	private fun drawComplications(canvas: Canvas, zonedDateTime: ZonedDateTime) {
+//
+//		for ((_, complication) in complicationSlotsManager.complicationSlots) {
+//			if (complication.enabled) {
+//				complication.render(canvas, zonedDateTime, renderParameters)
+//			}
+//		}
+//
+//	}
 
 	private fun drawClockHands(
 		c: Canvas,
@@ -553,27 +544,32 @@ class WatchFaceCanvasRenderer (
 	) {
 
 		val name = watchFaceData.activeColorStyle.toString()
-		val body = calculations.getBodyFromThemeName(name)
-		var data: Data? = null
+//		val body = calculations.getBodyFromThemeName(name)
+//		var data: Data? = null
 
-		var ss = 0f
-		var mm = 0f
-		var hh = 0f
-		var dd = 0
+//		var ss = 0f
+//		var mm = 0f
+//		var hh = 0f
+//		var dd = 0
 
-		data = calculations.getBodyData(body)
-		if(data!=null) {
-			ss = data.rightAscension.seconds.toFloat()
-			mm = data.rightAscension.minutes.toFloat()
-			hh = data.rightAscension.degrees.toFloat()
-			dd = if ( name.lowercase() == "earth" ) time.dayOfYear else data.solarDay
-		}
+//		data = calculations.getBodyData(body)
+//		if(data!=null) {
+//			ss = calculations.localTime.value.ss.toFloat() //data.rightAscension.seconds.toFloat()
+//			mm = calculations.localTime.value.mm.toFloat() //data.rightAscension.minutes.toFloat()
+//			hh = calculations.localTime.value.hh.toFloat() //data.rightAscension.degrees.toFloat()
+//			dd = if ( name.lowercase() == "earth" ) time.dayOfYear else 0
+//		}
 
 		// remote
-		val sr = -90f +  6f * ss
-		val mr = -90f +  6f * mm
-		val hr = -90f + 15f * hh
-		val dr = -90f + dd * ( 360f / 365f )
+		val sr = -90f +  6f * calculations.localTime.value.ss.toFloat()
+		val mr = -90f +  6f * calculations.localTime.value.mm.toFloat()
+		val hr = -90f + 15f * calculations.localTime.value.hh.toFloat()
+		val dr = if ( name.lowercase() == "earth" ) {
+			-90f +  time.dayOfYear * (360f / 365f)
+		} else {
+			-90f + calculations.localTime.value.dd
+		}
+
 //		Log.d(TAG, "drawClockHands: $dr $hr $mr $sr")
 
 		if ( renderParameters.drawMode != DrawMode.AMBIENT ) {

@@ -161,18 +161,18 @@ class WatchFaceSettingsState(
         )
     }
 
-    fun setComplication(complicationLocation: Int) {
-        val complicationSlotId = when (complicationLocation) {
-            TOP_LEFT_COMPLICATION_ID -> { TOP_LEFT_COMPLICATION_ID }
-            TOP_RIGHT_COMPLICATION_ID -> { TOP_RIGHT_COMPLICATION_ID }
-            BOTTOM_LEFT_COMPLICATION_ID -> { BOTTOM_LEFT_COMPLICATION_ID }
-            BOTTOM_RIGHT_COMPLICATION_ID -> { BOTTOM_RIGHT_COMPLICATION_ID }
-            else -> { return }
-        }
-        scope.launch(Dispatchers.Main.immediate) {
-            editorSession.openComplicationDataSourceChooser(complicationSlotId)
-        }
-    }
+//    fun setComplication(complicationLocation: Int) {
+//        val complicationSlotId = when (complicationLocation) {
+//            TOP_LEFT_COMPLICATION_ID -> { TOP_LEFT_COMPLICATION_ID }
+//            TOP_RIGHT_COMPLICATION_ID -> { TOP_RIGHT_COMPLICATION_ID }
+//            BOTTOM_LEFT_COMPLICATION_ID -> { BOTTOM_LEFT_COMPLICATION_ID }
+//            BOTTOM_RIGHT_COMPLICATION_ID -> { BOTTOM_RIGHT_COMPLICATION_ID }
+//            else -> { return }
+//        }
+//        scope.launch(Dispatchers.Main.immediate) {
+//            editorSession.openComplicationDataSourceChooser(complicationSlotId)
+//        }
+//    }
 
     fun setColorStyle(newColorStyleId: String) {
         val userStyleSettingList = editorSession.userStyleSchema.userStyleSettings
@@ -197,22 +197,6 @@ class WatchFaceSettingsState(
         }
     }
 
-    fun setDrawPips(enabled: Boolean) {
-        setUserStyleOption(
-            drawPipsKey,
-            UserStyleSetting.BooleanUserStyleSetting.BooleanOption.from(enabled)
-        )
-    }
-
-    fun setMinuteHandArmLength(newLengthRatio: Float) {
-        val newMinuteHandLengthRatio = newLengthRatio.toDouble() / MULTIPLE_FOR_SLIDER
-
-        setUserStyleOption(
-            minuteHandLengthKey,
-            UserStyleSetting.DoubleRangeUserStyleSetting.DoubleRangeOption(newMinuteHandLengthRatio)
-        )
-    }
-
     // Saves User Style Option change back to the back to the EditorSession.
     // Note: The UI widgets in the Activity that can trigger this method (through the 'set' methods)
     // will only be enabled after the EditorSession has been initialized.
@@ -220,6 +204,7 @@ class WatchFaceSettingsState(
         userStyleSetting: UserStyleSetting,
         userStyleOption: UserStyleSetting.Option
     ) {
+		Log.d(TAG, "================================================")
         Log.d(TAG, "setUserStyleOption()")
         Log.d(TAG, "\tuserStyleSetting: $userStyleSetting")
         Log.d(TAG, "\tuserStyleOption: $userStyleOption")
@@ -247,6 +232,6 @@ class WatchFaceSettingsState(
 
     companion object {
         private const val TAG = "Settings"
-        private const val MULTIPLE_FOR_SLIDER: Float = 1000f
+//        private const val MULTIPLE_FOR_SLIDER: Float = 1000f
     }
 }

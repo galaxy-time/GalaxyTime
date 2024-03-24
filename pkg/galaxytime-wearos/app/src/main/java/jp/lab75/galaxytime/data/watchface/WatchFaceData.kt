@@ -22,18 +22,18 @@ const val DRAW_HOUR_PIPS_DEFAULT = true
 const val DRAW_COMPLICATIONS_DEFAULT = false
 const val DRAW_BACKGROUND_IMAGE_DEFAULT = false
 
-private const val SECOND_DIAL_WIDTH = 10f
-private const val MINUTE_DIAL_WIDTH = 10f
-private const val HOUR_DIAL_WIDTH = 10f
-private const val DAY_DIAL_WIDTH = 0f
+//private const val SECOND_DIAL_WIDTH = 10f
+//private const val MINUTE_DIAL_WIDTH = 10f
+//private const val HOUR_DIAL_WIDTH = 10f
+//private const val DAY_DIAL_WIDTH = 0f
 
 // for publicly accessible values, defaults are set like this:
 // const val EXAMPLE_DEFAULT = 1.234f
 // const val EXAMPLE_MINIMUM = 1.0f
 // const val EXAMPLE_MAXIMUM = 2.0f
 
-private const val GAP_BETWEEN_DIALS = 1f
-private const val BEZEL_WIDTH = 20f
+//private const val GAP_BETWEEN_DIALS = 1f
+//private const val BEZEL_WIDTH = 20f
 
 /**
  * Represents all data needed to render an analog watch face.
@@ -45,6 +45,7 @@ data class WatchFaceData(
 
 	val drawComplications: Boolean = DRAW_COMPLICATIONS_DEFAULT,
 	val drawBackgroundImage: Boolean = DRAW_BACKGROUND_IMAGE_DEFAULT,
+
 //	val drawHourPips: Boolean = DRAW_HOUR_PIPS_DEFAULT,
 
 //	val secondDialWidth: Float = SECOND_DIAL_WIDTH,
@@ -54,7 +55,8 @@ data class WatchFaceData(
 //	val gapBetweenDials: Float = GAP_BETWEEN_DIALS,
 //	val bezelWidth: Float = BEZEL_WIDTH
 
-	// val backgroundImage: ImageResource,
+//	 val backgroundImage: ImageResource,
+
     // val hourHandDimensions: ArmDimensions = ArmDimensions(
     //     lengthFraction = HOUR_HAND_LENGTH_FRACTION,
     //     widthFraction = HOUR_HAND_WIDTH_FRACTION,
