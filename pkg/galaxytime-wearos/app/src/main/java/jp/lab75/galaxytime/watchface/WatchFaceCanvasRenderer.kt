@@ -450,8 +450,12 @@ class WatchFaceCanvasRenderer (
 		}
 
 		val universalTime = DateTimeFormatter
-				.ofPattern("HH:mm").format(OffsetDateTime.now(ZoneOffset.UTC))
+				.ofPattern("HH:mm").format(OffsetDateTime.now())
 				.replace("0", zero)
+
+
+		val zoneOffset = DateTimeFormatter
+			.ofPattern("O").format(OffsetDateTime.now())
 
 		// draw location name
 		canvas.drawText(name, xc, yc - 80f, p1)
@@ -461,7 +465,7 @@ class WatchFaceCanvasRenderer (
 		canvas.translate(85f,80f)
 		p3.textAlign = Paint.Align.LEFT
 		canvas.drawText("LT", xc - off1, yc - 6f, p3)
-		canvas.drawText("UT", xc - off1, yc + 20f, p3)
+		canvas.drawText(zoneOffset, xc - off1, yc + 20f, p3)
 		canvas.drawText(localTime, xc - off2, yc - 6f, p2)
 		canvas.drawText(universalTime, xc - off2, yc + 20f, p2)
 		canvas.restore()
