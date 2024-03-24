@@ -15,6 +15,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -51,12 +53,15 @@ import jp.lab75.galaxytime.service.BiometricsService
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.VectorProperty
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import kotlin.math.round
 import kotlin.math.roundToInt
 
@@ -128,6 +133,11 @@ fun BiometricsView(
 	val haptic = LocalHapticFeedback.current
 	val state by biometrics.state.collectAsState()
 
+//	 val density = LocalDensity.current
+	 val configuration = LocalConfiguration.current
+	 val height = configuration.screenHeightDp.dp
+	 val yp = height / 2
+
 	Log.d("Biometrics","mutable $state")
 	Image(
 		painter = painterResource(R.drawable.sgt_hydration),
@@ -147,18 +157,21 @@ fun BiometricsView(
 		LineChart(biometrics = biometrics)
 		Box(
 			modifier = Modifier
-				.fillMaxSize()
+				.wrapContentSize()
+				.fillMaxWidth()
+				.offset( x = 0.dp, y = yp )
+				.height( height )
 				.drawBehind {
 					drawRect(
-						topLeft = Offset( 0f,size.height/2f ),
-						color = Color(0xffff00ff),
-						alpha = 0f,
+						color = Color(0xff9900ff),
+							alpha = 0f,
 						size = Size(size.width, size.height/2)
 					)
 				}
 				.pointerInput(Unit) {
 					detectTapGestures(
 						onTap = {
+							Offset( x = 0f, y = size.height/2f,  )
 							haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 							onHydrate()
 						}
