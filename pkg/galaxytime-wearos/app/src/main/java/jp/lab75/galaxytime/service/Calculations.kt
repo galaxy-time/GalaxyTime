@@ -75,13 +75,13 @@ class Calculations private constructor(private val context: Context) {
 		Body.Pluto
 	)
 
+	// TODO: refactor --> 79-93
 	private var currentBody: Body = Body.Earth
 	private fun setCurrentBody(name: String) {
 		currentBody = bodyList.find { it.name.lowercase() == name.lowercase() } ?: Body.Earth
 	}
 	fun getCurrentBody(): Body { return currentBody }
 	fun getCurrentBodyData(): Data? { return bodyDataMap[currentBody] }
-
 	fun getBodyFromThemeName(name: String): Body {
 		return bodyList.find { it.name.lowercase() == name.lowercase() } ?: Body.Earth
 	}
@@ -119,6 +119,7 @@ class Calculations private constructor(private val context: Context) {
 		}
 	}
 
+	// TODO: rm
 	private fun convertToDMS(x: Double): DMS {
 
 		val negative = x < 0
@@ -151,6 +152,7 @@ class Calculations private constructor(private val context: Context) {
 
 		val localTime = Calendar.getInstance()
 
+		// TODO: rm
 		val convertedRa: DMS =
 			if (it != Body.Earth) {
 				convertToDMS(equatorial.ra)
@@ -162,6 +164,7 @@ class Calculations private constructor(private val context: Context) {
 					false
 				)
 			}
+		// TODO: rm
 		val convertedDec = convertToDMS(equatorial.dec)
 
 		// TODO: calculate correct offset per year
@@ -196,9 +199,11 @@ class Calculations private constructor(private val context: Context) {
 			seconds.toInt()
 		)
 
-		_localTime.value = if( _name.value == "Earth" ) earthTime else spaceTime
-		Log.d(TAG,"${time.toMillisecondsSince1970()} —— $it —— ${horizontal.ra} —— ${equatorial.ra} —— ${_localTime.value} —— $hours $minutes $seconds")
+		_localTime.value = if( _name.value.lowercase() == "earth" ) earthTime else spaceTime
 
+//		Log.d(TAG,"${time.toMillisecondsSince1970()} —— $it —— ${horizontal.ra} —— ${equatorial.ra} —— $earthTime —— ${_localTime.value} —— $hours $minutes $seconds")
+
+		// TODO: rm
 		bodyDataMap[it] = Data(
 			equatorial = equatorial,
 			horizontal = horizontal,
@@ -212,10 +217,7 @@ class Calculations private constructor(private val context: Context) {
 
 	}
 
-	private fun Double.roundTo(decimals: Int = 2): Double = round(
-		this * 10.0.pow(
-			decimals
-		)
-	) / 10.0.pow(decimals)
+	private fun Double.roundTo(decimals: Int = 2): Double =
+		round( this * 10.0.pow( decimals ) ) / 10.0.pow(decimals)
 
 }

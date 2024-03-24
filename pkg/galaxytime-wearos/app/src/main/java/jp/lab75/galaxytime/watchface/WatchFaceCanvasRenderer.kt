@@ -258,8 +258,6 @@ class WatchFaceCanvasRenderer (
 
 	private fun updateWatchFaceData(userStyle: UserStyle) {
 
-		Log.d(TAG, "========================================")
-		Log.d(TAG, "========================================")
 		Log.d(TAG, "updateWatchFace(): ${userStyle}")
 
 		if (currentWatchFaceSize.width() != 0) {
@@ -290,9 +288,6 @@ class WatchFaceCanvasRenderer (
 			}
 		}
 
-		Log.d(TAG,"old: ${watchFaceData.activeColorStyle.name} new: ${newWatchFaceData.activeColorStyle.name}")
-
-		// Only updates if something changed.
 		if (watchFaceData != newWatchFaceData && newWatchFaceData.activeColorStyle.name != "AMBIENT") {
 			watchFaceData = newWatchFaceData
 			watchFaceColors = convertToColorPalette(
@@ -302,14 +297,11 @@ class WatchFaceCanvasRenderer (
 			)
 			themeName = watchFaceData.activeColorStyle.name
 			calculations.setName(newWatchFaceData.activeColorStyle.toString())
-			calculations.update()
 
 		} else {
 			Log.d(TAG, "skipping...")
 		}
-		Log.d(TAG, "========================================")
-		Log.d(TAG, "========================================")
-
+		calculations.update()
 	}
 
 	//	destroy
@@ -349,23 +341,27 @@ class WatchFaceCanvasRenderer (
 	) {
 
 		if (currentWatchFaceSize != bounds) currentWatchFaceSize = bounds
+		val name = watchFaceData.activeColorStyle.toString()
 
 		when (renderParameters.drawMode) {
+
 			DrawMode.AMBIENT -> {
 				// TODO: implement day of year
 				val dr = -90f + zonedDateTime.dayOfYear * 360f / 365f
 				drawGradientArc( canvas, bounds, 0f, bounds.width() / 2 - 30f, dr, 365f, watchFaceColors.activePrimaryColor, 64 )
 			}
-			else -> {
-				renderWatchView(canvas, bounds, zonedDateTime)
-				drawGradient(canvas, currentWatchFaceSize)
-				if (currentWatchFaceSize.width() != 0) canvas.drawBitmap(grainImage, bounds, bounds, blendPaint)
 
-				val name = watchFaceData.activeColorStyle.toString()
+			else -> {
+				drawClockHands(canvas, bounds, zonedDateTime)
+				drawGradient(canvas, currentWatchFaceSize)
+				if (currentWatchFaceSize.width() != 0 && ::grainImage.isInitialized)
+					canvas.drawBitmap(grainImage, bounds, bounds, blendPaint)
 				drawBezel(canvas, bounds, name, watchFaceColors.activePrimaryColor)
 				drawTextZones(canvas, bounds, name, zonedDateTime)
 			}
+
 		}
+
 	}
 
 	private fun drawGradient(canvas: Canvas, bounds: Rect) {
@@ -390,7 +386,6 @@ class WatchFaceCanvasRenderer (
 				stops,
 				Shader.TileMode.CLAMP
 			)
-			// blendMode = BlendMode.OVERLAY
 		}
 
 		canvas.drawRect(
@@ -400,22 +395,6 @@ class WatchFaceCanvasRenderer (
 			bounds.height().toFloat(),
 			circularGradientPaint
 		)
-
-	}
-
-	private fun renderWatchView(
-		canvas: Canvas,
-		bounds: Rect,
-		zonedDateTime: ZonedDateTime
-	) {
-
-//		if (
-//			watchFaceData.drawComplications &&
-//			renderParameters.watchFaceLayers.contains(WatchFaceLayer.COMPLICATIONS_OVERLAY)
-//		) {
-//			drawComplications(canvas, zonedDateTime)
-//		}
-		drawClockHands(canvas, bounds, zonedDateTime)
 
 	}
 
@@ -447,19 +426,22 @@ class WatchFaceCanvasRenderer (
 		// TODO: validate calculation. lgtm.
 
 		val localTime = if ( name == "EARTH" ) {
-			DateTimeFormatter.ofPattern("DDD:HH:mm").format(zonedDateTime).replace("0", zero)
+			timeFormat.format(
+				zonedDateTime.dayOfYear,
+				zonedDateTime.hour,
+				zonedDateTime.minute
+			).replace("0", zero)
 		} else {
 			timeFormat.format(
 				currentDay, //data.solarDay,
 				calculations.localTime.value.hh,
 				calculations.localTime.value.mm,
-				).replace( "0", zero )
+			).replace( "0", zero )
 		}
 
 		val universalTime = DateTimeFormatter
 				.ofPattern("HH:mm").format(OffsetDateTime.now())
 				.replace("0", zero)
-
 
 		val zoneOffset = DateTimeFormatter
 			.ofPattern("O").format(OffsetDateTime.now())

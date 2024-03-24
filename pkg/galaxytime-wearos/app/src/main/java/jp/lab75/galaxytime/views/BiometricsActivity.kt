@@ -51,6 +51,7 @@ import jp.lab75.galaxytime.service.BiometricsService
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -146,9 +147,15 @@ fun BiometricsView(
 		LineChart(biometrics = biometrics)
 		Box(
 			modifier = Modifier
-				.width(80.dp)
-				.height(50.dp)
-				.offset(x = -45.dp, y = 35.dp)
+				.fillMaxSize()
+				.drawBehind {
+					drawRect(
+						topLeft = Offset( 0f,size.height/2f ),
+						color = Color(0xffff00ff),
+						alpha = 0f,
+						size = Size(size.width, size.height/2)
+					)
+				}
 				.pointerInput(Unit) {
 					detectTapGestures(
 						onTap = {
@@ -274,22 +281,22 @@ fun LineChart(biometrics: BiometricsService) {
 	val dataPoints by biometrics.dataPoints.collectAsState()
 
 	Box( modifier = Modifier
-		.padding( 10.dp )
+		.padding(10.dp)
 		.drawWithCache {
 
-			val stepX = round( size.width / ( dataPoints.size - 1 ) )
-			val stepY = round( size.height / 5 )
+			val stepX = round(size.width / (dataPoints.size - 1))
+			val stepY = round(size.height / 5)
 
 			val path = Path()
-			path.moveTo(0f, ( size.height - ( ( dataPoints.first() * stepY ) / 2000 ) * size.height ) )
+			path.moveTo(0f, (size.height - ((dataPoints.first() * stepY) / 2000) * size.height))
 
 			dataPoints.forEachIndexed { index, p ->
 
-				val x = ( stepX * index )
+				val x = (stepX * index)
 				//			invert			scale		fraction
-				val y = ( size.height - ( ( p * stepY ) / 2000 ) * size.height )
+				val y = (size.height - ((p * stepY) / 2000) * size.height)
 
-				path.lineTo( x, y )
+				path.lineTo(x, y)
 
 //				Log.d("Biometrics","$index: $x, $y, $p")
 
@@ -299,7 +306,7 @@ fun LineChart(biometrics: BiometricsService) {
 				drawPath(
 					path = path,
 					color = Color.White,
-					style = Stroke( width = 1f ),
+					style = Stroke(width = 1f),
 					alpha = 0.75f
 				)
 			}
