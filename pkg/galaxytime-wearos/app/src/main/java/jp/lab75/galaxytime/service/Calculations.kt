@@ -21,6 +21,7 @@ import androidx.wear.watchface.style.UserStyleSetting
 import io.github.cosinekitty.astronomy.*
 import jp.lab75.galaxytime.WatchFaceCanvasRenderer
 import jp.lab75.galaxytime.utils.COLOR_STYLE_SETTING
+import kotlin.math.pow
 import kotlin.reflect.typeOf
 
 class Calculations private constructor(private val context: Context) {
@@ -217,9 +218,9 @@ class Calculations private constructor(private val context: Context) {
 		val elapsedFraction = elapsedAngle / 360
 
 		val rotation = rotationAxis( it, time )
-		val distance =  helioDistance( it, time ).round(2)
+		val distance =  helioDistance( it, time ).roundTo(2)
 		// val apsis = searchPlanetApsis( it, timeA )
-		val totalSolarDays = planetOrbitalPeriod(it).round(0)
+		val totalSolarDays = planetOrbitalPeriod(it).roundTo(0)
 
 		val spin ="%.4f".format(rotation.spin).padStart(13)
 
@@ -255,7 +256,11 @@ class Calculations private constructor(private val context: Context) {
 		)
 	}
 
-	fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+	private fun Double.roundTo(decimals: Int = 2): Double = kotlin.math.round(
+		this * 10.0.pow(
+			decimals
+		)
+	) / 10.0.pow(decimals)
 
 //	fun calculateRASeconds(raDegrees: Float, totalRotationTimeSeconds: Int): Float {
 //		return (raDegrees / 360f) * totalRotationTimeSeconds

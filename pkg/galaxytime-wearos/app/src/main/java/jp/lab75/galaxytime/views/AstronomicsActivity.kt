@@ -56,6 +56,7 @@ import jp.lab75.galaxytime.service.getReferenceDataFromThemeName
 import jp.lab75.galaxytime.settings.WatchFaceSettingsActivity
 import jp.lab75.galaxytime.settings.WatchFaceSettingsState
 import jp.lab75.galaxytime.theme.GalaxyTimeTheme
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 class AstronomicsActivity : ComponentActivity() {
@@ -278,10 +279,10 @@ fun DescriptionText(
 
 	val leftColumn = arrayOf(l1,l2,l3).joinToString("\n")
 
-	fun Float.round(decimals: Int = 2): Float = "%.${decimals}f".format(this).toFloat()
+	fun Float.roundTo(decimals: Int = 2): Float = (kotlin.math.round(this * 10.0.pow(decimals)) / 10.0.pow(decimals)).toFloat()
 
 	val r1 = "\n\n\n\n\nSOL ${ref.totalRotationTimeHours}h"
-	val r2 = "    ${(ref.totalRotationTimeHours / 24).round(2)} TERRAN DAYS"
+	val r2 = "    ${(ref.totalRotationTimeHours / 24).roundTo(2)} TERRAN DAYS"
 	val r3 = "SRF ${ref.surfaceAreaKm2}km²"
 	val r4 = if (ref.satellites>0) "SAT ${ref.satellites}" else ""
 
