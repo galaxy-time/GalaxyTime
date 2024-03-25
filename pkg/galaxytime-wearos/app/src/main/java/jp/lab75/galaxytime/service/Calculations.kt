@@ -169,8 +169,8 @@ class Calculations private constructor(private val context: Context) {
 			eclipticLongitude = eclipticLongitude(body, currentTime)
 		}
 
-		// add seconds until ecliptic longitude crosses the target
-		while(eclipticLongitude < targetLongitude) {
+		// subtract seconds until ecliptic longitude crosses the target
+		while(eclipticLongitude > targetLongitude) {
 			currentTime = currentTime.addDays(1.0 / 24 / 60 / 60)
 			eclipticLongitude = eclipticLongitude(body, currentTime)
 		}
