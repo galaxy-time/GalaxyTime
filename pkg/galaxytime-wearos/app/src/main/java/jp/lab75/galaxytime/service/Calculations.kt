@@ -140,6 +140,44 @@ class Calculations private constructor(private val context: Context) {
 
 	}
 
+	fun searchPreviousEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
+		// make sure we are below an approximation
+		var currentTime = startTime.addDays(-1.0)
+		var eclipticLongitude = eclipticLongitude(body, currentTime)
+
+		// cross current cycle
+		while(eclipticLongitude < targetLongitude) {
+			currentTime = currentTime.addDays(-1.0)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// find a date where the ecliptic longitude crosses the target
+		while(eclipticLongitude > targetLongitude) {
+			currentTime = currentTime.addDays(-1.0)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// subtract hours until ecliptic longitude crosses the target
+		while(eclipticLongitude < targetLongitude) {
+			currentTime = currentTime.addDays(1.0 / 24)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// add minutes until ecliptic longitude crosses the target
+		while(eclipticLongitude > targetLongitude) {
+			currentTime = currentTime.addDays(-1.0 / 24 / 60)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// subtract seconds until ecliptic longitude crosses the target
+		while(eclipticLongitude < targetLongitude) {
+			currentTime = currentTime.addDays(1.0 / 24 / 60 / 60)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		return currentTime
+	}
+
 	fun searchNextEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
 		// make sure we are above an approximation
 		var currentTime = startTime.addDays(1.0)
@@ -171,7 +209,7 @@ class Calculations private constructor(private val context: Context) {
 
 		// subtract seconds until ecliptic longitude crosses the target
 		while(eclipticLongitude > targetLongitude) {
-			currentTime = currentTime.addDays(1.0 / 24 / 60 / 60)
+			currentTime = currentTime.addDays(-1.0 / 24 / 60 / 60)
 			eclipticLongitude = eclipticLongitude(body, currentTime)
 		}
 
@@ -190,8 +228,9 @@ class Calculations private constructor(private val context: Context) {
 
 		val j2000 = Time(2000, 1, 1, 12, 0, 0.0)
 
-		firstCrossing = searchNextEclipticLongitudeCrossing(it, 180, j2000)
+		firstCrossing = searchPreviousEclipticLongitudeCrossing(it, 180, j2000)
 		val secondCrossing = searchNextEclipticLongitudeCrossing(it, 180, firstCrossing)
+		Log.d("TIME", "${secondCrossing.toMillisecondsSince1970()}")
 
 		// planetary year in earth-ms
 		yearDuration = secondCrossing.toMillisecondsSince1970() - firstCrossing.toMillisecondsSince1970()
@@ -199,7 +238,7 @@ class Calculations private constructor(private val context: Context) {
 		val startRotation = rotationAxis(it, firstCrossing)
 		val endRotation = rotationAxis(it, secondCrossing)
 
-		val rotationDelta = endRotation.spin - startRotation.spin
+		val rotationDelta = abs(endRotation.spin - startRotation.spin)
 		siderealDaysPerYear = rotationDelta / 360.0
 
 		// sidereal day in earth-ms
@@ -209,9 +248,9 @@ class Calculations private constructor(private val context: Context) {
 
 		Log.d(TAG,"Initial calculations for body: $it")
 		Log.d(TAG,"FC Epoch at: $firstCrossing")
-		Log.d(TAG,"Year duration: ${yearDuration / 1000 / 60 / 60 / 24}")
+		Log.d(TAG,"Year duration: ${yearDuration / 1000 / 60 / 60}")
 		Log.d(TAG,"Sidereal days per year: $siderealDaysPerYear")
-		Log.d(TAG,"Length of planetary sidereal day (earth-days): ${siderealDayDuration / 1000 / 60 / 60 / 24}")
+		Log.d(TAG,"Length of planetary sidereal day (earth-days): ${siderealDayDuration / 1000 / 60 / 60}")
 	}
 
 	fun updateTime() {
@@ -228,14 +267,14 @@ class Calculations private constructor(private val context: Context) {
 		var currentYear = (now / yearDuration).toInt()
 
 		val totalDays = (now / siderealDayDuration).toInt()
-		val totalHours = (now / siderealDayDuration * 24).toInt()
-		val totalMinutes = (now / siderealDayDuration * 24 * 60).toInt()
-		val totalSeconds = (now / siderealDayDuration * 24 * 60 * 60).toInt()
+		val totalHours = (now / siderealDayDuration * 24).toLong()
+		val totalMinutes = (now / siderealDayDuration * 24 * 60).toLong()
+		val totalSeconds = (now / siderealDayDuration * 24 * 60 * 60).toLong()
 
 		val currentDay = (totalDays % siderealDaysPerYear).toInt()
-		val currentHours: Int = (totalHours % 24)
-		val currentMinutes: Int = (totalMinutes % 60)
-		val currentSeconds: Int = (totalSeconds % 60)
+		val currentHours: Int = (totalHours % 24).toInt()
+		val currentMinutes: Int = (totalMinutes % 60).toInt()
+		val currentSeconds: Int = (totalSeconds % 60).toInt()
 
 		val localTime = Calendar.getInstance()
 
@@ -252,6 +291,9 @@ class Calculations private constructor(private val context: Context) {
 			currentMinutes,
 			currentSeconds
 		)
+		// Log.d(TAG, "$now $siderealDayDuration $yearDuration $siderealDaysPerYear")
+		// Log.d(TAG, "$currentDay $currentHours $currentMinutes $currentSeconds")
+
 
 		_localTime.value = if( _name.value.lowercase() == "earth" ) earthTime else spaceTime
 
