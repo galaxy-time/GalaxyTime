@@ -18,6 +18,7 @@ import io.github.cosinekitty.astronomy.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -139,8 +140,124 @@ class Calculations private constructor(private val context: Context) {
 
 	}
 
-	fun update() {
+	fun searchNextEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
+		// make sure we are above an approximation
+		var currentTime = startTime.addDays(1.0)
+		var eclipticLongitude = eclipticLongitude(body, currentTime)
 
+		// cross current cycle
+		while(eclipticLongitude > targetLongitude) {
+			currentTime = currentTime.addDays(1.0)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// find a date where the ecliptic longitude crosses the target
+		while(eclipticLongitude < targetLongitude) {
+			currentTime = currentTime.addDays(1.0)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// subtract hours until ecliptic longitude crosses the target
+		while(eclipticLongitude > targetLongitude) {
+			currentTime = currentTime.addDays(-1.0 / 24)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// add minutes until ecliptic longitude crosses the target
+		while(eclipticLongitude < targetLongitude) {
+			currentTime = currentTime.addDays(1.0 / 24 / 60)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		// add seconds until ecliptic longitude crosses the target
+		while(eclipticLongitude < targetLongitude) {
+			currentTime = currentTime.addDays(1.0 / 24 / 60 / 60)
+			eclipticLongitude = eclipticLongitude(body, currentTime)
+		}
+
+		return currentTime
+	}
+
+	private lateinit var calculatedBody: Body
+	private lateinit var firstCrossing: Time
+	private var yearDuration: Long = 0
+	private var siderealDayDuration: Double = 0.0
+	private var siderealDaysPerYear: Double = 0.0
+
+	private fun initialize() {
+		if ( _name.value == ""  ) return
+		val it = getBodyFromThemeName( _name.value )
+
+		val j2000 = Time(2000, 1, 1, 12, 0, 0.0)
+
+		firstCrossing = searchNextEclipticLongitudeCrossing(it, 180, j2000)
+		val secondCrossing = searchNextEclipticLongitudeCrossing(it, 180, firstCrossing)
+
+		// planetary year in earth-ms
+		yearDuration = secondCrossing.toMillisecondsSince1970() - firstCrossing.toMillisecondsSince1970()
+
+		val startRotation = rotationAxis(it, firstCrossing)
+		val endRotation = rotationAxis(it, secondCrossing)
+
+		val rotationDelta = endRotation.spin - startRotation.spin
+		siderealDaysPerYear = rotationDelta / 360.0
+
+		// sidereal day in earth-ms
+		siderealDayDuration = yearDuration / siderealDaysPerYear
+
+		calculatedBody = it
+
+		Log.d(TAG,"Initial calculations for body: $it")
+		Log.d(TAG,"FC Epoch at: $firstCrossing")
+		Log.d(TAG,"Year duration: ${yearDuration / 1000 / 60 / 60 / 24}")
+		Log.d(TAG,"Sidereal days per year: $siderealDaysPerYear")
+		Log.d(TAG,"Length of planetary sidereal day (earth-days): ${siderealDayDuration / 1000 / 60 / 60 / 24}")
+	}
+
+	fun updateTime() {
+		if ( _name.value == ""  ) return
+		val it = getBodyFromThemeName( _name.value )
+
+		if (!::calculatedBody.isInitialized || calculatedBody != it)
+			initialize()
+
+		// Millis since
+		val now = System.currentTimeMillis() - firstCrossing.toMillisecondsSince1970()
+
+		// Year since FC Epoch
+		var currentYear = (now / yearDuration).toInt()
+
+		val totalDays = (now / siderealDayDuration).toInt()
+		val totalHours = (now / siderealDayDuration * 24).toInt()
+		val totalMinutes = (now / siderealDayDuration * 24 * 60).toInt()
+		val totalSeconds = (now / siderealDayDuration * 24 * 60 * 60).toInt()
+
+		val currentDay = (totalDays % siderealDaysPerYear).toInt()
+		val currentHours: Int = (totalHours % 24)
+		val currentMinutes: Int = (totalMinutes % 60)
+		val currentSeconds: Int = (totalSeconds % 60)
+
+		val localTime = Calendar.getInstance()
+
+		val earthTime = LocalTime(
+			localTime.get(Calendar.DAY_OF_YEAR),
+			localTime.get(Calendar.HOUR_OF_DAY),
+			localTime.get(Calendar.MINUTE),
+			localTime.get(Calendar.SECOND)
+		)
+
+		val spaceTime = LocalTime(
+			currentDay,
+			currentHours,
+			currentMinutes,
+			currentSeconds
+		)
+
+		_localTime.value = if( _name.value.lowercase() == "earth" ) earthTime else spaceTime
+
+	}
+
+	fun update() {
 		if ( _name.value == ""  ) return
 		val it = getBodyFromThemeName( _name.value )
 
@@ -178,30 +295,11 @@ class Calculations private constructor(private val context: Context) {
 
 		val totalAngle = 360f
 		val currentAngle = eclipticLongitude( it, time )
-		val currentDay = ( currentAngle * ( totalSolarDays / totalAngle ) )
+		// val currentDay = ( currentAngle * ( totalSolarDays / totalAngle ) )
 		_dayOfYear.value = currentAngle
 		// Log.d(TAG,"$el ———— $doy")
 
-		val earthTime = LocalTime(
-			localTime.get(Calendar.DAY_OF_YEAR),
-			localTime.get(Calendar.HOUR_OF_DAY),
-			localTime.get(Calendar.MINUTE),
-			localTime.get(Calendar.SECOND)
-		)
-
-		val hours = equatorial.ra / 15f
-		val minutes = ( hours - hours.toInt() ) * 60f
-		val seconds = ( minutes - minutes.toInt() ) * 60f
-		val spaceTime = LocalTime(
-			currentDay.toInt(),
-			hours.toInt(),
-			minutes.toInt(),
-			seconds.toInt()
-		)
-
-		_localTime.value = if( _name.value.lowercase() == "earth" ) earthTime else spaceTime
-
-//		Log.d(TAG,"${time.toMillisecondsSince1970()} —— $it —— ${horizontal.ra} —— ${equatorial.ra} —— $earthTime —— ${_localTime.value} —— $hours $minutes $seconds")
+ 		// Log.d(TAG,"${time.toMillisecondsSince1970()} —— $it —— ${horizontal.ra} —— ${equatorial.ra} —— $earthTime —— ${_localTime.value} —— $currentHours $currentMinutes $currentSeconds")
 
 		// TODO: rm
 		bodyDataMap[it] = Data(
@@ -212,7 +310,7 @@ class Calculations private constructor(private val context: Context) {
 			rotation = rotation,
 			distance = distance,
 			totalSolarDays = totalSolarDays,
-			dayOfYear = currentDay
+			dayOfYear = _localTime.value.dd * 1.0
 		)
 
 	}

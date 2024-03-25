@@ -436,6 +436,7 @@ class WatchFaceCanvasRenderer (
 				currentDay, //data.solarDay,
 				calculations.localTime.value.hh,
 				calculations.localTime.value.mm,
+				calculations.localTime.value.ss, // for debug
 			).replace( "0", zero )
 		}
 

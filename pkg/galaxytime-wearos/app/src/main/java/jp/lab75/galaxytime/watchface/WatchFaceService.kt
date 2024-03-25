@@ -51,6 +51,7 @@ class WatchFaceService : WatchFaceService() {
 
 	val refreshLocationInterval: Long = 1000 * 60
 	val refreshCalculationsInterval: Long = 1000 * 1
+	val refreshTimeCalculationsInterval: Long = 100
 	val refreshMeetingServiceInterval: Long = 1000 * 60 * 5
 	val refreshBiometricsServiceInterval: Long = 1000 // * 60 * 5
 
@@ -75,6 +76,13 @@ class WatchFaceService : WatchFaceService() {
 		override fun run() {
 			calculations.update()
 			handler.postDelayed(this, refreshCalculationsInterval)
+		}
+	}
+
+	private val updateTimeCalculationsLoop = object : Runnable {
+		override fun run() {
+			calculations.updateTime()
+			handler.postDelayed(this, refreshTimeCalculationsInterval)
 		}
 	}
 
@@ -119,11 +127,13 @@ class WatchFaceService : WatchFaceService() {
 			Log.d(TAG, "Permissions granted")
 
 			calculations.updateLocation()
+			calculations.updateTime()
 			calculations.update()
 			meetingService.update()
 			biometricsService.update()
 
 			handler.post(updateLocationLoop)
+			handler.post(updateTimeCalculationsLoop)
 			handler.post(updateCalculationsLoop)
 			handler.post(updateMeetingServiceLoop)
 			handler.post(updateBiometricsServiceLoop)
