@@ -44,6 +44,7 @@ import jp.lab75.galaxytime.views.PermissionRequestActivity
 class WatchFaceService : WatchFaceService() {
 
 	private val handler = Handler( Looper.getMainLooper() )
+	private var hasPermissions = false
 
 	private lateinit var calculations: Calculations
 	private lateinit var meetingService: MeetingService
@@ -106,14 +107,14 @@ class WatchFaceService : WatchFaceService() {
 		biometricsService = BiometricsService.getInstance(applicationContext)
 
 		if ( ContextCompat.checkSelfPermission(
-				this, Manifest.permission.ACCESS_FINE_LOCATION
+				this, Manifest.permission.ACCESS_COARSE_LOCATION
 			) != PackageManager.PERMISSION_GRANTED ||
 			ContextCompat.checkSelfPermission(
 				this, Manifest.permission.READ_CALENDAR
 			) != PackageManager.PERMISSION_GRANTED
 		) {
 
-			// hasPermissions = false
+			hasPermissions = false
 
 			Log.d( TAG, "Insufficient permissions. Starting permission request activity." )
 			val intent = Intent(this, PermissionRequestActivity::class.java)
@@ -122,14 +123,13 @@ class WatchFaceService : WatchFaceService() {
 
 		} else {
 
-			// hasPermissions = true
+			hasPermissions = true
 
 			Log.d(TAG, "Permissions granted")
-
 			calculations.updateLocation()
 			meetingService.update()
 
-			handler.post(updateLocationLoop)
+      handler.post(updateLocationLoop)
 			handler.post(updateMeetingServiceLoop)
 
 		}
@@ -141,11 +141,11 @@ class WatchFaceService : WatchFaceService() {
 		handler.post(updateTimeCalculationsLoop)
 		handler.post(updateCalculationsLoop)
 		handler.post(updateBiometricsServiceLoop)
-	}
+
+  }
 
 	override fun onCreate() {
 		super.onCreate()
-
 		initialize()
 	}
 
