@@ -51,7 +51,7 @@ class WatchFaceService : WatchFaceService() {
 
 	val refreshLocationInterval: Long = 1000 * 60
 	val refreshCalculationsInterval: Long = 1000 * 1
-	val refreshTimeCalculationsInterval: Long = 100
+	val refreshTimeCalculationsInterval: Long = 50
 	val refreshMeetingServiceInterval: Long = 1000 * 60 * 5
 	val refreshBiometricsServiceInterval: Long = 1000 // * 60 * 5
 
@@ -100,7 +100,7 @@ class WatchFaceService : WatchFaceService() {
 		}
 	}
 
-	fun initialize() {
+	private fun initialize() {
 		calculations = Calculations.getInstance(applicationContext)
 		meetingService = MeetingService.getInstance(applicationContext)
 		biometricsService = BiometricsService.getInstance(applicationContext)

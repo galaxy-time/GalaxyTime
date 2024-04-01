@@ -11,7 +11,7 @@ class BiometricsService private constructor(private val context: Context) {
 
 	private var hydrations = mutableListOf<Long>()
 	private var lastUpdate: Long = 0
-	private val threshold: Long = 1000 * 10 //  * 60 * 60 // 1 h
+	private val threshold: Long = 1000 * 60 * 60 // 1 h
 	private var count: Int = 0
 
 	private var _state = MutableStateFlow("")

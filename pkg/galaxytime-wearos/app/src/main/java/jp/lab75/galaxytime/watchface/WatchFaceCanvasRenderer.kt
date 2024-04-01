@@ -72,7 +72,7 @@ import kotlin.math.roundToInt
 //	shaders
 
 // Default for how long each frame is displayed at expected frame rate.
-private const val FRAME_PERIOD_MS_DEFAULT: Long = 16L
+private const val FRAME_PERIOD_MS_DEFAULT: Long = 100L
 
 class WatchFaceCanvasRenderer (
 	private val context: Context,
@@ -452,7 +452,7 @@ class WatchFaceCanvasRenderer (
 
 		// draw timezones
 		canvas.save()
-		canvas.translate(85f,80f)
+		canvas.translate(75f,75f)
 		p3.textAlign = Paint.Align.LEFT
 		canvas.drawText("LT", xc - off1, yc - 6f, p3)
 		canvas.drawText(zoneOffset, xc - off1, yc + 20f, p3)

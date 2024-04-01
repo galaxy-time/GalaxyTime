@@ -25,12 +25,15 @@ android {
     namespace "jp.lab75.galaxytime"
 
     defaultConfig {
-        applicationId "jp.lab75.galaxytime"
-//		applicationId "me.galaxyti.galaxytime"
+		// change this to release under a
+		// different application id and
+		// create a signed bundle to upload
+//		applicationId "jp.lab75.galaxytime"
+		applicationId "me.galaxyti.galaxytime"
         minSdk 33
         targetSdk 33
-        versionCode 30
-        versionName '0.30'
+        versionCode 35
+        versionName '0.35'
 		versionNameSuffix 'RC'
 	}
 
