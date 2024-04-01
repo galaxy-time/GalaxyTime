@@ -114,7 +114,7 @@ class WatchFaceService : WatchFaceService() {
 			) != PackageManager.PERMISSION_GRANTED
 		) {
 
-			 hasPermissions = false
+			hasPermissions = false
 
 			Log.d( TAG, "Insufficient permissions. Starting permission request activity." )
 			val intent = Intent(this, PermissionRequestActivity::class.java)
@@ -123,12 +123,13 @@ class WatchFaceService : WatchFaceService() {
 
 		} else {
 
-			 hasPermissions = true
+			hasPermissions = true
 
 			Log.d(TAG, "Permissions granted")
 			calculations.updateLocation()
 			meetingService.update()
-			handler.post(updateLocationLoop)
+
+      handler.post(updateLocationLoop)
 			handler.post(updateMeetingServiceLoop)
 
 		}
@@ -141,7 +142,7 @@ class WatchFaceService : WatchFaceService() {
 		handler.post(updateCalculationsLoop)
 		handler.post(updateBiometricsServiceLoop)
 
-	}
+  }
 
 	override fun onCreate() {
 		super.onCreate()
