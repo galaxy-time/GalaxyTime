@@ -140,15 +140,35 @@ class Calculations private constructor(private val context: Context) {
 
 	}
 
-	fun searchPreviousEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
+	private fun searchPreviousEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
 		// make sure we are below an approximation
 		var currentTime = startTime.addDays(-1.0)
 		var eclipticLongitude = eclipticLongitude(body, currentTime)
 
-		// cross current cycle
-		while(eclipticLongitude < targetLongitude) {
-			currentTime = currentTime.addDays(-1.0)
-			eclipticLongitude = eclipticLongitude(body, currentTime)
+		if (_name.value.lowercase() == "pluto" || _name.value.lowercase() == "mercury") {
+			// cross current cycle
+			while(eclipticLongitude < targetLongitude) {
+				currentTime = currentTime.addDays(-30.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
+
+			// add 30 days until ecliptic longitude crosses the target
+			while(eclipticLongitude > targetLongitude) {
+				currentTime = currentTime.addDays(-30.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
+
+			// subtract weeks until ecliptic longitude crosses the target
+			while(eclipticLongitude < targetLongitude) {
+				currentTime = currentTime.addDays(7.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
+		} else {
+			// cross current cycle
+			while(eclipticLongitude < targetLongitude) {
+				currentTime = currentTime.addDays(-1.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
 		}
 
 		// find a date where the ecliptic longitude crosses the target
@@ -157,19 +177,19 @@ class Calculations private constructor(private val context: Context) {
 			eclipticLongitude = eclipticLongitude(body, currentTime)
 		}
 
-		// subtract hours until ecliptic longitude crosses the target
+		// add hours until ecliptic longitude crosses the target
 		while(eclipticLongitude < targetLongitude) {
 			currentTime = currentTime.addDays(1.0 / 24)
 			eclipticLongitude = eclipticLongitude(body, currentTime)
 		}
 
-		// add minutes until ecliptic longitude crosses the target
+		// subtract minutes until ecliptic longitude crosses the target
 		while(eclipticLongitude > targetLongitude) {
 			currentTime = currentTime.addDays(-1.0 / 24 / 60)
 			eclipticLongitude = eclipticLongitude(body, currentTime)
 		}
 
-		// subtract seconds until ecliptic longitude crosses the target
+		// add seconds until ecliptic longitude crosses the target
 		while(eclipticLongitude < targetLongitude) {
 			currentTime = currentTime.addDays(1.0 / 24 / 60 / 60)
 			eclipticLongitude = eclipticLongitude(body, currentTime)
@@ -178,15 +198,35 @@ class Calculations private constructor(private val context: Context) {
 		return currentTime
 	}
 
-	fun searchNextEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
+	private fun searchNextEclipticLongitudeCrossing(body: Body, targetLongitude: Int, startTime: Time): Time {
 		// make sure we are above an approximation
 		var currentTime = startTime.addDays(1.0)
 		var eclipticLongitude = eclipticLongitude(body, currentTime)
 
-		// cross current cycle
-		while(eclipticLongitude > targetLongitude) {
-			currentTime = currentTime.addDays(1.0)
-			eclipticLongitude = eclipticLongitude(body, currentTime)
+		if (_name.value.lowercase() == "pluto" || _name.value.lowercase() == "mercury") {
+			// cross current cycle
+			while(eclipticLongitude > targetLongitude) {
+				currentTime = currentTime.addDays(30.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
+
+			// add 30 days until ecliptic longitude crosses the target
+			while(eclipticLongitude < targetLongitude) {
+				currentTime = currentTime.addDays(30.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
+
+			// subtract weeks until ecliptic longitude crosses the target
+			while(eclipticLongitude > targetLongitude) {
+				currentTime = currentTime.addDays(-7.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
+		} else {
+			// cross current cycle
+			while(eclipticLongitude > targetLongitude) {
+				currentTime = currentTime.addDays(1.0)
+				eclipticLongitude = eclipticLongitude(body, currentTime)
+			}
 		}
 
 		// find a date where the ecliptic longitude crosses the target
@@ -293,7 +333,6 @@ class Calculations private constructor(private val context: Context) {
 		)
 		// Log.d(TAG, "$now $siderealDayDuration $yearDuration $siderealDaysPerYear")
 		// Log.d(TAG, "$currentDay $currentHours $currentMinutes $currentSeconds")
-
 
 		_localTime.value = if( _name.value.lowercase() == "earth" ) earthTime else spaceTime
 

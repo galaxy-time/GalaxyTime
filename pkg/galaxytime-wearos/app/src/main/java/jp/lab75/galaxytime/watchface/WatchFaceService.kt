@@ -127,18 +127,20 @@ class WatchFaceService : WatchFaceService() {
 			Log.d(TAG, "Permissions granted")
 
 			calculations.updateLocation()
-			calculations.updateTime()
-			calculations.update()
 			meetingService.update()
-			biometricsService.update()
 
 			handler.post(updateLocationLoop)
-			handler.post(updateTimeCalculationsLoop)
-			handler.post(updateCalculationsLoop)
 			handler.post(updateMeetingServiceLoop)
-			handler.post(updateBiometricsServiceLoop)
 
 		}
+
+		calculations.updateTime()
+		calculations.update()
+		biometricsService.update()
+
+		handler.post(updateTimeCalculationsLoop)
+		handler.post(updateCalculationsLoop)
+		handler.post(updateBiometricsServiceLoop)
 	}
 
 	override fun onCreate() {
