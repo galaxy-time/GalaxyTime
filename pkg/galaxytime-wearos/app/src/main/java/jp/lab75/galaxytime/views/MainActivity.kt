@@ -11,6 +11,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -42,15 +43,11 @@ import jp.lab75.galaxytime.theme.GalaxyTimeTheme
 class MainActivity : ComponentActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-//		installSplashScreen()
 		super.onCreate(savedInstanceState)
 		setTheme(android.R.style.Theme_DeviceDefault)
-
 		setContent {
 			WearApp("GalaxyTime") { navigateToWatchFace() }
 		}
-
-		finish()
 	}
 
 	fun navigateToWatchFace() {
@@ -118,7 +115,7 @@ fun SimpleButton(action: () -> Unit) {
 	}
 }
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
 	WearApp("GalaxyTime Preview", action = { })

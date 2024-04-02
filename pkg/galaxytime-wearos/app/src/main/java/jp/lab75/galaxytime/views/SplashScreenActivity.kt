@@ -39,4 +39,7 @@ class SplashScreenActivity : AppCompatActivity() {
 		startActivity(intent)
 		finish()
 	}
+	companion object {
+		private const val TAG = "Splash"
+	}
 }
